@@ -9,14 +9,14 @@ export const metadata: Metadata = {
     "Aankomende Renocheck events voor architecten, aannemers en interieurprofessionals — ontmoetingen, beurzen en exclusieve avonden.",
   alternates: { canonical: "/events" },
   openGraph: {
-    title: "Events · Renocheck",
+    title: "Events · Renocheck Professionals",
     description:
       "Onze aankomende events, opendeuren en beurzen in België.",
     url: "/events",
     type: "website",
   },
   twitter: {
-    title: "Events · Renocheck",
+    title: "Events · Renocheck Professionals",
     description:
       "Onze aankomende events, opendeuren en beurzen in België.",
   },
@@ -46,7 +46,7 @@ const AGENDA = [
   },
   {
     date: "19 juni 2026",
-    city: "Knokke",
+    city: "Brugge",
     title: "Partners aan tafel",
   },
   {
@@ -71,7 +71,7 @@ export default function EventsPage() {
 
         <h1 className="enter-up delay-400 mt-6 font-display text-[clamp(3rem,8vw,7rem)] font-medium leading-[0.98] text-ink">
           Waar u ons{" "}
-          <span className="italic text-gold-dark">ontmoet</span>.
+          <span className="italic text-sage">ontmoet</span>.
         </h1>
 
         <p className="enter-up delay-500 mt-8 max-w-xl text-[17px] leading-[1.65] text-ink-soft md:text-[19px]">
@@ -106,7 +106,7 @@ export default function EventsPage() {
             >
               {FEATURED.title}
             </h2>
-            <p className="mt-4 font-display text-[22px] italic leading-[1.3] text-gold-dark md:text-[26px]">
+            <p className="mt-4 font-display text-[22px] italic leading-[1.3] text-sage md:text-[26px]">
               {FEATURED.tagline}
             </p>
             <p className="mt-8 max-w-md text-[17px] leading-[1.7] text-ink-soft md:text-[18px]">
@@ -134,7 +134,7 @@ export default function EventsPage() {
               className="mt-6 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink"
             >
               Alles op{" "}
-              <span className="italic text-gold-dark">komst</span>.
+              <span className="italic text-sage">komst</span>.
             </h2>
           </div>
 
@@ -167,7 +167,7 @@ export default function EventsPage() {
             <p className="text-[18px] text-ink-soft">Altijd op de hoogte</p>
             <h2 className="mt-6 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink">
               Events{" "}
-              <span className="italic text-gold-dark">eerst</span> in uw
+              <span className="italic text-sage">eerst</span> in uw
               mailbox.
             </h2>
             <div className="mt-10">

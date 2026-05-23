@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 function SocialIcon({
@@ -52,28 +53,33 @@ function SocialIcon({
 export function SiteFooter() {
   return (
     <footer className="relative z-[2] px-4 pb-6 pt-14 sm:px-6 md:px-16 md:pb-14 md:pt-[104px] lg:px-24 lg:pt-[152px]">
-      <div className="rounded-[28px] border border-ink-hair/60 bg-cream-soft/60 px-6 shadow-[0_1px_0_rgba(255,255,255,0.6)_inset] backdrop-blur-sm sm:px-8 md:rounded-[32px] md:px-16 lg:px-24">
+      <div className="rounded-[28px] border border-ink-hair/60 bg-surface-soft/60 px-6 shadow-[0_1px_0_rgba(255,255,255,0.6)_inset] backdrop-blur-sm sm:px-8 md:rounded-[32px] md:px-16 lg:px-24">
         <div className="pt-14 pb-8 md:pt-20 md:pb-10">
         <div className="grid gap-10 md:grid-cols-12 md:gap-16">
           <div className="md:col-span-5">
             <Link
               href="/"
-              aria-label="Renocheck — home"
-              className="inline-flex items-baseline font-display text-ink"
+              aria-label="Renocheck Professionals — home"
+              className="inline-flex flex-col items-start text-ink"
             >
-              <span className="text-[40px] font-medium leading-none tracking-tight sm:text-[48px] md:text-[56px]">
-                Reno
-              </span>
-              <span className="text-[40px] font-medium italic leading-none tracking-tight text-gold-dark sm:text-[48px] md:text-[56px]">
-                check
-              </span>
-              <span
-                aria-hidden="true"
-                className="ml-1.5 inline-block h-1.5 w-1.5 translate-y-[-8px] rounded-full bg-gold-dark opacity-70"
+              <Image
+                src="/brand/renocheck-wordmark.png"
+                alt="Renocheck"
+                width={338}
+                height={41}
+                className="h-[44px] w-auto select-none sm:h-[52px] md:h-[60px]"
+                sizes="(max-width: 640px) 360px, (max-width: 768px) 430px, 500px"
               />
+              <span
+                className="mt-3 text-[13px] font-medium uppercase text-ink sm:text-[14px]"
+                style={{ letterSpacing: "0.4em", marginLeft: "3.5rem" }}
+              >
+                Professionals
+              </span>
             </Link>
             <p className="mt-6 max-w-sm text-[15px] leading-[1.7] text-ink-soft md:mt-8">
-              Producten, events en ledenportaal voor bouwprofessionals.
+              Het partnerportaal voor architecten, aannemers en
+              vakspecialisten.
             </p>
             <div className="mt-8 flex items-center gap-5 md:mt-10">
               {(["instagram", "facebook", "linkedin"] as const).map((name) => (
@@ -83,7 +89,7 @@ export function SiteFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Renocheck op ${name.charAt(0).toUpperCase() + name.slice(1)}`}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink-hair/60 text-ink-soft transition-colors hover:border-gold-dark hover:bg-gold/20 hover:text-ink"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink-hair/60 text-ink-soft transition-colors hover:border-sage hover:bg-sage/20 hover:text-ink"
                 >
                   <SocialIcon name={name} className="h-4 w-4" />
                 </a>
@@ -103,9 +109,10 @@ export function SiteFooter() {
           />
           <FooterColumn
             className="md:col-span-2"
-            title="Renocheck"
+            title="Renocheck Professionals"
             links={[
               { href: "/over-ons", label: "Over ons" },
+              { href: "/faq", label: "FAQ" },
               { href: "/contact", label: "Contact" },
               { href: "/login", label: "Partner login" },
             ]}
@@ -138,7 +145,8 @@ export function SiteFooter() {
 
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-ink-hair/50 pt-6 text-[11px] text-ink-muted md:mt-16 md:flex-row md:items-center">
           <p>
-            © {new Date().getFullYear()} Renocheck. Alle rechten voorbehouden.
+            © {new Date().getFullYear()} Renocheck Professionals. Alle rechten
+            voorbehouden.
           </p>
           <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
             <Link href="/privacy" className="hover:text-ink">
@@ -150,14 +158,7 @@ export function SiteFooter() {
             <span aria-hidden="true" className="hidden h-3 w-px bg-ink-hair md:inline-block" />
             <p>
               Gemaakt door{" "}
-              <a
-                href="https://suave.gg/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium text-ink-soft transition-colors hover:text-gold-dark"
-              >
-                suave
-              </a>
+              <span className="font-medium text-ink-soft">nebula</span>
             </p>
           </div>
         </div>

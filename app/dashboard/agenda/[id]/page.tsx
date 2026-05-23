@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/auth";
+import { deleteEvent, getEvent } from "@/lib/queries";
 import { DeletePostButton } from "../../blog/[id]/delete-button";
 
 export const metadata: Metadata = {
@@ -9,12 +10,19 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-async function deleteEvent(formData: FormData) {
+async function deleteEventAction(formData: FormData) {
   "use server";
   const id = String(formData.get("id"));
   if (!id) return;
-  const supabase = await createClient();
-  await supabase.from("events").delete().eq("id", id);
+
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+
+  const event = getEvent(id);
+  if (!event) return;
+  if (event.author_id !== user.id && user.role !== "admin") return;
+
+  deleteEvent(id);
   redirect("/dashboard/agenda");
 }
 
@@ -24,37 +32,22 @@ export default async function EventDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { data: event } = await supabase
-    .from("events")
-    .select(
-      "id, title, description, location, starts_at, ends_at, author_id, author:profiles(full_name, company)",
-    )
-    .eq("id", id)
-    .maybeSingle();
+  const user = await getCurrentUser();
+  const event = getEvent(id);
 
   if (!event) {
     notFound();
   }
 
-  type Author = { full_name: string | null; company: string | null };
-  const rawAuthor = event.author as Author | Author[] | null | undefined;
-  const author: Author | null = Array.isArray(rawAuthor)
-    ? (rawAuthor[0] ?? null)
-    : (rawAuthor ?? null);
-  const authorName = author?.full_name ?? author?.company ?? "Renocheck partner";
+  const authorName =
+    event.author?.full_name ?? event.author?.company ?? "Renocheck partner";
   const isOwner = user?.id === event.author_id;
 
   return (
     <article className="px-6 pb-20 pt-12 md:px-12 md:pb-28 md:pt-16 lg:px-20 lg:pt-20">
       <Link
         href="/dashboard/agenda"
-        className="inline-flex items-center gap-2 text-[14px] font-medium text-ink-soft transition-colors hover:text-gold-dark"
+        className="inline-flex items-center gap-2 text-[14px] font-medium text-ink-soft transition-colors hover:text-sage"
       >
         ← Terug naar de agenda
       </Link>
@@ -68,7 +61,7 @@ export default async function EventDetailPage({
         </h1>
       </header>
 
-      <dl className="mt-10 grid max-w-3xl gap-6 rounded-3xl border border-ink-hair/60 bg-cream-soft/30 p-7 md:grid-cols-2 md:gap-8 md:p-10">
+      <dl className="mt-10 grid max-w-3xl gap-6 rounded-3xl border border-ink-hair/60 bg-surface-soft/30 p-7 md:grid-cols-2 md:gap-8 md:p-10">
         <Detail label="Begint op" value={formatDateTime(event.starts_at)} />
         {event.ends_at ? (
           <Detail label="Eindigt op" value={formatDateTime(event.ends_at)} />
@@ -93,7 +86,7 @@ export default async function EventDetailPage({
           <div className="mt-4">
             <DeletePostButton
               postId={event.id}
-              action={deleteEvent}
+              action={deleteEventAction}
               label="Event verwijderen"
               confirmText="Klik nogmaals om definitief te verwijderen"
             />

@@ -32,7 +32,7 @@ export function DeletePostButton({
         type="button"
         onClick={handleClick}
         disabled={isPending}
-        className="inline-flex items-center gap-2 rounded-full border border-ink-hair/70 bg-cream/60 px-5 py-3 text-[14px] font-medium text-ink transition-colors hover:border-red-700/60 hover:text-red-800 disabled:opacity-60"
+        className="inline-flex items-center gap-2 rounded-full border border-ink-hair/70 bg-white/60 px-5 py-3 text-[14px] font-medium text-ink transition-colors hover:border-red-700/60 hover:text-red-800 disabled:opacity-60"
       >
         {isPending
           ? "Bezig met verwijderen…"

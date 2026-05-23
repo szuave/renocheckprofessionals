@@ -10,14 +10,14 @@ export const metadata: Metadata = {
     "Per regio in Vlaanderen één vakspecialist per rubriek — van dakwerken tot zonnepanelen. Veertien rubrieken, één gedeelde standaard.",
   alternates: { canonical: "/vakspecialisten" },
   openGraph: {
-    title: "Vakspecialisten · Renocheck",
+    title: "Vakspecialisten · Renocheck Professionals",
     description:
       "Veertien rubrieken, één vakspecialist per regio — vakkennis op maat van uw bouwproject.",
     url: "/vakspecialisten",
     type: "website",
   },
   twitter: {
-    title: "Vakspecialisten · Renocheck",
+    title: "Vakspecialisten · Renocheck Professionals",
     description:
       "Veertien rubrieken, één vakspecialist per regio.",
   },
@@ -41,12 +41,10 @@ const RUBRIEKEN = [
 ];
 
 const REGIONS = [
-  { name: "Knokke", slug: "knokke" },
   { name: "West-Vlaanderen", slug: "west-vlaanderen" },
   { name: "Oost-Vlaanderen", slug: "oost-vlaanderen" },
   { name: "Antwerpen", slug: "antwerpen" },
   { name: "Vlaams-Brabant", slug: "vlaams-brabant" },
-  { name: "Limburg", slug: "limburg" },
 ];
 
 export default function VakspecialistenPage() {
@@ -66,7 +64,7 @@ export default function VakspecialistenPage() {
 
         <h1 className="enter-up delay-400 mt-6 font-display text-[clamp(3rem,8vw,7rem)] font-medium leading-[0.98] text-ink">
           Veertien rubrieken,<br />
-          <span className="italic text-gold-dark">één</span> standaard.
+          <span className="italic text-sage">één</span> standaard.
         </h1>
 
         <p className="enter-up delay-500 mt-8 max-w-xl text-[17px] leading-[1.65] text-ink-soft md:text-[19px]">
@@ -83,7 +81,7 @@ export default function VakspecialistenPage() {
               <p className="text-[18px] text-ink-soft">Wat we dekken</p>
               <h2 className="mt-6 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink">
                 De{" "}
-                <span className="italic text-gold-dark">veertien</span>{" "}
+                <span className="italic text-sage">veertien</span>{" "}
                 rubrieken.
               </h2>
               <p className="mt-8 max-w-md text-[17px] leading-[1.7] text-ink-soft md:text-[18px]">
@@ -126,7 +124,7 @@ export default function VakspecialistenPage() {
                 className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink"
               >
                 Vakspecialisten in{" "}
-                <span className="italic text-gold-dark">uw</span> regio.
+                <span className="italic text-sage">uw</span> regio.
               </h2>
               <p className="mt-8 max-w-md text-[17px] leading-[1.7] text-ink-soft">
                 Selecteer uw regio om de veertien vakspecialisten te
@@ -156,14 +154,14 @@ export default function VakspecialistenPage() {
                     i === 0 ? "border-t border-ink-hair/40" : ""
                   } border-b border-ink-hair/40`}
                 >
-                  <span className="font-display text-[28px] font-medium leading-tight text-ink transition-colors group-hover:text-gold-dark md:text-[36px]">
+                  <span className="font-display text-[28px] font-medium leading-tight text-ink transition-colors group-hover:text-sage md:text-[36px]">
                     {r.name}
                   </span>
                   <span className="flex items-center gap-5 text-[13px] text-ink-muted">
                     <span className="hidden sm:inline">14 partners</span>
                     <span
                       aria-hidden="true"
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ink-hair/70 text-ink-soft transition-all duration-300 group-hover:border-gold-dark group-hover:bg-gold-dark group-hover:text-cream"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ink-hair/70 text-ink-soft transition-all duration-300 group-hover:border-sage group-hover:bg-sage group-hover:text-white"
                     >
                       <svg
                         viewBox="0 0 16 10"
@@ -185,16 +183,77 @@ export default function VakspecialistenPage() {
         </div>
       </section>
 
+      <section
+        aria-labelledby="vak-why-title"
+        className="relative mt-28 md:mt-44"
+      >
+        <div className="mx-auto max-w-[1280px] px-6 md:px-16 lg:px-24">
+          <div className="max-w-2xl">
+            <p className="text-[10px] font-medium uppercase tracking-[0.32em] text-ink-muted">
+              Waarom aansluiten
+            </p>
+            <h2
+              id="vak-why-title"
+              className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink"
+            >
+              Eén plek per{" "}
+              <span className="italic text-sage">rubriek</span>, exclusief.
+            </h2>
+            <p className="mt-6 max-w-xl text-[17px] leading-[1.65] text-ink-soft">
+              U bent niet één van de twintig sanitair-bedrijven in een
+              database — u bent <em>de</em> sanitair-partner van het netwerk
+              in uw regio. Dat verandert hoe doorverwijzingen werken.
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-10 md:mt-20 md:grid-cols-3 md:gap-8 lg:gap-12">
+            {[
+              {
+                nr: "01",
+                title: "Exclusiviteit binnen uw regio",
+                body: "Eén partner per rubriek. Geen onderlinge concurrentie op opdrachten die via het netwerk binnenkomen.",
+              },
+              {
+                nr: "02",
+                title: "Architecten die uw werk kennen",
+                body: "Bouwprojecten komen via architect-partners binnen die u al hebben leren kennen op een netwerkevent. Geen koude offertes.",
+              },
+              {
+                nr: "03",
+                title: "Een sterkere lokale reputatie",
+                body: "Aansluiting bij Renocheck Professionals is een kwaliteitsstempel. Bouwers en architecten zien u als deel van een geselecteerd netwerk.",
+              },
+            ].map((b) => (
+              <div key={b.nr} className="min-w-0">
+                <span className="font-display text-[44px] font-light leading-none text-sage md:text-[56px]">
+                  {b.nr}
+                </span>
+                <div
+                  aria-hidden="true"
+                  className="mt-5 h-px w-10 bg-ink-hair"
+                />
+                <h3 className="mt-5 font-display text-[22px] font-medium leading-[1.15] text-ink md:text-[26px]">
+                  {b.title}
+                </h3>
+                <p className="mt-4 text-[15px] leading-[1.7] text-ink-soft">
+                  {b.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="mx-auto mt-28 max-w-[1280px] px-6 md:mt-44 md:px-16 lg:px-24">
         <div className="grid gap-12 md:grid-cols-12 md:items-center md:gap-16">
           <div className="min-w-0 md:col-span-5">
             <p className="text-[18px] text-ink-soft">Bent u vakspecialist</p>
             <h2 className="mt-6 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink">
               Eén plek per{" "}
-              <span className="italic text-gold-dark">rubriek</span>.
+              <span className="italic text-sage">rubriek</span>.
             </h2>
             <div className="mt-10">
-              <PillLink href="/contact">Vraag uw plek aan</PillLink>
+              <PillLink href="/#partner-aanvraag">Vraag uw plek aan</PillLink>
             </div>
           </div>
           <div className="min-w-0 md:col-span-7">

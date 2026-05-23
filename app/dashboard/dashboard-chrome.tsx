@@ -1,10 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
+import { logoutAction } from "@/app/login/actions";
 
 type DashboardUser = {
   email: string;
@@ -20,7 +21,10 @@ const NAV = [
   { href: "/dashboard/leden", label: "Andere partners" },
 ];
 
-const ADMIN_NAV = [{ href: "/dashboard/beheer", label: "Beheer (admin)" }];
+const ADMIN_NAV = [
+  { href: "/dashboard/inbox", label: "Inbox (admin)" },
+  { href: "/dashboard/beheer", label: "Beheer (admin)" },
+];
 
 export function DashboardChrome({
   children,
@@ -84,22 +88,26 @@ function DesktopSidebar({
       <div className="sticky top-0 flex h-screen flex-col border-r border-ink-hair/40 px-10 py-12">
         <Link
           href="/"
-          aria-label="Renocheck — naar publieke site"
-          className="inline-flex items-baseline font-display text-ink"
+          aria-label="Renocheck Professionals — naar publieke site"
+          className="inline-flex flex-col items-start text-ink"
         >
-          <span className="text-[32px] font-medium leading-none tracking-tight">
-            Reno
-          </span>
-          <span className="text-[32px] font-medium italic leading-none tracking-tight text-gold-dark">
-            check
-          </span>
-          <span
-            aria-hidden="true"
-            className="ml-1 inline-block h-1 w-1 translate-y-[-4px] rounded-full bg-gold-dark opacity-70"
+          <Image
+            src="/brand/renocheck-wordmark.png"
+            alt="Renocheck"
+            width={247}
+            height={30}
+            priority
+            className="select-none"
           />
+          <span
+            className="mt-2.5 text-[11px] font-medium uppercase text-ink"
+            style={{ letterSpacing: "0.4em", marginLeft: 36 }}
+          >
+            Professionals
+          </span>
         </Link>
 
-        <p className="mt-2 text-[10px] font-medium uppercase tracking-[0.32em] text-ink-muted">
+        <p className="mt-3 text-[10px] font-medium uppercase tracking-[0.32em] text-ink-muted">
           Partnerportaal
         </p>
 
@@ -129,18 +137,26 @@ function MobileBar({
   user: DashboardUser;
 }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-ink-hair/40 bg-cream/80 px-4 py-3 backdrop-blur lg:hidden">
+    <header className="sticky top-0 z-40 border-b border-ink-hair/40 bg-white/80 px-4 py-3 backdrop-blur lg:hidden">
       <div className="flex items-center justify-between gap-3">
         <Link
           href="/"
-          aria-label="Renocheck — naar publieke site"
-          className="inline-flex items-baseline font-display text-ink"
+          aria-label="Renocheck Professionals — naar publieke site"
+          className="inline-flex flex-col items-start text-ink"
         >
-          <span className="text-[22px] font-medium leading-none tracking-tight">
-            Reno
-          </span>
-          <span className="text-[22px] font-medium italic leading-none tracking-tight text-gold-dark">
-            check
+          <Image
+            src="/brand/renocheck-wordmark.png"
+            alt="Renocheck"
+            width={165}
+            height={20}
+            priority
+            className="select-none"
+          />
+          <span
+            className="mt-1 text-[9px] font-medium uppercase text-ink"
+            style={{ letterSpacing: "0.4em", marginLeft: 22 }}
+          >
+            Professionals
           </span>
         </Link>
         <button
@@ -171,7 +187,9 @@ function MobileBar({
         </button>
       </div>
       <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.32em] text-ink-muted">
-        {user.role === "admin" ? "Admin · Renocheck" : "Partner · Renocheck"}
+        {user.role === "admin"
+          ? "Admin · Renocheck Professionals"
+          : "Partner · Renocheck Professionals"}
       </p>
     </header>
   );
@@ -193,7 +211,7 @@ function MobileOverlay({
   return (
     <div
       className={cn(
-        "fixed inset-0 z-30 flex flex-col bg-cream px-6 pb-10 pt-24 transition-opacity duration-300 lg:hidden",
+        "fixed inset-0 z-30 flex flex-col bg-white px-6 pb-10 pt-24 transition-opacity duration-300 lg:hidden",
         open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
       )}
     >
@@ -206,8 +224,8 @@ function MobileOverlay({
             className={cn(
               "py-3 font-display text-[36px] font-medium leading-tight transition-colors",
               isActive(pathname, item)
-                ? "italic text-gold-dark"
-                : "text-ink hover:text-gold-dark",
+                ? "italic text-sage"
+                : "text-ink hover:text-sage",
             )}
           >
             {item.label}
@@ -234,8 +252,8 @@ function NavLink({
       className={cn(
         "group flex items-center justify-between rounded-2xl px-5 py-4 text-[17px] transition-colors",
         active
-          ? "bg-ink text-cream"
-          : "text-ink hover:bg-cream-soft/70",
+          ? "bg-ink text-white"
+          : "text-ink hover:bg-surface-soft/70",
       )}
     >
       <span className="font-medium">{item.label}</span>
@@ -243,7 +261,7 @@ function NavLink({
         aria-hidden="true"
         className={cn(
           "h-1.5 w-1.5 rounded-full transition-opacity",
-          active ? "bg-gold-soft opacity-100" : "bg-gold-dark opacity-0",
+          active ? "bg-sage-glow opacity-100" : "bg-sage opacity-0",
         )}
       />
     </Link>
@@ -251,21 +269,18 @@ function NavLink({
 }
 
 function UserCard({ user }: { user: DashboardUser }) {
-  const router = useRouter();
-  const [signingOut, setSigningOut] = useState(false);
+  const [signingOut, startSignOut] = useTransition();
 
-  async function handleSignOut() {
-    setSigningOut(true);
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.replace("/login");
-    router.refresh();
+  function handleSignOut() {
+    startSignOut(() => {
+      logoutAction();
+    });
   }
 
   const displayName = user.name ?? user.email.split("@")[0];
 
   return (
-    <div className="mt-auto rounded-2xl border border-ink-hair/50 bg-cream-soft/40 p-4">
+    <div className="mt-auto rounded-2xl border border-ink-hair/50 bg-surface-soft/40 p-4">
       <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-ink-muted">
         {user.role === "admin" ? "Admin" : "Partner"}
       </p>
@@ -281,7 +296,7 @@ function UserCard({ user }: { user: DashboardUser }) {
         type="button"
         onClick={handleSignOut}
         disabled={signingOut}
-        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border border-ink-hair/70 bg-cream/70 px-5 py-3 text-[15px] font-medium text-ink transition-colors hover:border-gold-dark hover:text-gold-dark disabled:opacity-50"
+        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border border-ink-hair/70 bg-white/70 px-5 py-3 text-[15px] font-medium text-ink transition-colors hover:border-sage hover:text-sage disabled:opacity-50"
       >
         {signingOut ? "Bezig met uitloggen…" : "Uitloggen"}
       </button>

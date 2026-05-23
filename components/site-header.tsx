@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -11,33 +12,38 @@ const NAV_ITEMS = [
   { href: "/architecten", label: "Architecten" },
   { href: "/vakspecialisten", label: "Vakspecialisten" },
   { href: "/events", label: "Events" },
+  { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ];
 
-function Wordmark({ size = 44 }: { size?: number }) {
+function Wordmark({ size = 44, stacked = true }: { size?: number; stacked?: boolean }) {
+  // Source PNG is 338x41 (≈ 8.24:1), already trimmed.
+  const height = Math.round(size * 0.95);
+  const width = Math.round(height * (338 / 41));
+  const tagSize = Math.max(Math.round(size * 0.22), 10);
   return (
-    <span className="inline-flex items-baseline font-display text-ink">
-      <span
-        style={{ fontSize: size, lineHeight: 1 }}
-        className="font-medium tracking-tight"
-      >
-        Reno
-      </span>
-      <span
-        style={{ fontSize: size, lineHeight: 1 }}
-        className="font-medium italic tracking-tight text-gold-dark"
-      >
-        check
-      </span>
-      <span
-        aria-hidden="true"
-        style={{
-          width: size * 0.06,
-          height: size * 0.06,
-          transform: `translateY(-${size * 0.28}px)`,
-        }}
-        className="ml-1 inline-block rounded-full bg-gold-dark opacity-70"
+    <span className="inline-flex flex-col items-start text-ink">
+      <Image
+        src="/brand/renocheck-wordmark.png"
+        alt="Renocheck"
+        width={width}
+        height={height}
+        priority
+        style={{ width, height }}
+        className="select-none"
       />
+      {stacked ? (
+        <span
+          style={{
+            fontSize: tagSize,
+            letterSpacing: "0.4em",
+            marginLeft: Math.round(height * 1.25),
+          }}
+          className="mt-2.5 font-medium uppercase text-ink"
+        >
+          Professionals
+        </span>
+      ) : null}
     </span>
   );
 }
@@ -77,15 +83,15 @@ export function DesktopSidebar() {
   return (
     <aside
       aria-label="Hoofdnavigatie"
-      className="hidden shrink-0 lg:block lg:w-[320px]"
+      className="hidden shrink-0 lg:block lg:w-[360px]"
     >
-      <div className="sticky top-0 flex h-screen flex-col items-end justify-between px-12 py-14">
+      <div className="sticky top-0 flex h-screen flex-col items-end justify-between px-10 py-14">
         <Link
           href="/"
-          aria-label="Renocheck — home"
+          aria-label="Renocheck Professionals — home"
           className="enter-up delay-100"
         >
-          <Wordmark size={50} />
+          <Wordmark size={42} />
         </Link>
 
         <nav className="flex flex-col items-end gap-5">
@@ -100,7 +106,7 @@ export function DesktopSidebar() {
                 className={cn(
                   "group enter-up relative text-[38px] font-normal leading-[1.08] tracking-tight transition-colors duration-300",
                   active
-                    ? "italic text-gold-dark"
+                    ? "italic text-sage"
                     : "text-ink-soft hover:text-ink",
                 )}
                 style={{ animationDelay: `${250 + i * 80}ms` }}
@@ -109,7 +115,7 @@ export function DesktopSidebar() {
                 <span
                   aria-hidden="true"
                   className={cn(
-                    "absolute -bottom-1.5 right-0 h-px origin-right bg-gold-dark transition-transform duration-500 ease-out",
+                    "absolute -bottom-1.5 right-0 h-px origin-right bg-sage transition-transform duration-500 ease-out",
                     active
                       ? "w-12 scale-x-100"
                       : "w-12 scale-x-0 group-hover:scale-x-100",
@@ -145,8 +151,8 @@ function MobileBar({
     <header className="fixed inset-x-0 top-0 z-50 lg:hidden">
       <div className="px-4 pt-4">
         <div className="flex items-center justify-between gap-3 rounded-full bg-white/85 py-2.5 pl-5 pr-2 shadow-[0_2px_14px_-2px_rgba(28,27,24,0.08)] ring-1 ring-ink/[0.04] backdrop-blur-xl">
-          <Link href="/" aria-label="Renocheck — home">
-            <Wordmark size={22} />
+          <Link href="/" aria-label="Renocheck Professionals — home">
+            <Wordmark size={24} stacked={false} />
           </Link>
           <button
             type="button"
@@ -192,13 +198,13 @@ function MobileOverlay({
   return (
     <div
       className={cn(
-        "fixed inset-0 z-40 flex flex-col bg-cream transition-opacity duration-500 lg:hidden",
+        "fixed inset-0 z-40 flex flex-col bg-white transition-opacity duration-500 lg:hidden",
         open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
       )}
     >
       <div className="flex flex-1 flex-col justify-center px-8">
         <p className="text-[10px] font-medium uppercase tracking-[0.32em] text-ink-muted">
-          Het Renocheck Netwerk
+          Renocheck Professionals
         </p>
         <nav className="mt-10 flex flex-col gap-5">
           {NAV_ITEMS.map((item) => {
@@ -213,8 +219,8 @@ function MobileOverlay({
                 className={cn(
                   "text-5xl font-light leading-tight tracking-tight transition-colors",
                   active
-                    ? "italic text-gold-dark"
-                    : "text-ink hover:text-gold-dark",
+                    ? "italic text-sage"
+                    : "text-ink hover:text-sage",
                 )}
               >
                 {item.label}

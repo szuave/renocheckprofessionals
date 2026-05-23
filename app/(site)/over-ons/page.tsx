@@ -12,14 +12,14 @@ export const metadata: Metadata = {
     "Renocheck is het platform dat bouwprofessionals — architecten, aannemers en interieurpros — ondersteunt met producten, planners, events en een persoonlijk ledenportaal.",
   alternates: { canonical: "/over-ons" },
   openGraph: {
-    title: "Over Renocheck",
+    title: "Over Renocheck Professionals",
     description:
       "Het verhaal achter Renocheck — tools, producten en events voor de bouwsector.",
     url: "/over-ons",
     type: "article",
   },
   twitter: {
-    title: "Over Renocheck",
+    title: "Over Renocheck Professionals",
     description:
       "Het verhaal achter Renocheck — tools, producten en events voor de bouwsector.",
   },
@@ -43,7 +43,7 @@ export default function OverOnsPage() {
 
         <h1 className="enter-up delay-400 mt-6 font-display text-[clamp(3rem,8vw,7rem)] font-medium leading-[0.98] text-ink">
           Het platform voor{" "}
-          <span className="italic text-gold-dark">elk</span> vak.
+          <span className="italic text-sage">elk</span> vak.
         </h1>
 
         <div className="mt-20 grid gap-14 md:mt-28 md:grid-cols-12 md:items-center md:gap-16">
@@ -51,7 +51,7 @@ export default function OverOnsPage() {
             <p className="text-[18px] text-ink-soft">Onze missie</p>
             <h2 className="mt-6 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink">
               Eén plek voor elk{" "}
-              <span className="italic text-gold-dark">bedrijf</span>.
+              <span className="italic text-sage">bedrijf</span>.
             </h2>
             <div className="mt-10">
               <PillLink href="/contact">Neem contact op</PillLink>
@@ -96,7 +96,7 @@ export default function OverOnsPage() {
                 className="mt-6 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink"
               >
                 Opgericht door en{" "}
-                <span className="italic text-gold-dark">voor</span> de sector.
+                <span className="italic text-sage">voor</span> de sector.
               </h2>
               <div className="mt-8 space-y-5 text-[17px] leading-[1.75] text-ink-soft md:text-[18px]">
                 <p>
@@ -121,7 +121,7 @@ export default function OverOnsPage() {
             <p className="text-[18px] text-ink-soft">Aan de slag</p>
             <h2 className="mt-6 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink">
               Benieuwd of Renocheck iets voor u{" "}
-              <span className="italic text-gold-dark">is</span>?
+              <span className="italic text-sage">is</span>?
             </h2>
             <div className="mt-10">
               <PillLink href="/contact">Start een gesprek</PillLink>

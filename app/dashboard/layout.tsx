@@ -1,5 +1,4 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { requireUser } from "@/lib/auth";
 import { DashboardChrome } from "./dashboard-chrome";
 
 export default async function DashboardLayout({
@@ -7,28 +6,15 @@ export default async function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login?next=/dashboard");
-  }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role, full_name, company")
-    .eq("id", user.id)
-    .maybeSingle();
+  const user = await requireUser();
 
   return (
     <DashboardChrome
       user={{
-        email: user.email ?? "",
-        name: profile?.full_name ?? null,
-        company: profile?.company ?? null,
-        role: profile?.role ?? "partner",
+        email: user.email,
+        name: user.full_name,
+        company: user.company,
+        role: user.role,
       }}
     >
       {children}

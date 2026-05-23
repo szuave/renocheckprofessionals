@@ -1,6 +1,24 @@
 import Image from "next/image";
 import Link from "next/link";
 import { PillButton, PillLink } from "@/components/pill-button";
+import { submitPartnerApplication } from "./actions";
+
+const RUBRIEKEN = [
+  "Dakwerken",
+  "Ramen & deuren",
+  "Elektriciteit",
+  "Sanitair",
+  "Verwarming & airco",
+  "Tegels & natuursteen",
+  "Schrijnwerk",
+  "Schilderwerken",
+  "Vloeren",
+  "Isolatie",
+  "Tuinaanleg",
+  "Zonnepanelen",
+  "Zwembaden",
+  "Keukens",
+];
 
 const PATHWAYS = [
   {
@@ -36,15 +54,24 @@ const PATHWAYS = [
 ];
 
 const REGIONS = [
-  { name: "Knokke", slug: "knokke" },
   { name: "West-Vlaanderen", slug: "west-vlaanderen" },
   { name: "Oost-Vlaanderen", slug: "oost-vlaanderen" },
   { name: "Antwerpen", slug: "antwerpen" },
   { name: "Vlaams-Brabant", slug: "vlaams-brabant" },
-  { name: "Limburg", slug: "limburg" },
 ];
 
-export default function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ form?: string; ok?: string; error?: string }>;
+}) {
+  const params = await searchParams;
+  const partnerState =
+    params?.form === "partner"
+      ? params?.ok
+        ? "ok"
+        : params?.error || null
+      : null;
   return (
     <>
       <Hero />
@@ -52,7 +79,7 @@ export default function HomePage() {
       <Regions />
       <Manifesto />
       <PullQuote />
-      <PartnerCTA />
+      <PartnerCTA state={partnerState} />
     </>
   );
 }
@@ -64,12 +91,12 @@ function Hero() {
         <div className="grid items-center gap-12 md:grid-cols-12 md:gap-16">
           <div className="min-w-0 md:col-span-7">
             <p className="enter-up delay-300 text-[18px] text-ink-soft">
-              Renocheck · Het bouwnetwerk
+              Renocheck Professionals · Het bouwnetwerk
             </p>
 
             <h1 className="enter-up delay-400 mt-6 font-display text-[clamp(3rem,6.5vw,5.75rem)] font-medium leading-[0.98] text-ink">
               Het netwerk dat<br />
-              <span className="italic text-gold-dark">samen</span> bouwt.
+              <span className="italic text-sage">samen</span> bouwt.
             </h1>
 
             <p className="enter-up delay-500 mt-8 max-w-xl text-[17px] leading-[1.65] text-ink-soft md:text-[19px]">
@@ -95,7 +122,7 @@ function Hero() {
               />
             </div>
             <figcaption className="mt-5 flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.32em] text-ink-muted">
-              <span aria-hidden="true" className="h-px w-8 bg-gold-dark/60" />
+              <span aria-hidden="true" className="h-px w-8 bg-sage/60" />
               Het netwerk · 2026
             </figcaption>
           </figure>
@@ -106,6 +133,7 @@ function Hero() {
 }
 
 function Pathways() {
+  const [hero, ...rest] = PATHWAYS;
   return (
     <section
       id="pathways"
@@ -121,7 +149,7 @@ function Pathways() {
               className="mt-4 font-display text-[clamp(1.75rem,3vw,2.5rem)] font-medium leading-[1.05] text-ink"
             >
               Drie ingangen,{" "}
-              <span className="italic text-gold-dark">één</span> netwerk.
+              <span className="italic text-sage">één</span> netwerk.
             </h2>
           </div>
           <Link
@@ -132,17 +160,20 @@ function Pathways() {
           </Link>
         </div>
 
-        <ul className="mt-14 grid gap-10 md:mt-20 md:grid-cols-3 md:gap-8 lg:gap-12">
-          {PATHWAYS.map((p, i) => (
-            <li
+        <div className="mt-14 grid gap-4 md:mt-20 md:grid-cols-12 md:gap-5">
+          <div className="enter-up md:col-span-7 md:row-span-2" style={{ animationDelay: "700ms" }}>
+            <PathwayCard {...hero} size="lg" index={1} />
+          </div>
+          {rest.map((p, i) => (
+            <div
               key={p.href}
-              className="enter-up"
-              style={{ animationDelay: `${700 + i * 150}ms` }}
+              className="enter-up md:col-span-5"
+              style={{ animationDelay: `${850 + i * 150}ms` }}
             >
-              <PathwayCard {...p} />
-            </li>
+              <PathwayCard {...p} size="sm" index={i + 2} />
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </section>
   );
@@ -155,6 +186,8 @@ function PathwayCard({
   tagline,
   image,
   alt,
+  size,
+  index,
 }: {
   href: string;
   eyebrow: string;
@@ -162,40 +195,45 @@ function PathwayCard({
   tagline: string;
   image: string;
   alt: string;
+  size: "lg" | "sm";
+  index: number;
 }) {
+  const isLarge = size === "lg";
   return (
     <Link
       href={href}
       aria-label={`${title} — ${tagline}`}
-      className="group block"
+      className={`group relative block h-full overflow-hidden rounded-[28px] bg-ink ${
+        isLarge
+          ? "min-h-[460px] md:min-h-[640px]"
+          : "min-h-[260px] md:min-h-[310px]"
+      }`}
     >
-      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[28px] bg-ink/5">
-        <Image
-          src={image}
-          alt={alt}
-          fill
-          sizes="(max-width: 768px) 100vw, 33vw"
-          className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-          priority
-        />
-      </div>
+      <Image
+        src={image}
+        alt={alt}
+        fill
+        sizes={isLarge ? "(max-width: 768px) 100vw, 60vw" : "(max-width: 768px) 100vw, 40vw"}
+        className="object-cover opacity-90 transition-transform duration-700 ease-out group-hover:scale-[1.05] group-hover:opacity-100"
+        priority={isLarge}
+      />
 
-      <div className="mt-6 flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <p className="text-[12px] font-medium uppercase tracking-[0.28em] text-ink-muted">
-            {eyebrow}
-          </p>
-          <h3 className="mt-3 font-display text-[34px] font-medium leading-[1.05] text-ink md:text-[40px]">
-            {title}
-          </h3>
-        </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/35 to-ink/10" />
+      <div className="absolute inset-0 bg-sage/0 transition-colors duration-500 group-hover:bg-sage/15" />
+
+      <div className="absolute inset-x-0 top-0 flex items-start justify-between p-6 md:p-8">
+        <span className="text-[10px] font-medium uppercase tracking-[0.32em] text-white/85">
+          {String(index).padStart(2, "0")} · {eyebrow}
+        </span>
         <span
           aria-hidden="true"
-          className="mt-1 inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-ink-hair/70 text-ink-soft transition-all duration-300 group-hover:border-gold-dark group-hover:bg-gold-dark group-hover:text-cream"
+          className={`inline-flex shrink-0 items-center justify-center rounded-full border border-white/30 bg-white/5 text-white backdrop-blur-sm transition-all duration-300 group-hover:border-white group-hover:bg-white group-hover:text-ink ${
+            isLarge ? "h-12 w-12" : "h-10 w-10"
+          }`}
         >
           <svg
             viewBox="0 0 16 10"
-            className="h-3 w-4"
+            className={isLarge ? "h-3 w-5" : "h-3 w-4"}
             fill="none"
             stroke="currentColor"
             strokeWidth="1.5"
@@ -207,9 +245,33 @@ function PathwayCard({
         </span>
       </div>
 
-      <p className="mt-4 max-w-xs text-[14px] leading-[1.6] text-ink-soft">
-        {tagline}
-      </p>
+      <div className="absolute inset-x-0 bottom-0 p-6 text-white md:p-8 lg:p-10">
+        <h3
+          className={`font-display font-semibold leading-[1.02] ${
+            isLarge
+              ? "text-[40px] md:text-[56px] lg:text-[64px]"
+              : "text-[30px] md:text-[34px] lg:text-[38px]"
+          }`}
+        >
+          {title}
+        </h3>
+        {isLarge ? (
+          <p className="mt-5 max-w-md text-[15px] leading-[1.6] text-white/85 md:text-[16px]">
+            {tagline}
+          </p>
+        ) : null}
+        <span
+          className={`mt-5 inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.32em] text-white/90 transition-colors group-hover:text-white ${
+            isLarge ? "md:mt-7" : ""
+          }`}
+        >
+          Ontdek
+          <span
+            aria-hidden="true"
+            className="inline-block h-px w-8 bg-white/60 transition-all duration-500 group-hover:w-14 group-hover:bg-white"
+          />
+        </span>
+      </div>
     </Link>
   );
 }
@@ -229,7 +291,7 @@ function Regions() {
               className="mt-6 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink"
             >
               Een netwerk in{" "}
-              <span className="italic text-gold-dark">elke</span> regio.
+              <span className="italic text-sage">elke</span> regio.
             </h2>
             <p className="mt-8 max-w-md text-[17px] leading-[1.7] text-ink-soft">
               Per regio een vaste selectie van architecten en veertien
@@ -247,12 +309,12 @@ function Regions() {
                     i === 0 ? "border-t border-ink-hair/40" : ""
                   } border-b border-ink-hair/40`}
                 >
-                  <span className="font-display text-[24px] font-medium leading-tight text-ink transition-colors group-hover:text-gold-dark md:text-[30px]">
+                  <span className="font-display text-[24px] font-medium leading-tight text-ink transition-colors group-hover:text-sage md:text-[30px]">
                     {r.name}
                   </span>
                   <span
                     aria-hidden="true"
-                    className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-ink-hair/70 text-ink-soft transition-all duration-300 group-hover:border-gold-dark group-hover:bg-gold-dark group-hover:text-cream"
+                    className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-ink-hair/70 text-ink-soft transition-all duration-300 group-hover:border-sage group-hover:bg-sage group-hover:text-white"
                   >
                     <svg
                       viewBox="0 0 16 10"
@@ -291,7 +353,7 @@ function Manifesto() {
               className="mt-6 font-display text-[clamp(2.25rem,4.5vw,4.25rem)] font-medium leading-[1.02] text-ink"
             >
               Eén netwerk voor{" "}
-              <span className="italic text-gold-dark">elk</span> bouwproject.
+              <span className="italic text-sage">elk</span> bouwproject.
             </h2>
             <div className="mt-10">
               <PillLink href="/login">Word partner</PillLink>
@@ -326,11 +388,11 @@ function PullQuote() {
         <div className="mx-auto max-w-4xl text-center">
           <span
             aria-hidden="true"
-            className="mx-auto block h-px w-12 bg-gold-dark/60"
+            className="mx-auto block h-px w-12 bg-sage/60"
           />
           <blockquote className="mt-10 font-display text-[clamp(2rem,5.5vw,4.5rem)] font-medium leading-[1.1] text-ink">
             Vakwerk is{" "}
-            <span className="italic text-gold-dark">mensen</span>werk.
+            <span className="italic text-sage">mensen</span>werk.
           </blockquote>
           <p className="mt-10 text-[12px] font-medium uppercase tracking-[0.32em] text-ink-muted">
             Het Renocheck idee
@@ -341,66 +403,132 @@ function PullQuote() {
   );
 }
 
-function PartnerCTA() {
+function PartnerCTA({ state }: { state: string | null }) {
   return (
     <section
+      id="partner-aanvraag"
       aria-labelledby="partner-title"
-      className="relative pb-14 pt-10 md:pt-14"
+      className="relative scroll-mt-24 pb-14 pt-10 md:pt-14"
     >
-      <div className="mx-auto max-w-[1400px] px-6 md:px-16 lg:px-24">
-        <div className="relative overflow-hidden rounded-[40px] bg-cream-warm ring-1 ring-ink-hair/40">
+      <div className="mx-auto max-w-[1100px] px-6 md:px-16 lg:px-24">
+        <div className="relative overflow-hidden rounded-[28px] bg-surface-warm ring-1 ring-ink-hair/40">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-gold/30 blur-3xl"
+            className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-sage/25 blur-3xl"
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-gold-soft/40 blur-3xl"
+            className="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-sage-glow/35 blur-3xl"
           />
 
-          <div className="relative grid gap-10 p-7 sm:p-10 md:grid-cols-12 md:items-center md:gap-16 md:p-16 lg:p-20">
-            <div className="min-w-0 md:col-span-6">
-              <p className="text-[18px] text-ink-soft">Word partner</p>
+          <div className="relative grid gap-8 p-6 sm:p-8 md:grid-cols-12 md:items-start md:gap-10 md:p-10 lg:p-14">
+            <div className="min-w-0 md:col-span-5">
+              <p className="text-[14px] text-ink-soft">Word partner</p>
               <h2
                 id="partner-title"
-                className="mt-6 font-display text-[clamp(2.5rem,5.5vw,4.5rem)] font-medium leading-[1.02] text-ink"
+                className="mt-3 font-display text-[clamp(1.75rem,3.5vw,2.75rem)] font-medium leading-[1.05] text-ink"
               >
                 Sluit aan bij het{" "}
-                <span className="italic text-gold-dark">Renocheck</span>{" "}
+                <span className="italic text-sage">Renocheck</span>{" "}
                 netwerk.
               </h2>
-              <p className="mt-8 max-w-md text-[17px] leading-[1.7] text-ink-soft">
+              <p className="mt-5 max-w-sm text-[15px] leading-[1.6] text-ink-soft">
                 Per regio nemen we één vakspecialist per rubriek op. Laat uw
                 gegevens achter en we contacteren u voor een kennismaking.
               </p>
             </div>
 
             <form
-              className="min-w-0 md:col-span-6 md:max-w-lg md:justify-self-end"
+              action={submitPartnerApplication}
+              className="min-w-0 md:col-span-7 md:max-w-md md:justify-self-end"
               aria-label="Partner aanvraag"
             >
-              <div className="rounded-[28px] bg-ivory/80 p-6 ring-1 ring-ink-hair/50 backdrop-blur sm:p-8">
-                <div className="space-y-6">
+              <div className="rounded-[20px] bg-surface-soft/80 p-5 ring-1 ring-ink-hair/50 backdrop-blur sm:p-6">
+                {state === "ok" ? (
+                  <div className="mb-5 rounded-xl border border-sage/40 bg-sage/10 p-4 text-[13px] text-ink">
+                    Bedankt — we hebben uw aanvraag ontvangen. We nemen binnen
+                    één werkdag contact op.
+                  </div>
+                ) : state ? (
+                  <div className="mb-5 rounded-xl border border-red-300/60 bg-red-50/60 p-4 text-[13px] text-red-800">
+                    {state === "missing"
+                      ? "Vul minstens bedrijf en e-mailadres in."
+                      : state === "email"
+                        ? "Vul een geldig e-mailadres in."
+                        : "Er ging iets mis. Probeer het opnieuw."}
+                  </div>
+                ) : null}
+                <div className="space-y-4">
                   <FieldInput
-                    id="bedrijf"
+                    id="company"
+                    name="company"
                     label="Naam bedrijf"
                     type="text"
                     placeholder="Uw bedrijf"
+                    required
                   />
                   <FieldInput
-                    id="rubriek"
-                    label="Rubriek"
+                    id="contact_name"
+                    name="contact_name"
+                    label="Contactpersoon"
                     type="text"
-                    placeholder="Bv. dakwerken, sanitair, elektriciteit"
+                    placeholder="Voor- en achternaam"
                   />
                   <FieldInput
                     id="email"
+                    name="email"
                     label="E-mailadres"
                     type="email"
                     placeholder="u@bedrijf.be"
+                    required
+                  />
+                  <FieldInput
+                    id="phone"
+                    name="phone"
+                    label="Telefoon (optioneel)"
+                    type="tel"
+                    placeholder="+32…"
+                  />
+                  <FieldSelect
+                    id="partner_type"
+                    name="partner_type"
+                    label="Type partner"
+                    options={[
+                      { value: "", label: "Kies een type" },
+                      { value: "architect", label: "Architect" },
+                      { value: "vakspecialist", label: "Vakspecialist" },
+                      { value: "bouwondernemer", label: "Bouwondernemer" },
+                    ]}
+                  />
+                  <FieldSelect
+                    id="region"
+                    name="region"
+                    label="Regio"
+                    options={[
+                      { value: "", label: "Kies een regio" },
+                      ...REGIONS.map((r) => ({
+                        value: r.slug,
+                        label: r.name,
+                      })),
+                    ]}
+                  />
+                  <FieldSelect
+                    id="rubriek"
+                    name="rubriek"
+                    label="Rubriek (vakspecialisten)"
+                    options={[
+                      { value: "", label: "Kies een rubriek" },
+                      ...RUBRIEKEN.map((r) => ({ value: r, label: r })),
+                    ]}
+                  />
+                  <FieldTextarea
+                    id="message"
+                    name="message"
+                    label="Korte intro (optioneel)"
+                    placeholder="Vertel kort wie u bent en wat u onderscheidt."
                   />
                   <div className="pt-2">
-                    <PillButton>Stuur aanvraag</PillButton>
+                    <PillButton type="submit">Stuur aanvraag</PillButton>
                   </div>
                 </div>
               </div>
@@ -416,14 +544,18 @@ function PartnerCTA() {
 
 function FieldInput({
   id,
+  name,
   label,
   type = "text",
   placeholder,
+  required,
 }: {
   id: string;
+  name?: string;
   label: string;
   type?: string;
   placeholder?: string;
+  required?: boolean;
 }) {
   return (
     <div>
@@ -432,12 +564,90 @@ function FieldInput({
         className="text-[10px] font-medium uppercase tracking-[0.3em] text-ink-muted"
       >
         {label}
+        {required ? <span className="ml-1 text-sage">*</span> : null}
       </label>
       <input
         id={id}
+        name={name ?? id}
         type={type}
         placeholder={placeholder}
-        className="mt-3 w-full border-0 border-b border-ink-hair bg-transparent px-0 py-2 text-base text-ink placeholder:text-ink-muted/60 focus:border-ink focus:outline-none"
+        required={required}
+        className="mt-2 w-full border-0 border-b border-ink-hair bg-transparent px-0 py-1.5 text-[14px] text-ink placeholder:text-ink-muted/60 focus:border-ink focus:outline-none"
+      />
+    </div>
+  );
+}
+
+function FieldSelect({
+  id,
+  name,
+  label,
+  options,
+  required,
+}: {
+  id: string;
+  name?: string;
+  label: string;
+  options: { value: string; label: string }[];
+  required?: boolean;
+}) {
+  return (
+    <div>
+      <label
+        htmlFor={id}
+        className="text-[10px] font-medium uppercase tracking-[0.3em] text-ink-muted"
+      >
+        {label}
+        {required ? <span className="ml-1 text-sage">*</span> : null}
+      </label>
+      <select
+        id={id}
+        name={name ?? id}
+        required={required}
+        defaultValue=""
+        className="mt-2 w-full appearance-none border-0 border-b border-ink-hair bg-transparent px-0 py-1.5 text-[14px] text-ink focus:border-ink focus:outline-none"
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function FieldTextarea({
+  id,
+  name,
+  label,
+  placeholder,
+  required,
+  rows,
+}: {
+  id: string;
+  name?: string;
+  label: string;
+  placeholder?: string;
+  required?: boolean;
+  rows?: number;
+}) {
+  return (
+    <div>
+      <label
+        htmlFor={id}
+        className="text-[10px] font-medium uppercase tracking-[0.3em] text-ink-muted"
+      >
+        {label}
+        {required ? <span className="ml-1 text-sage">*</span> : null}
+      </label>
+      <textarea
+        id={id}
+        name={name ?? id}
+        placeholder={placeholder}
+        required={required}
+        rows={rows ?? 4}
+        className="mt-3 w-full resize-none border-0 border-b border-ink-hair bg-transparent px-0 py-2 text-base text-ink placeholder:text-ink-muted/60 focus:border-ink focus:outline-none"
       />
     </div>
   );

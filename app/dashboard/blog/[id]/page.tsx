@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/auth";
+import { deleteBlogPost, getBlogPost } from "@/lib/queries";
 import { DeletePostButton } from "./delete-button";
 
 export const metadata: Metadata = {
@@ -9,13 +10,18 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-async function deletePost(formData: FormData) {
+async function deletePostAction(formData: FormData) {
   "use server";
   const id = String(formData.get("id"));
   if (!id) return;
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
 
-  const supabase = await createClient();
-  await supabase.from("blog_posts").delete().eq("id", id);
+  const post = getBlogPost(id);
+  if (!post) return;
+  if (post.author_id !== user.id && user.role !== "admin") return;
+
+  deleteBlogPost(id);
   redirect("/dashboard/blog");
 }
 
@@ -25,38 +31,22 @@ export default async function BlogPostPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { data: post } = await supabase
-    .from("blog_posts")
-    .select(
-      "id, title, excerpt, body, created_at, updated_at, author_id, author:profiles(full_name, company)",
-    )
-    .eq("id", id)
-    .maybeSingle();
+  const user = await getCurrentUser();
+  const post = getBlogPost(id);
 
   if (!post) {
     notFound();
   }
 
-  type Author = { full_name: string | null; company: string | null };
-  const rawAuthor = post.author as Author | Author[] | null | undefined;
-  const author: Author | null = Array.isArray(rawAuthor)
-    ? (rawAuthor[0] ?? null)
-    : (rawAuthor ?? null);
   const authorName =
-    author?.full_name ?? author?.company ?? "Renocheck partner";
+    post.author?.full_name ?? post.author?.company ?? "Renocheck partner";
   const isOwner = user?.id === post.author_id;
 
   return (
     <article className="px-6 pb-20 pt-12 md:px-12 md:pb-28 md:pt-16 lg:px-20 lg:pt-20">
       <Link
         href="/dashboard/blog"
-        className="inline-flex items-center gap-2 text-[14px] font-medium text-ink-soft transition-colors hover:text-gold-dark"
+        className="inline-flex items-center gap-2 text-[14px] font-medium text-ink-soft transition-colors hover:text-sage"
       >
         ← Terug naar alle berichten
       </Link>
@@ -88,7 +78,7 @@ export default async function BlogPostPage({
           <div className="mt-4">
             <DeletePostButton
               postId={post.id}
-              action={deletePost}
+              action={deletePostAction}
               label="Bericht verwijderen"
               confirmText="Klik nogmaals om definitief te verwijderen"
             />

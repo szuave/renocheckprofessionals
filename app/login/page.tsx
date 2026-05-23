@@ -6,7 +6,7 @@ import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = {
   title: "Login",
-  description: "Log in op het Renocheck partner-portaal.",
+  description: "Log in op het Renocheck Professionals partnerportaal.",
   alternates: { canonical: "/login" },
   robots: { index: false, follow: false },
 };
@@ -17,81 +17,42 @@ export default function LoginPage() {
       {/* ---------- Visual side ---------- */}
       <aside
         aria-hidden="true"
-        className="relative hidden overflow-hidden lg:flex lg:w-[52%] lg:flex-col lg:justify-between lg:p-12 xl:p-16"
+        className="relative hidden overflow-hidden lg:flex lg:w-[50%] lg:flex-col lg:justify-end lg:p-14 xl:p-20"
       >
         <Image
           src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1800&q=90"
           alt=""
           fill
-          sizes="52vw"
+          sizes="50vw"
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-ink/70 via-ink/55 to-ink/80" />
-        <div className="pointer-events-none absolute -right-32 -top-32 h-[500px] w-[500px] rounded-full bg-gold-dark/30 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 -left-24 h-[440px] w-[440px] rounded-full bg-gold/15 blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/50 to-ink/30" />
+        <div className="pointer-events-none absolute -right-32 -top-32 h-[500px] w-[500px] rounded-full bg-sage/25 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 -left-24 h-[440px] w-[440px] rounded-full bg-sage/15 blur-3xl" />
 
-        {/* Top: back link */}
-        <Link
-          href="/"
-          className="relative inline-flex items-center gap-2 self-start text-[13px] font-medium uppercase tracking-[0.28em] text-cream/80 transition-colors hover:text-gold-soft"
-        >
-          <svg
-            viewBox="0 0 16 10"
-            className="h-3 w-4 rotate-180"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M1 5h14M11 1l4 4-4 4" />
-          </svg>
-          Terug naar de site
-        </Link>
-
-        {/* Middle: brand */}
-        <Link
-          href="/"
-          aria-label="Renocheck — home"
-          className="relative inline-flex items-baseline self-start font-display text-cream"
-        >
-          <span className="text-[34px] font-medium leading-none tracking-tight">
-            Reno
-          </span>
-          <span className="text-[34px] font-medium italic leading-none tracking-tight text-gold-soft">
-            check
-          </span>
+        <div className="relative max-w-md text-white">
           <span
             aria-hidden="true"
-            className="ml-1.5 inline-block h-1.5 w-1.5 translate-y-[-7px] rounded-full bg-gold-soft opacity-90"
+            className="block h-px w-12 bg-sage-glow/80"
           />
-        </Link>
-
-        {/* Bottom: editorial quote */}
-        <div className="relative max-w-md text-cream">
-          <span
-            aria-hidden="true"
-            className="block h-px w-12 bg-gold-soft/80"
-          />
-          <blockquote className="mt-7 font-display text-[34px] font-medium leading-[1.15] xl:text-[40px]">
+          <blockquote className="mt-7 font-display text-[34px] font-medium leading-[1.15] xl:text-[42px]">
             Vakwerk is{" "}
-            <span className="italic text-gold-soft">mensen</span>werk.
+            <span className="italic text-sage-glow">mensen</span>werk.
           </blockquote>
-          <p className="mt-6 text-[12px] font-medium uppercase tracking-[0.32em] text-cream/70">
-            Renocheck · Partner portaal
+          <p className="mt-6 text-[12px] font-medium uppercase tracking-[0.32em] text-white/75">
+            Renocheck Professionals · Partnerportaal
           </p>
         </div>
       </aside>
 
       {/* ---------- Form side ---------- */}
-      <section className="relative flex flex-1 flex-col px-6 py-12 sm:px-10 lg:px-20 lg:py-16 xl:px-28">
-        {/* Mobile only: back link + logo (visual side is hidden on mobile) */}
-        <div className="flex items-center justify-between gap-6 lg:hidden">
+      <section className="relative flex flex-1 flex-col px-6 py-8 sm:px-10 sm:py-12 lg:px-20 lg:py-14 xl:px-28">
+        {/* Top bar: back link (left) + logo + Professionals (right) */}
+        <div className="flex items-center justify-between gap-6">
           <Link
             href="/"
-            className="enter-up delay-200 inline-flex items-center gap-2 text-[13px] text-ink-muted transition-colors hover:text-ink"
+            className="enter-up delay-200 inline-flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.28em] text-ink-muted transition-colors hover:text-ink"
           >
             <svg
               viewBox="0 0 16 10"
@@ -110,27 +71,35 @@ export default function LoginPage() {
 
           <Link
             href="/"
-            aria-label="Renocheck — home"
-            className="enter-up delay-200 inline-flex items-baseline font-display text-ink"
+            aria-label="Renocheck Professionals — home"
+            className="enter-up delay-200 inline-flex flex-col items-start text-ink"
           >
-            <span className="text-[24px] font-medium leading-none tracking-tight">
-              Reno
-            </span>
-            <span className="text-[24px] font-medium italic leading-none tracking-tight text-gold-dark">
-              check
+            <Image
+              src="/brand/renocheck-wordmark.png"
+              alt="Renocheck"
+              width={330}
+              height={40}
+              priority
+              className="select-none"
+            />
+            <span
+              className="mt-2.5 text-[10px] font-medium uppercase text-ink"
+              style={{ letterSpacing: "0.4em", marginLeft: 50 }}
+            >
+              Professionals
             </span>
           </Link>
         </div>
 
-        <div className="my-auto w-full max-w-sm py-12 lg:max-w-md">
+        <div className="my-auto w-full max-w-md py-10 lg:py-16">
           <p className="enter-up delay-300 text-[11px] font-medium uppercase tracking-[0.32em] text-ink-muted">
             Inloggen
           </p>
           <h1 className="enter-up delay-400 mt-4 font-display text-[clamp(2.25rem,4vw,3.25rem)] font-medium leading-[1.05] text-ink">
             Welkom{" "}
-            <span className="italic text-gold-dark">terug</span>.
+            <span className="italic text-sage">terug</span>.
           </h1>
-          <p className="enter-up delay-500 mt-5 text-[15px] leading-[1.6] text-ink-soft">
+          <p className="enter-up delay-500 mt-5 max-w-sm text-[15px] leading-[1.65] text-ink-soft">
             Log in op uw partner-account om uw blog en agenda bij te werken.
           </p>
 
@@ -140,11 +109,11 @@ export default function LoginPage() {
             </Suspense>
           </div>
 
-          <p className="mt-12 text-[13px] text-ink-muted">
+          <p className="mt-10 border-t border-ink-hair/60 pt-8 text-[13px] text-ink-muted">
             Geen account?{" "}
             <Link
-              href="/contact"
-              className="font-medium text-ink-soft underline-offset-4 transition-colors hover:text-gold-dark hover:underline"
+              href="/contact?subject=membership#contact-form"
+              className="font-medium text-ink-soft underline-offset-4 transition-colors hover:text-sage hover:underline"
             >
               Vraag een partnerschap aan
             </Link>
@@ -153,8 +122,8 @@ export default function LoginPage() {
         </div>
 
         {/* Bottom: copyright/footer note */}
-        <p className="mt-auto pt-12 text-[11px] text-ink-muted">
-          © {new Date().getFullYear()} Renocheck. Alle rechten voorbehouden.
+        <p className="text-[11px] text-ink-muted">
+          © {new Date().getFullYear()} Renocheck Professionals.
         </p>
       </section>
     </main>

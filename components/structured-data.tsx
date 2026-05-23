@@ -4,11 +4,11 @@ export function OrganizationSchema() {
   const data = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Renocheck",
+    name: "Renocheck Professionals",
     url: SITE_URL,
     logo: `${SITE_URL}/icon.png`,
     description:
-      "Renocheck levert goodies, planners, borden en interieurcollecties aan architecten, aannemers en andere bouwprofessionals, samen met een persoonlijk ledenportaal en events.",
+      "Renocheck Professionals is het partnerportaal van Renocheck — voor architecten, aannemers en vakspecialisten. Beheer uw blog, agenda en ledencontacten op één plek.",
     email: "info@renocheck.be",
     telephone: "+32 3 123 45 67",
     address: {
@@ -25,11 +25,12 @@ export function OrganizationSchema() {
       name: "Belgium",
     },
     knowsAbout: [
-      "Goodies voor architectenbureaus",
-      "Planners",
-      "Borden en signage",
-      "Interieurcollecties",
+      "Architectenbureaus",
+      "Aannemers",
+      "Vakspecialisten",
+      "Renovatie",
       "Events voor bouwprofessionals",
+      "Partnerportaal",
     ],
   };
 
@@ -45,12 +46,12 @@ export function WebsiteSchema() {
   const data = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Renocheck",
+    name: "Renocheck Professionals",
     url: SITE_URL,
     inLanguage: "nl-BE",
     publisher: {
       "@type": "Organization",
-      name: "Renocheck",
+      name: "Renocheck Professionals",
       url: SITE_URL,
     },
     potentialAction: {
@@ -96,13 +97,13 @@ export function ContactPageSchema() {
   const data = {
     "@context": "https://schema.org",
     "@type": "ContactPage",
-    name: "Contact Renocheck",
+    name: "Contact — Renocheck Professionals",
     url: `${SITE_URL}/contact`,
     description:
-      "Neem contact op met Renocheck voor vragen over producten, events of het ledenportaal.",
+      "Neem contact op met Renocheck Professionals voor vragen over het partnerportaal, events of partnerschap.",
     mainEntity: {
       "@type": "Organization",
-      name: "Renocheck",
+      name: "Renocheck Professionals",
       email: "info@renocheck.be",
       telephone: "+32 3 123 45 67",
       contactPoint: {
@@ -128,13 +129,13 @@ export function AboutPageSchema() {
   const data = {
     "@context": "https://schema.org",
     "@type": "AboutPage",
-    name: "Over Renocheck",
+    name: "Over Renocheck Professionals",
     url: `${SITE_URL}/over-ons`,
     description:
-      "Het verhaal achter Renocheck — het platform voor bouwprofessionals met producten, events en ledenportaal.",
+      "Het verhaal achter Renocheck Professionals — het partnerportaal voor architecten, aannemers en vakspecialisten.",
     mainEntity: {
       "@type": "Organization",
-      name: "Renocheck",
+      name: "Renocheck Professionals",
       url: SITE_URL,
     },
   };

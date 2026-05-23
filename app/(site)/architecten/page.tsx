@@ -10,26 +10,24 @@ export const metadata: Metadata = {
     "Een geselecteerd architectennetwerk per regio in Vlaanderen — voor verbouwing, nieuwbouw of interieur. Vind de juiste architect voor uw project.",
   alternates: { canonical: "/architecten" },
   openGraph: {
-    title: "Architecten · Renocheck",
+    title: "Architecten · Renocheck Professionals",
     description:
       "Architectennetwerk per regio in Vlaanderen — voor elk bouwproject.",
     url: "/architecten",
     type: "website",
   },
   twitter: {
-    title: "Architecten · Renocheck",
+    title: "Architecten · Renocheck Professionals",
     description:
       "Architectennetwerk per regio in Vlaanderen — voor elk bouwproject.",
   },
 };
 
 const REGIONS = [
-  { name: "Knokke", slug: "knokke", count: 3 },
   { name: "West-Vlaanderen", slug: "west-vlaanderen", count: 5 },
   { name: "Oost-Vlaanderen", slug: "oost-vlaanderen", count: 4 },
   { name: "Antwerpen", slug: "antwerpen", count: 6 },
   { name: "Vlaams-Brabant", slug: "vlaams-brabant", count: 4 },
-  { name: "Limburg", slug: "limburg", count: 3 },
 ];
 
 export default function ArchitectenPage() {
@@ -49,7 +47,7 @@ export default function ArchitectenPage() {
 
         <h1 className="enter-up delay-400 mt-6 font-display text-[clamp(3rem,8vw,7rem)] font-medium leading-[0.98] text-ink">
           Een architect voor{" "}
-          <span className="italic text-gold-dark">elk</span> project.
+          <span className="italic text-sage">elk</span> project.
         </h1>
 
         <p className="enter-up delay-500 mt-8 max-w-xl text-[17px] leading-[1.65] text-ink-soft md:text-[19px]">
@@ -78,7 +76,7 @@ export default function ArchitectenPage() {
               <p className="text-[18px] text-ink-soft">Hoe selecteren we</p>
               <h2 className="mt-6 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink">
                 Vakmanschap{" "}
-                <span className="italic text-gold-dark">eerst</span>.
+                <span className="italic text-sage">eerst</span>.
               </h2>
               <div className="mt-8 space-y-5 text-[17px] leading-[1.75] text-ink-soft md:text-[18px]">
                 <p>
@@ -110,7 +108,7 @@ export default function ArchitectenPage() {
               className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink"
             >
               Architecten in{" "}
-              <span className="italic text-gold-dark">uw</span> regio.
+              <span className="italic text-sage">uw</span> regio.
             </h2>
           </div>
 
@@ -123,7 +121,7 @@ export default function ArchitectenPage() {
                     i === 0 ? "border-t border-ink-hair/40" : ""
                   } border-b border-ink-hair/40`}
                 >
-                  <span className="font-display text-[28px] font-medium leading-tight text-ink transition-colors group-hover:text-gold-dark md:text-[36px]">
+                  <span className="font-display text-[28px] font-medium leading-tight text-ink transition-colors group-hover:text-sage md:text-[36px]">
                     {r.name}
                   </span>
                   <span className="flex items-center gap-5 text-[13px] text-ink-muted">
@@ -132,7 +130,7 @@ export default function ArchitectenPage() {
                     </span>
                     <span
                       aria-hidden="true"
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ink-hair/70 text-ink-soft transition-all duration-300 group-hover:border-gold-dark group-hover:bg-gold-dark group-hover:text-cream"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ink-hair/70 text-ink-soft transition-all duration-300 group-hover:border-sage group-hover:bg-sage group-hover:text-white"
                     >
                       <svg
                         viewBox="0 0 16 10"
@@ -154,16 +152,77 @@ export default function ArchitectenPage() {
         </div>
       </section>
 
+      <section
+        aria-labelledby="why-title"
+        className="relative mt-28 md:mt-44"
+      >
+        <div className="mx-auto max-w-[1280px] px-6 md:px-16 lg:px-24">
+          <div className="max-w-2xl">
+            <p className="text-[10px] font-medium uppercase tracking-[0.32em] text-ink-muted">
+              Waarom aansluiten
+            </p>
+            <h2
+              id="why-title"
+              className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink"
+            >
+              Wat een netwerk{" "}
+              <span className="italic text-sage">oplevert</span>.
+            </h2>
+            <p className="mt-6 max-w-xl text-[17px] leading-[1.65] text-ink-soft">
+              We verkopen geen leads. We bouwen een kring waarin partners
+              elkaar versterken — met als gevolg betere projecten en minder
+              verloren tijd.
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-10 md:mt-20 md:grid-cols-3 md:gap-8 lg:gap-12">
+            {[
+              {
+                nr: "01",
+                title: "Vaste vakspecialisten in uw regio",
+                body: "Eén dakwerker, één sanitair-partner, één elektricien — die u kent en die uw projecten kent. Geen koud bellen meer.",
+              },
+              {
+                nr: "02",
+                title: "Doorverwijzingen vanuit bouwers",
+                body: "Bouwers die via Renocheck binnenkomen, krijgen een architect uit hun regio voorgesteld. Exclusief per regio.",
+              },
+              {
+                nr: "03",
+                title: "Partnerevents om elkaar te leren kennen",
+                body: "Zes events per jaar in uw regio. In een rustige setting, zonder commerciële druk — gewoon om de mensen achter de partners te leren kennen.",
+              },
+            ].map((b) => (
+              <div key={b.nr} className="min-w-0">
+                <span className="font-display text-[44px] font-light leading-none text-sage md:text-[56px]">
+                  {b.nr}
+                </span>
+                <div
+                  aria-hidden="true"
+                  className="mt-5 h-px w-10 bg-ink-hair"
+                />
+                <h3 className="mt-5 font-display text-[22px] font-medium leading-[1.15] text-ink md:text-[26px]">
+                  {b.title}
+                </h3>
+                <p className="mt-4 text-[15px] leading-[1.7] text-ink-soft">
+                  {b.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="mx-auto mt-28 max-w-[1280px] px-6 md:mt-44 md:px-16 lg:px-24">
         <div className="grid gap-12 md:grid-cols-12 md:items-center md:gap-16">
           <div className="min-w-0 md:col-span-5">
             <p className="text-[18px] text-ink-soft">Bent u architect</p>
             <h2 className="mt-6 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink">
               Sluit aan bij het{" "}
-              <span className="italic text-gold-dark">netwerk</span>.
+              <span className="italic text-sage">netwerk</span>.
             </h2>
             <div className="mt-10">
-              <PillLink href="/contact">Word partner</PillLink>
+              <PillLink href="/#partner-aanvraag">Word partner</PillLink>
             </div>
           </div>
           <div className="min-w-0 md:col-span-7">

@@ -1,21 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import {
   OrganizationSchema,
   WebsiteSchema,
 } from "@/components/structured-data";
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  display: "swap",
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -25,35 +19,31 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default:
-      "Renocheck — Producten, events & ledenportaal voor bouwprofessionals",
-    template: "%s · Renocheck",
+      "Renocheck Professionals — Partnerportaal voor architecten, bouwers & vakspecialisten",
+    template: "%s · Renocheck Professionals",
   },
   description:
-    "Renocheck levert goodies, planners, borden en interieurcollecties aan architecten, aannemers, interieurpros en andere bouwprofessionals. Beheer uw bestellingen, bekijk onze events en blijf op de hoogte via het ledenportaal.",
-  applicationName: "Renocheck",
+    "Renocheck Professionals is het partnerportaal van Renocheck — voor architecten, aannemers en vakspecialisten. Beheer uw blog, agenda en ledencontacten op één plek.",
+  applicationName: "Renocheck Professionals",
   generator: "Next.js",
   referrer: "origin-when-cross-origin",
   keywords: [
     "Renocheck",
+    "Renocheck Professionals",
     "bouwprofessionals",
     "architect",
     "architectenbureau",
     "aannemer",
     "interieurarchitect",
-    "projectontwikkelaar",
-    "goodies bouwbedrijf",
-    "planners bouw",
-    "borden bouw",
-    "signage architect",
-    "hometrends",
-    "house & home",
+    "vakspecialist",
+    "renovatie",
     "events bouwsector",
-    "Renocheck ledenportaal",
+    "partnerportaal",
     "bouw netwerk België",
   ],
-  authors: [{ name: "Renocheck", url: SITE_URL }],
-  creator: "Renocheck",
-  publisher: "Renocheck",
+  authors: [{ name: "Renocheck Professionals", url: SITE_URL }],
+  creator: "Renocheck Professionals",
+  publisher: "Renocheck Professionals",
   formatDetection: {
     email: false,
     address: false,
@@ -63,24 +53,24 @@ export const metadata: Metadata = {
     type: "website",
     locale: "nl_BE",
     url: SITE_URL,
-    siteName: "Renocheck",
-    title: "Renocheck — Voor elke bouwprofessional",
+    siteName: "Renocheck Professionals",
+    title: "Renocheck Professionals — Het partnerportaal",
     description:
-      "Goodies, planners, borden en events voor architecten, aannemers en interieurpros. Ontdek de Renocheck collectie en word lid van het ledenportaal.",
+      "Het partnerportaal van Renocheck — voor architecten, aannemers en vakspecialisten. Word lid en bouw mee aan het netwerk.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Renocheck — Voor elke bouwprofessional",
+        alt: "Renocheck Professionals",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Renocheck — Voor elke bouwprofessional",
+    title: "Renocheck Professionals — Het partnerportaal",
     description:
-      "Goodies, planners, borden en events voor de hele bouwsector.",
+      "Het partnerportaal van Renocheck — voor architecten, aannemers en vakspecialisten.",
     images: ["/og-image.png"],
   },
   alternates: {
@@ -118,8 +108,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F1E8D2" },
-    { media: "(prefers-color-scheme: dark)", color: "#F1E8D2" },
+    { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
+    { media: "(prefers-color-scheme: dark)", color: "#FFFFFF" },
   ],
   colorScheme: "light",
 };
@@ -132,12 +122,12 @@ export default function RootLayout({
   return (
     <html
       lang="nl-BE"
-      className={`${cormorant.variable} ${inter.variable} h-full antialiased`}
+      className={`${poppins.variable} h-full antialiased`}
     >
-      <body className="bg-paper grain relative flex min-h-full flex-col text-ink">
+      <body className="bg-paper relative flex min-h-full flex-col text-ink">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:text-sm focus:text-cream"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:text-sm focus:text-white"
         >
           Ga naar hoofdinhoud
         </a>

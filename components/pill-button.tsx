@@ -2,7 +2,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 const pillClass =
-  "group inline-flex cursor-pointer items-center gap-5 rounded-full bg-ivory py-2 pl-8 pr-2 text-[17px] text-ink ring-1 ring-ink/[0.08]";
+  "group inline-flex cursor-pointer items-center gap-5 rounded-full bg-surface-soft py-2 pl-8 pr-2 text-[17px] text-ink ring-1 ring-ink/[0.08]";
 
 type IconKind = "arrow" | "user";
 
@@ -51,7 +51,7 @@ function PillContent({
   return (
     <>
       <span>{children}</span>
-      <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-ink text-cream transition-colors duration-300 group-hover:bg-gold-dark">
+      <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-ink text-white transition-colors duration-300 group-hover:bg-sage">
         {icon === "user" ? <GlyphUser /> : <GlyphArrow />}
       </span>
     </>

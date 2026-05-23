@@ -1,28 +1,13 @@
 import type { Metadata } from "next";
-import { createClient } from "@/lib/supabase/server";
+import { listUsersByName } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Andere partners",
   robots: { index: false, follow: false },
 };
 
-type Profile = {
-  id: string;
-  full_name: string | null;
-  company: string | null;
-  region: string | null;
-  rubriek: string | null;
-  partner_type: string | null;
-  role: string;
-};
-
 export default async function LedenPage() {
-  const supabase = await createClient();
-  const { data: profiles, error } = await supabase
-    .from("profiles")
-    .select("id, full_name, company, region, rubriek, partner_type, role")
-    .order("full_name", { ascending: true })
-    .returns<Profile[]>();
+  const profiles = listUsersByName();
 
   return (
     <article className="px-6 pb-20 pt-12 md:px-12 md:pb-28 md:pt-16 lg:px-20 lg:pt-20">
@@ -32,7 +17,7 @@ export default async function LedenPage() {
         </p>
         <h1 className="mt-4 font-display text-[clamp(2rem,4.5vw,3.5rem)] font-medium leading-[1.05] text-ink">
           Wie is er{" "}
-          <span className="italic text-gold-dark">aangesloten</span>.
+          <span className="italic text-sage">aangesloten</span>.
         </h1>
         <p className="mt-6 max-w-xl text-[16px] leading-[1.65] text-ink-soft">
           Bekijk de andere architecten en vakspecialisten in het Renocheck
@@ -40,11 +25,7 @@ export default async function LedenPage() {
         </p>
       </header>
 
-      {error ? (
-        <p className="mt-12 text-[14px] text-ink-muted">
-          Ledenlijst kon niet geladen worden ({error.message}).
-        </p>
-      ) : !profiles || profiles.length === 0 ? (
+      {profiles.length === 0 ? (
         <p className="mt-12 text-[15px] text-ink-soft">
           Nog geen andere partners zichtbaar.
         </p>
@@ -53,7 +34,7 @@ export default async function LedenPage() {
           {profiles.map((p) => (
             <li
               key={p.id}
-              className="rounded-2xl border border-ink-hair/60 bg-cream-soft/30 p-6"
+              className="rounded-2xl border border-ink-hair/60 bg-surface-soft/30 p-6"
             >
               <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-ink-muted">
                 {p.partner_type ??

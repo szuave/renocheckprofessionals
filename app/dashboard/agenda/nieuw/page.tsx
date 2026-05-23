@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { requireUser } from "@/lib/auth";
+import { createEvent } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Nieuw event",
   robots: { index: false, follow: false },
 };
 
-async function createEvent(formData: FormData) {
+async function createEventAction(formData: FormData) {
   "use server";
 
   const title = String(formData.get("title") ?? "").trim();
@@ -21,32 +22,18 @@ async function createEvent(formData: FormData) {
     redirect("/dashboard/agenda/nieuw?error=missing");
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const user = await requireUser();
 
-  const { data, error } = await supabase
-    .from("events")
-    .insert({
-      author_id: user.id,
-      title,
-      description: description || null,
-      location: location || null,
-      starts_at: new Date(starts_at).toISOString(),
-      ends_at: ends_at ? new Date(ends_at).toISOString() : null,
-    })
-    .select("id")
-    .single();
+  const id = createEvent({
+    author_id: user.id,
+    title,
+    description: description || null,
+    location: location || null,
+    starts_at: new Date(starts_at).toISOString(),
+    ends_at: ends_at ? new Date(ends_at).toISOString() : null,
+  });
 
-  if (error || !data) {
-    redirect(
-      `/dashboard/agenda/nieuw?error=${encodeURIComponent(error?.message ?? "unknown")}`,
-    );
-  }
-
-  redirect(`/dashboard/agenda/${data.id}`);
+  redirect(`/dashboard/agenda/${id}`);
 }
 
 export default async function NewEventPage({
@@ -61,7 +48,7 @@ export default async function NewEventPage({
     <article className="px-6 pb-20 pt-12 md:px-12 md:pb-28 md:pt-16 lg:px-20 lg:pt-20">
       <Link
         href="/dashboard/agenda"
-        className="inline-flex items-center gap-2 text-[14px] font-medium text-ink-soft transition-colors hover:text-gold-dark"
+        className="inline-flex items-center gap-2 text-[14px] font-medium text-ink-soft transition-colors hover:text-sage"
       >
         ← Terug naar de agenda
       </Link>
@@ -72,7 +59,7 @@ export default async function NewEventPage({
         </p>
         <h1 className="mt-4 font-display text-[clamp(2rem,4.5vw,3.5rem)] font-medium leading-[1.05] text-ink">
           Voeg een{" "}
-          <span className="italic text-gold-dark">event</span> toe.
+          <span className="italic text-sage">event</span> toe.
         </h1>
         <p className="mt-6 max-w-xl text-[16px] leading-[1.65] text-ink-soft">
           Een opendeur, opleiding of partnervergadering — vul de gegevens
@@ -88,7 +75,7 @@ export default async function NewEventPage({
         </div>
       ) : null}
 
-      <form action={createEvent} className="mt-10 max-w-3xl space-y-8">
+      <form action={createEventAction} className="mt-10 max-w-3xl space-y-8">
         <Field
           id="title"
           label="Titel van het event"
@@ -126,13 +113,13 @@ export default async function NewEventPage({
         <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:gap-5">
           <button
             type="submit"
-            className="inline-flex items-center justify-center gap-3 rounded-full bg-ink px-7 py-4 text-[16px] font-medium text-cream transition-colors hover:bg-gold-dark"
+            className="inline-flex items-center justify-center gap-3 rounded-full bg-ink px-7 py-4 text-[16px] font-medium text-white transition-colors hover:bg-sage"
           >
             Event toevoegen
           </button>
           <Link
             href="/dashboard/agenda"
-            className="inline-flex items-center justify-center rounded-full border border-ink-hair/70 bg-cream/60 px-7 py-4 text-[16px] font-medium text-ink transition-colors hover:border-gold-dark"
+            className="inline-flex items-center justify-center rounded-full border border-ink-hair/70 bg-white/60 px-7 py-4 text-[16px] font-medium text-ink transition-colors hover:border-sage"
           >
             Annuleren
           </Link>
@@ -163,7 +150,7 @@ function Field({
       >
         {label}
         {required ? (
-          <span className="ml-1 text-gold-dark" aria-hidden="true">
+          <span className="ml-1 text-sage" aria-hidden="true">
             *
           </span>
         ) : null}
@@ -176,7 +163,7 @@ function Field({
         name={id}
         type={type}
         required={required}
-        className="mt-3 w-full rounded-xl border border-ink-hair/70 bg-ivory/70 px-4 py-3.5 text-[16px] text-ink placeholder:text-ink-muted/60 focus:border-ink focus:outline-none"
+        className="mt-3 w-full rounded-xl border border-ink-hair/70 bg-surface-soft/70 px-4 py-3.5 text-[16px] text-ink placeholder:text-ink-muted/60 focus:border-ink focus:outline-none"
       />
     </div>
   );
@@ -208,7 +195,7 @@ function TextArea({
         id={id}
         name={id}
         rows={rows ?? 6}
-        className="mt-3 w-full resize-y rounded-xl border border-ink-hair/70 bg-ivory/70 px-4 py-3.5 text-[16px] leading-[1.6] text-ink placeholder:text-ink-muted/60 focus:border-ink focus:outline-none"
+        className="mt-3 w-full resize-y rounded-xl border border-ink-hair/70 bg-surface-soft/70 px-4 py-3.5 text-[16px] leading-[1.6] text-ink placeholder:text-ink-muted/60 focus:border-ink focus:outline-none"
       />
     </div>
   );
