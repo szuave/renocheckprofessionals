@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "renocheck-professionals",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-03-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".open-next/assets"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "renocheck-professionals",
+      "database_id": "<RUN: wrangler d1 create renocheck-professionals AND PASTE ID HERE>"
+    }
+  ],
+  "vars": {
+    "SESSION_SECRET": "<SET-IN-CLOUDFLARE-DASHBOARD-SECRETS>"
+  }
+}

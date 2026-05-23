@@ -22,7 +22,7 @@ async function createPost(formData: FormData) {
 
   const user = await requireUser();
 
-  const id = createBlogPost({
+  const id = await createBlogPost({
     author_id: user.id,
     title,
     excerpt: excerpt || null,

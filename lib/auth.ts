@@ -2,47 +2,45 @@ import "server-only";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { randomBytes, randomUUID } from "node:crypto";
-import { db } from "./db";
+import { and, eq, gt } from "drizzle-orm";
+import { getDb, schema } from "./db";
 import { hashPassword, verifyPassword } from "./passwords";
 import type { Role, User } from "./types";
+
+const { users, sessions } = schema;
 
 export const SESSION_COOKIE = "renocheck_session";
 const SESSION_DAYS = 30;
 
-type UserRow = User & { password_hash?: string };
+const userColumns = {
+  id: users.id,
+  email: users.email,
+  full_name: users.full_name,
+  company: users.company,
+  region: users.region,
+  rubriek: users.rubriek,
+  partner_type: users.partner_type,
+  role: users.role,
+  created_at: users.created_at,
+};
 
-const USER_COLS =
-  "id, email, full_name, company, region, rubriek, partner_type, role, created_at";
-
-function rowToUser(row: UserRow | undefined): User | null {
-  if (!row) return null;
-  return {
-    id: row.id,
-    email: row.email,
-    full_name: row.full_name ?? null,
-    company: row.company ?? null,
-    region: row.region ?? null,
-    rubriek: row.rubriek ?? null,
-    partner_type: row.partner_type ?? null,
-    role: row.role as Role,
-    created_at: row.created_at,
-  };
+function nowIso(): string {
+  return new Date().toISOString();
 }
 
 export async function getCurrentUser(): Promise<User | null> {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!token) return null;
 
-  const row = db
-    .prepare(
-      `SELECT ${USER_COLS.split(",").map((c) => `u.${c.trim()}`).join(", ")}
-       FROM sessions s
-       JOIN users u ON u.id = s.user_id
-       WHERE s.token = ? AND s.expires_at > strftime('%Y-%m-%dT%H:%M:%fZ','now')`,
-    )
-    .get(token) as UserRow | undefined;
+  const db = await getDb();
+  const rows = await db
+    .select(userColumns)
+    .from(sessions)
+    .innerJoin(users, eq(users.id, sessions.user_id))
+    .where(and(eq(sessions.token, token), gt(sessions.expires_at, nowIso())))
+    .limit(1);
 
-  return rowToUser(row);
+  return (rows[0] as User | undefined) ?? null;
 }
 
 export async function requireUser(redirectTo = "/dashboard"): Promise<User> {
@@ -68,11 +66,16 @@ export async function signIn(
   email: string,
   password: string,
 ): Promise<SignInResult> {
-  const row = db
-    .prepare(
-      `SELECT ${USER_COLS}, password_hash FROM users WHERE email = ? COLLATE NOCASE`,
-    )
-    .get(email.trim()) as UserRow | undefined;
+  const db = await getDb();
+  const rows = await db
+    .select({
+      ...userColumns,
+      password_hash: users.password_hash,
+    })
+    .from(users)
+    .where(eq(users.email, email.trim()))
+    .limit(1);
+  const row = rows[0];
 
   if (!row?.password_hash || !verifyPassword(password, row.password_hash)) {
     return { ok: false, error: "invalid" };
@@ -83,9 +86,11 @@ export async function signIn(
     Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000,
   ).toISOString();
 
-  db.prepare(
-    "INSERT INTO sessions (token, user_id, expires_at) VALUES (?, ?, ?)",
-  ).run(token, row.id, expiresAt);
+  await db.insert(sessions).values({
+    token,
+    user_id: row.id,
+    expires_at: expiresAt,
+  });
 
   const store = await cookies();
   store.set(SESSION_COOKIE, token, {
@@ -96,14 +101,17 @@ export async function signIn(
     expires: new Date(expiresAt),
   });
 
-  return { ok: true, user: rowToUser(row)! };
+  const { password_hash: _ph, ...user } = row;
+  void _ph;
+  return { ok: true, user: user as User };
 }
 
 export async function signOut(): Promise<void> {
   const store = await cookies();
   const token = store.get(SESSION_COOKIE)?.value;
   if (token) {
-    db.prepare("DELETE FROM sessions WHERE token = ?").run(token);
+    const db = await getDb();
+    await db.delete(sessions).where(eq(sessions.token, token));
   }
   store.delete(SESSION_COOKIE);
 }
@@ -119,33 +127,35 @@ export type CreateUserInput = {
   role?: Role;
 };
 
-export function createUser(input: CreateUserInput): User {
+export async function createUser(input: CreateUserInput): Promise<User> {
+  const db = await getDb();
   const id = randomUUID();
-  db.prepare(
-    `INSERT INTO users (id, email, password_hash, full_name, company, region, rubriek, partner_type, role)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  ).run(
+  await db.insert(users).values({
     id,
-    input.email.trim(),
-    hashPassword(input.password),
-    input.full_name?.trim() || null,
-    input.company?.trim() || null,
-    input.region?.trim() || null,
-    input.rubriek?.trim() || null,
-    input.partner_type?.trim() || null,
-    input.role ?? "partner",
-  );
+    email: input.email.trim(),
+    password_hash: hashPassword(input.password),
+    full_name: input.full_name?.trim() || null,
+    company: input.company?.trim() || null,
+    region: input.region?.trim() || null,
+    rubriek: input.rubriek?.trim() || null,
+    partner_type: input.partner_type?.trim() || null,
+    role: input.role ?? "partner",
+  });
 
-  const row = db
-    .prepare(`SELECT ${USER_COLS} FROM users WHERE id = ?`)
-    .get(id) as UserRow;
-  return rowToUser(row)!;
+  const rows = await db
+    .select(userColumns)
+    .from(users)
+    .where(eq(users.id, id))
+    .limit(1);
+  return rows[0] as User;
 }
 
-export function setUserRole(id: string, role: Role): void {
-  db.prepare("UPDATE users SET role = ? WHERE id = ?").run(role, id);
+export async function setUserRole(id: string, role: Role): Promise<void> {
+  const db = await getDb();
+  await db.update(users).set({ role }).where(eq(users.id, id));
 }
 
-export function deleteUser(id: string): void {
-  db.prepare("DELETE FROM users WHERE id = ?").run(id);
+export async function deleteUser(id: string): Promise<void> {
+  const db = await getDb();
+  await db.delete(users).where(eq(users.id, id));
 }

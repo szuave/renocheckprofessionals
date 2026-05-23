@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AgendaListPage() {
-  const events = listUpcomingEvents();
+  const events = await listUpcomingEvents();
 
   return (
     <article className="px-6 pb-20 pt-12 md:px-12 md:pb-28 md:pt-16 lg:px-20 lg:pt-20">

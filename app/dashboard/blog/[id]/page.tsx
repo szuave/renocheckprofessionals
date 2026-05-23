@@ -17,11 +17,11 @@ async function deletePostAction(formData: FormData) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const post = getBlogPost(id);
+  const post = await getBlogPost(id);
   if (!post) return;
   if (post.author_id !== user.id && user.role !== "admin") return;
 
-  deleteBlogPost(id);
+  await deleteBlogPost(id);
   redirect("/dashboard/blog");
 }
 
@@ -32,7 +32,7 @@ export default async function BlogPostPage({
 }) {
   const { id } = await params;
   const user = await getCurrentUser();
-  const post = getBlogPost(id);
+  const post = await getBlogPost(id);
 
   if (!post) {
     notFound();

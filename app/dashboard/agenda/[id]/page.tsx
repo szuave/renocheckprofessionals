@@ -18,11 +18,11 @@ async function deleteEventAction(formData: FormData) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const event = getEvent(id);
+  const event = await getEvent(id);
   if (!event) return;
   if (event.author_id !== user.id && user.role !== "admin") return;
 
-  deleteEvent(id);
+  await deleteEvent(id);
   redirect("/dashboard/agenda");
 }
 
@@ -33,7 +33,7 @@ export default async function EventDetailPage({
 }) {
   const { id } = await params;
   const user = await getCurrentUser();
-  const event = getEvent(id);
+  const event = await getEvent(id);
 
   if (!event) {
     notFound();

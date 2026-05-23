@@ -28,7 +28,7 @@ async function updateApplicationStatusAction(formData: FormData) {
     | "";
   if (!id) return;
   if (!["new", "contacted", "accepted", "declined"].includes(status)) return;
-  setApplicationStatus(id, status as PartnerApplication["status"]);
+  await setApplicationStatus(id, status as PartnerApplication["status"]);
   revalidatePath("/dashboard/inbox");
 }
 
@@ -37,7 +37,7 @@ async function deleteApplicationAction(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id"));
   if (!id) return;
-  deletePartnerApplication(id);
+  await deletePartnerApplication(id);
   revalidatePath("/dashboard/inbox");
 }
 
@@ -50,7 +50,7 @@ async function updateMessageStatusAction(formData: FormData) {
     | "";
   if (!id) return;
   if (!["new", "read", "closed"].includes(status)) return;
-  setContactMessageStatus(id, status as ContactMessage["status"]);
+  await setContactMessageStatus(id, status as ContactMessage["status"]);
   revalidatePath("/dashboard/inbox");
 }
 
@@ -59,7 +59,7 @@ async function deleteMessageAction(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id"));
   if (!id) return;
-  deleteContactMessage(id);
+  await deleteContactMessage(id);
   revalidatePath("/dashboard/inbox");
 }
 
@@ -68,7 +68,7 @@ async function deleteLeadAction(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id"));
   if (!id) return;
-  deleteLead(id);
+  await deleteLead(id);
   revalidatePath("/dashboard/inbox");
 }
 
@@ -95,9 +95,11 @@ const MSG_STATUS_LABELS: Record<ContactMessage["status"], string> = {
 export default async function InboxPage() {
   await requireAdmin();
 
-  const applications = listPartnerApplications();
-  const messages = listContactMessages();
-  const leads = listLeads();
+  const [applications, messages, leads] = await Promise.all([
+    listPartnerApplications(),
+    listContactMessages(),
+    listLeads(),
+  ]);
 
   const newApplications = applications.filter((a) => a.status === "new").length;
   const newMessages = messages.filter((m) => m.status === "new").length;

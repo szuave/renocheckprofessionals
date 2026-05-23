@@ -31,7 +31,7 @@ export async function submitPartnerApplication(formData: FormData) {
     redirect("/?form=partner&error=email");
   }
 
-  createPartnerApplication({
+  await createPartnerApplication({
     company,
     contact_name: contact_name || null,
     email,
@@ -67,7 +67,7 @@ export async function submitContactMessage(formData: FormData) {
     redirect("/contact?error=email");
   }
 
-  createContactMessage({
+  await createContactMessage({
     subject_type,
     first_name,
     last_name: last_name || null,
@@ -95,7 +95,7 @@ export async function submitLead(formData: FormData) {
     redirect(`${next}?lead=email#gids`);
   }
 
-  createLead({
+  await createLead({
     first_name: first_name || null,
     last_name: last_name || null,
     email,

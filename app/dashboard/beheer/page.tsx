@@ -60,7 +60,7 @@ async function createUserAction(formData: FormData) {
   }
 
   try {
-    createUser({
+    await createUser({
       email,
       password,
       full_name: full_name || null,
@@ -86,7 +86,7 @@ async function setRoleAction(formData: FormData) {
   const id = String(formData.get("id"));
   const role = String(formData.get("role"));
   if (!id || (role !== "admin" && role !== "partner")) return;
-  setUserRole(id, role);
+  await setUserRole(id, role);
   revalidatePath("/dashboard/beheer");
 }
 
@@ -96,7 +96,7 @@ async function deleteUserAction(formData: FormData) {
   const id = String(formData.get("id"));
   if (!id) return;
   if (id === admin.id) return;
-  deleteUser(id);
+  await deleteUser(id);
   revalidatePath("/dashboard/beheer");
 }
 
@@ -108,7 +108,7 @@ export default async function BeheerPage({
   const admin = await requireAdmin();
   const params = await searchParams;
 
-  const profiles = listUsers();
+  const profiles = await listUsers();
 
   return (
     <article className="px-6 pb-20 pt-12 md:px-12 md:pb-28 md:pt-16 lg:px-20 lg:pt-20">

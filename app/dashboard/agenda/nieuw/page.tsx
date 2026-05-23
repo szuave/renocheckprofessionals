@@ -24,7 +24,7 @@ async function createEventAction(formData: FormData) {
 
   const user = await requireUser();
 
-  const id = createEvent({
+  const id = await createEvent({
     author_id: user.id,
     title,
     description: description || null,

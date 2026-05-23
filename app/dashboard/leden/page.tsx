@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 export default async function LedenPage() {
-  const profiles = listUsersByName();
+  const profiles = await listUsersByName();
 
   return (
     <article className="px-6 pb-20 pt-12 md:px-12 md:pb-28 md:pt-16 lg:px-20 lg:pt-20">
