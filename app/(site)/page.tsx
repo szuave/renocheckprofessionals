@@ -22,34 +22,34 @@ const RUBRIEKEN = [
 
 const PATHWAYS = [
   {
-    href: "/bouwers",
-    eyebrow: "Bouwen of verbouwen",
-    title: "Vind uw team",
-    tagline:
-      "Eén ingang voor wie bouwt of renoveert — wij brengen u in contact met de juiste architecten en vakspecialisten in uw regio.",
-    image:
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1600&q=90",
-    alt: "Modern architectonisch gebouw — Renocheck bouwers",
-  },
-  {
     href: "/architecten",
-    eyebrow: "Architectenbureau",
-    title: "Voor de architect",
+    eyebrow: "Word netwerkpartner",
+    title: "Voor architectenbureaus",
     tagline:
-      "Een lokaal architectennetwerk dat samen aan tafel zit met de uitvoerders — voor projecten die kloppen van schets tot oplevering.",
+      "Sluit aan bij een geselecteerde kring architecten in uw regio. Vaste vakspecialisten waarmee u al meermaals samenwerkte vóór de eerstvolgende opdracht arriveert.",
     image:
       "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=90",
     alt: "Architect aan het werk met bouwplannen",
   },
   {
     href: "/vakspecialisten",
-    eyebrow: "Veertien rubrieken",
-    title: "Voor de vakman",
+    eyebrow: "Eén plek per rubriek",
+    title: "Voor vakspecialisten",
     tagline:
-      "Per regio één vakspecialist per rubriek — van dakwerken tot zonnepanelen, één gedeelde standaard.",
+      "Veertien rubrieken, één partner per rubriek per regio. Exclusiviteit boven concurrentie, doorverwijzingen vanuit het hele netwerk.",
     image:
       "https://images.unsplash.com/photo-1530124566582-a618bc2615dc?auto=format&fit=crop&w=1600&q=90",
     alt: "Vakspecialist op de werf met materiaal",
+  },
+  {
+    href: "/bouwers",
+    eyebrow: "Bouwt of renoveert u",
+    title: "Voor bouwheren",
+    tagline:
+      "Eén ingang naar een coherent team — architect en vakspecialisten uit het netwerk die elkaar al kennen voor uw project start.",
+    image:
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1600&q=90",
+    alt: "Modern architectonisch gebouw",
   },
 ];
 
@@ -91,22 +91,33 @@ function Hero() {
         <div className="grid items-center gap-12 md:grid-cols-12 md:gap-16">
           <div className="min-w-0 md:col-span-7">
             <p className="enter-up delay-300 text-[18px] text-ink-soft">
-              Renocheck Professionals · Het bouwnetwerk
+              Renocheck Professionals · Vlaams bouwnetwerk
             </p>
 
             <h1 className="enter-up delay-400 mt-6 font-display text-[clamp(3rem,6.5vw,5.75rem)] font-medium leading-[0.98] text-ink">
-              Het netwerk dat<br />
-              <span className="italic text-sage">samen</span> bouwt.
+              Geselecteerde{" "}
+              <span className="italic text-sage">partners</span>,<br />
+              gedeelde standaard.
             </h1>
 
             <p className="enter-up delay-500 mt-8 max-w-xl text-[17px] leading-[1.65] text-ink-soft md:text-[19px]">
-              Renocheck verbindt architecten en vakspecialisten per regio in
-              Vlaanderen — partners die elkaar kennen, voordat uw project
-              start.
+              Een gesloten netwerk van architectenbureaus, vakspecialisten en
+              bouwondernemers in West-Vlaanderen, Oost-Vlaanderen, Antwerpen en
+              Vlaams-Brabant. Eén partner per rubriek per regio — exclusief op
+              vakmanschap.
             </p>
 
-            <div className="enter-up delay-600 mt-10">
-              <PillLink href="#pathways">Ontdek het netwerk</PillLink>
+            <div className="enter-up delay-600 mt-10 flex flex-wrap items-center gap-4">
+              <PillLink href="#partner-aanvraag">Word partner</PillLink>
+              <Link
+                href="#pathways"
+                className="inline-flex items-center gap-2 text-[14px] font-medium uppercase tracking-[0.28em] text-ink-soft transition-colors hover:text-ink"
+              >
+                Ontdek het netwerk
+                <span aria-hidden="true" className="inline-block">
+                  →
+                </span>
+              </Link>
             </div>
           </div>
 
@@ -114,7 +125,7 @@ function Hero() {
             <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[32px] bg-ink/5">
               <Image
                 src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1400&q=90"
-                alt="Architecten en vakspecialisten in overleg over een bouwproject"
+                alt="Architecten en vakspecialisten van het Renocheck Professionals netwerk in overleg"
                 fill
                 sizes="(max-width: 768px) 100vw, 40vw"
                 className="object-cover"
@@ -123,7 +134,7 @@ function Hero() {
             </div>
             <figcaption className="mt-5 flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.32em] text-ink-muted">
               <span aria-hidden="true" className="h-px w-8 bg-sage/60" />
-              Het netwerk · 2026
+              Vlaanderen · 2026
             </figcaption>
           </figure>
         </div>
@@ -279,8 +290,9 @@ function PathwayCard({
 function Regions() {
   return (
     <section
+      id="regios"
       aria-labelledby="regions-title"
-      className="relative py-20 md:py-28 lg:py-32"
+      className="relative scroll-mt-24 py-20 md:py-28 lg:py-32"
     >
       <div className="mx-auto max-w-[1280px] px-6 md:px-16 lg:px-24">
         <div className="grid gap-14 md:grid-cols-12 md:items-center md:gap-16">
@@ -290,13 +302,14 @@ function Regions() {
               id="regions-title"
               className="mt-6 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink"
             >
-              Een netwerk in{" "}
-              <span className="italic text-sage">elke</span> regio.
+              Eén kring per{" "}
+              <span className="italic text-sage">regio</span>.
             </h2>
             <p className="mt-8 max-w-md text-[17px] leading-[1.7] text-ink-soft">
-              Per regio een vaste selectie van architecten en veertien
-              vakspecialisten — één per rubriek. Lokaal, samen, op maat van uw
-              project.
+              Per Vlaamse regio bouwen we één kring partners op — een
+              architectenbureau, veertien vakspecialisten (één per rubriek) en
+              bouwondernemers die elkaar kennen via terugkerende
+              netwerkmomenten.
             </p>
           </div>
 
@@ -347,29 +360,34 @@ function Manifesto() {
       <div className="mx-auto max-w-[1280px] px-6 md:px-16 lg:px-24">
         <div className="grid gap-14 md:grid-cols-12 md:items-center md:gap-16">
           <div className="min-w-0 md:col-span-5">
-            <p className="text-[18px] text-ink-soft">Over Renocheck</p>
+            <p className="text-[18px] text-ink-soft">Over Renocheck Professionals</p>
             <h2
               id="visie-title"
               className="mt-6 font-display text-[clamp(2.25rem,4.5vw,4.25rem)] font-medium leading-[1.02] text-ink"
             >
-              Eén netwerk voor{" "}
-              <span className="italic text-sage">elk</span> bouwproject.
+              Selectie boven{" "}
+              <span className="italic text-sage">zoekvolume</span>.
             </h2>
             <div className="mt-10">
-              <PillLink href="/login">Word partner</PillLink>
+              <PillLink href="#partner-aanvraag">Word partner</PillLink>
             </div>
           </div>
 
           <div className="min-w-0 space-y-6 md:col-span-7">
             <p className="text-[19px] leading-[1.7] text-ink-soft md:text-[21px]">
-              Een bouwproject is een puzzel van vakken. Renocheck verbindt
-              architecten en vakspecialisten in één regio — partners die
-              elkaar al kennen voordat uw project start.
+              De meeste platformen verkopen leads aan iedereen die betaalt.
+              Renocheck Professionals werkt omgekeerd: één partner per rubriek
+              per regio, geselecteerd op vakkennis en reputatie binnen het
+              netwerk.
             </p>
             <p className="text-[19px] leading-[1.7] text-ink-soft md:text-[21px]">
-              Geen versnipperde offertes, geen tegenstrijdige planningen.
-              Eén kring vakmensen die samen aan een project werken — van
-              eerste schets tot oplevering.
+              Voor architectenbureaus en vakspecialisten betekent dat: geen
+              concurrentie op opdrachten die via het netwerk binnenkomen, en
+              vaste partners waarmee u al meermaals samenwerkte.
+            </p>
+            <p className="text-[19px] leading-[1.7] text-ink-soft md:text-[21px]">
+              Voor bouwheren: één coherent team in plaats van versnipperde
+              offertes.
             </p>
           </div>
         </div>
@@ -395,7 +413,7 @@ function PullQuote() {
             <span className="italic text-sage">mensen</span>werk.
           </blockquote>
           <p className="mt-10 text-[12px] font-medium uppercase tracking-[0.32em] text-ink-muted">
-            Het Renocheck idee
+            Renocheck Professionals · Het idee
           </p>
         </div>
       </div>

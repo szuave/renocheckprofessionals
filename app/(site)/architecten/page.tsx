@@ -5,21 +5,21 @@ import { PillLink } from "@/components/pill-button";
 import { BreadcrumbSchema } from "@/components/structured-data";
 
 export const metadata: Metadata = {
-  title: "Architecten",
+  title: "Voor architectenbureaus",
   description:
-    "Een geselecteerd architectennetwerk per regio in Vlaanderen — voor verbouwing, nieuwbouw of interieur. Vind de juiste architect voor uw project.",
+    "Word netwerkpartner bij Renocheck Professionals — een geselecteerde kring architectenbureaus in West-Vlaanderen, Oost-Vlaanderen, Antwerpen en Vlaams-Brabant. Vaste vakspecialisten, lokale doorverwijzingen en exclusiviteit per regio.",
   alternates: { canonical: "/architecten" },
   openGraph: {
-    title: "Architecten · Renocheck Professionals",
+    title: "Voor architectenbureaus · Renocheck Professionals",
     description:
-      "Architectennetwerk per regio in Vlaanderen — voor elk bouwproject.",
+      "Een Vlaams architectennetwerk dat samenwerkt met geselecteerde vakspecialisten — exclusief per regio.",
     url: "/architecten",
     type: "website",
   },
   twitter: {
-    title: "Architecten · Renocheck Professionals",
+    title: "Voor architectenbureaus · Renocheck Professionals",
     description:
-      "Architectennetwerk per regio in Vlaanderen — voor elk bouwproject.",
+      "Een Vlaams architectennetwerk dat samenwerkt met geselecteerde vakspecialisten — exclusief per regio.",
   },
 };
 
@@ -42,18 +42,19 @@ export default function ArchitectenPage() {
 
       <section className="mx-auto max-w-[1280px] px-6 md:px-16 lg:px-24">
         <p className="enter-up delay-300 text-[18px] text-ink-soft">
-          Architecten
+          Voor architectenbureaus
         </p>
 
         <h1 className="enter-up delay-400 mt-6 font-display text-[clamp(3rem,8vw,7rem)] font-medium leading-[0.98] text-ink">
-          Een architect voor{" "}
-          <span className="italic text-sage">elk</span> project.
+          Architecten die elkaar{" "}
+          <span className="italic text-sage">versterken</span>.
         </h1>
 
-        <p className="enter-up delay-500 mt-8 max-w-xl text-[17px] leading-[1.65] text-ink-soft md:text-[19px]">
-          Verbouwen, nieuwbouw of interieurontwerp — elke regio kent zijn
-          eigen kring architecten die deel uitmaken van het Renocheck
-          netwerk. Lokaal, betrokken en op maat van uw project.
+        <p className="enter-up delay-500 mt-8 max-w-2xl text-[17px] leading-[1.65] text-ink-soft md:text-[19px]">
+          Een gesloten kring architectenbureaus per Vlaamse regio — die werkt
+          met vaste vakspecialisten, deelt referenties en doorverwijzingen, en
+          mekaar maandelijks ontmoet op partnerevents. Geen open marktplaats,
+          geen lead-veiling.
         </p>
       </section>
 

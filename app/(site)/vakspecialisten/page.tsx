@@ -5,21 +5,21 @@ import { PillLink } from "@/components/pill-button";
 import { BreadcrumbSchema } from "@/components/structured-data";
 
 export const metadata: Metadata = {
-  title: "Vakspecialisten",
+  title: "Voor vakspecialisten",
   description:
-    "Per regio in Vlaanderen één vakspecialist per rubriek — van dakwerken tot zonnepanelen. Veertien rubrieken, één gedeelde standaard.",
+    "Word netwerkpartner als vakspecialist in Vlaanderen — exclusief één plek per rubriek per regio. Dakwerken, ramen, sanitair, elektriciteit, zonnepanelen en meer. Geen lead-veilingen, vaste architecten.",
   alternates: { canonical: "/vakspecialisten" },
   openGraph: {
-    title: "Vakspecialisten · Renocheck Professionals",
+    title: "Voor vakspecialisten · Renocheck Professionals",
     description:
-      "Veertien rubrieken, één vakspecialist per regio — vakkennis op maat van uw bouwproject.",
+      "Eén plek per rubriek per Vlaamse regio — exclusief, geselecteerd op vakmanschap.",
     url: "/vakspecialisten",
     type: "website",
   },
   twitter: {
-    title: "Vakspecialisten · Renocheck Professionals",
+    title: "Voor vakspecialisten · Renocheck Professionals",
     description:
-      "Veertien rubrieken, één vakspecialist per regio.",
+      "Eén plek per rubriek per Vlaamse regio — exclusief, geselecteerd op vakmanschap.",
   },
 };
 
@@ -59,18 +59,19 @@ export default function VakspecialistenPage() {
 
       <section className="mx-auto max-w-[1280px] px-6 md:px-16 lg:px-24">
         <p className="enter-up delay-300 text-[18px] text-ink-soft">
-          Vakspecialisten
+          Voor vakspecialisten
         </p>
 
         <h1 className="enter-up delay-400 mt-6 font-display text-[clamp(3rem,8vw,7rem)] font-medium leading-[0.98] text-ink">
-          Veertien rubrieken,<br />
-          <span className="italic text-sage">één</span> standaard.
+          Eén plek per{" "}
+          <span className="italic text-sage">rubriek</span>.
         </h1>
 
-        <p className="enter-up delay-500 mt-8 max-w-xl text-[17px] leading-[1.65] text-ink-soft md:text-[19px]">
-          Per regio nemen we één vakspecialist op per rubriek. Veertien
-          stuks — van dakwerken tot zonnepanelen — die elkaar kennen en
-          samen een werf gezond houden.
+        <p className="enter-up delay-500 mt-8 max-w-2xl text-[17px] leading-[1.65] text-ink-soft md:text-[19px]">
+          Renocheck Professionals neemt per Vlaamse regio één partner per
+          rubriek op — exclusief. Veertien rubrieken, van dakwerken tot
+          zonnepanelen. Geen leads die rondreizen tussen 20 collega's, wel
+          doorverwijzingen vanuit een vaste kring architecten.
         </p>
       </section>
 

@@ -12,21 +12,21 @@ const REGIONS = [
 ];
 
 export const metadata: Metadata = {
-  title: "Bouwers",
+  title: "Voor bouwheren",
   description:
-    "Bent u aan het bouwen of renoveren? Het Renocheck netwerk brengt u in contact met betrouwbare architecten en vakspecialisten in uw regio.",
+    "Bouwt of renoveert u in Vlaanderen? Renocheck Professionals is een gesloten netwerk van geselecteerde architecten en vakspecialisten per regio. Eén partner per rubriek — geen versnipperde offertes.",
   alternates: { canonical: "/bouwers" },
   openGraph: {
-    title: "Voor bouwers · Renocheck Professionals",
+    title: "Voor bouwheren · Renocheck Professionals",
     description:
-      "Vind de juiste partners voor uw bouw- of renovatieproject — via één netwerk.",
+      "Gesloten netwerk van geselecteerde architectenbureaus en vakspecialisten in Vlaanderen. Eén coherent team voor uw project.",
     url: "/bouwers",
     type: "website",
   },
   twitter: {
-    title: "Voor bouwers · Renocheck Professionals",
+    title: "Voor bouwheren · Renocheck Professionals",
     description:
-      "Vind de juiste partners voor uw bouw- of renovatieproject — via één netwerk.",
+      "Gesloten netwerk van geselecteerde architectenbureaus en vakspecialisten in Vlaanderen.",
   },
 };
 
@@ -34,17 +34,17 @@ const STEPS = [
   {
     nr: "01",
     title: "U vertelt uw project",
-    body: "Renovatie, nieuwbouw of interieur — geef de regio en de scope aan, wij doen de rest.",
+    body: "Renovatie, nieuwbouw of interieur — geef de regio, de scope en het tijdpad aan. Eén bericht volstaat.",
   },
   {
     nr: "02",
-    title: "Wij stellen partners voor",
-    body: "Een geselecteerde architect en vakspecialisten uit uw regio die elkaar al kennen.",
+    title: "Wij stellen het team voor",
+    body: "De architect en vakspecialisten uit het netwerk in uw regio die elkaar al kennen — geen lijst van twintig namen, één coherent team.",
   },
   {
     nr: "03",
     title: "U beslist samen",
-    body: "Eén kennismakingsgesprek, één coherent voorstel — geen versnipperde offertes.",
+    body: "Eén kennismakingsgesprek met het volledige team, één gedeeld voorstel — geen tegenstrijdige offertes meer.",
   },
 ];
 
@@ -67,19 +67,19 @@ export default async function BouwersPage({
 
       <section className="mx-auto max-w-[1280px] px-6 md:px-16 lg:px-24">
         <p className="enter-up delay-300 text-[18px] text-ink-soft">
-          Voor bouwers
+          Voor bouwheren
         </p>
 
         <h1 className="enter-up delay-400 mt-6 font-display text-[clamp(3rem,8vw,7rem)] font-medium leading-[0.98] text-ink">
-          Eén ingang voor uw{" "}
-          <span className="italic text-sage">project</span>.
+          Bouwen zonder{" "}
+          <span className="italic text-sage">versnipperde</span> offertes.
         </h1>
 
-        <p className="enter-up delay-500 mt-8 max-w-xl text-[17px] leading-[1.65] text-ink-soft md:text-[19px]">
-          Bouwen of renoveren is een puzzel van architecten, aannemers en
-          tientallen vakspecialisten. Renocheck brengt deze partners samen
-          per regio — zodat u één netwerk hebt in plaats van twintig
-          contacten.
+        <p className="enter-up delay-500 mt-8 max-w-2xl text-[17px] leading-[1.65] text-ink-soft md:text-[19px]">
+          De goedkoopste offerte wordt vaak de duurste werf. Renocheck
+          Professionals is een gesloten netwerk: één geselecteerde architect
+          en veertien vakspecialisten per Vlaamse regio, geselecteerd op
+          vakkennis en regionale reputatie — niet op marketingbudget.
         </p>
       </section>
 
