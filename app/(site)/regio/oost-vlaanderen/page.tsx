@@ -402,21 +402,20 @@ export default async function RegioOostVlaanderenPage() {
       <section className="mx-auto mt-20 max-w-[1280px] px-6 md:mt-32 md:px-16 lg:px-24">
         <div className="grid gap-12 md:grid-cols-12 md:items-center md:gap-16">
           <div className="min-w-0 md:col-span-5">
-            <p className="text-[18px] text-ink-soft">Voor bouwheren</p>
+            <p className="text-[18px] text-ink-soft">Nog plek vrij</p>
             <h2 className="mt-6 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink">
-              Bouwt of renoveert u in{" "}
-              <span className="italic text-sage">Oost-Vlaanderen</span>?
+              Word partner in{" "}
+              <span className="italic text-sage">Oost-Vlaanderen</span>.
             </h2>
             <div className="mt-10">
-              <PillLink href="/bouwers">Voor bouwheren</PillLink>
+              <PillLink href="/#partner-aanvraag">Vraag aan</PillLink>
             </div>
           </div>
           <div className="min-w-0 md:col-span-7">
             <p className="text-[19px] leading-[1.7] text-ink-soft md:text-[20px]">
-              Of het nu om een Gentse stadswoning gaat of een nieuwbouw
-              langs de N70: vertel ons de scope en het tijdpad. We stellen
-              de architect en vakspecialisten uit de Oost-Vlaamse kring
-              voor — één team, één gedeeld voorstel.
+              Of u nu Gentse stadsrenovaties wilt opvolgen of nieuwbouw in
+              het Waasland — niet alle rubrieken zijn ingevuld. Een
+              kennismakingsgesprek volstaat om de pasvorm te checken.
             </p>
           </div>
         </div>

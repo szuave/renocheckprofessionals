@@ -370,21 +370,21 @@ export default async function VlaamsBrabantRegioPage() {
       <section className="mx-auto mt-20 max-w-[1280px] px-6 md:mt-32 md:px-16 lg:px-24">
         <div className="grid gap-12 md:grid-cols-12 md:items-center md:gap-16">
           <div className="min-w-0 md:col-span-5">
-            <p className="text-[18px] text-ink-soft">Voor bouwheren</p>
+            <p className="text-[18px] text-ink-soft">Nog plek vrij</p>
             <h2 className="mt-6 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink"
             >
-              Bouwt u in{" "}
-              <span className="italic text-sage">Vlaams-Brabant</span>?
+              Word partner in{" "}
+              <span className="italic text-sage">Vlaams-Brabant</span>.
             </h2>
             <div className="mt-10">
-              <PillLink href="/bouwers">Voor bouwheren</PillLink>
+              <PillLink href="/#partner-aanvraag">Vraag aan</PillLink>
             </div>
           </div>
           <div className="min-w-0 md:col-span-7">
             <p className="text-[19px] leading-[1.7] text-ink-soft md:text-[20px]">
-              Renoveert of bouwt u tussen Leuven en Halle, in Tienen of in de
-              Brusselse rand? Vertel ons over uw project — we stellen u
-              voor aan het team dat in uw gemeente al heeft gewerkt.
+              Werkt u rond Leuven, in Halle of de Brusselse rand en zoekt u
+              een vaste kring partners? Een korte kennismaking volstaat om de
+              pasvorm te checken — niet alle veertien rubrieken zijn vol.
             </p>
           </div>
         </div>

@@ -24,12 +24,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${SITE_URL}/bouwers`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
       url: `${SITE_URL}/architecten`,
       lastModified: now,
       changeFrequency: "weekly",
@@ -42,10 +36,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
-      url: `${SITE_URL}/events`,
+      url: `${SITE_URL}/bouwondernemers`,
       lastModified: now,
       changeFrequency: "weekly",
-      priority: 0.8,
+      priority: 0.9,
     },
     {
       url: `${SITE_URL}/faq`,
@@ -88,36 +82,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.85,
-    },
-    {
-      url: `${SITE_URL}/renovatiegids`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${SITE_URL}/renovatiegids/dakwerken`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${SITE_URL}/renovatiegids/isolatie`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${SITE_URL}/renovatiegids/zonnepanelen`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${SITE_URL}/renovatiegids/sanitair`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.8,
     },
   ];
 }

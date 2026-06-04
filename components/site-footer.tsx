@@ -67,7 +67,7 @@ export function SiteFooter() {
                 alt="Renocheck"
                 width={338}
                 height={41}
-                className="h-[44px] w-auto select-none sm:h-[52px] md:h-[60px]"
+                className="h-[52px] w-auto select-none sm:h-[64px] md:h-[78px]"
                 sizes="(max-width: 640px) 360px, (max-width: 768px) 430px, 500px"
               />
               <span
@@ -101,10 +101,10 @@ export function SiteFooter() {
             className="md:col-span-3"
             title="Het netwerk"
             links={[
-              { href: "/bouwers", label: "Voor bouwers" },
               { href: "/architecten", label: "Architecten" },
               { href: "/vakspecialisten", label: "Vakspecialisten" },
-              { href: "/events", label: "Events" },
+              { href: "/bouwondernemers", label: "Bouwondernemers" },
+              { href: "/regio/west-vlaanderen", label: "Onze regio's" },
             ]}
           />
           <FooterColumn

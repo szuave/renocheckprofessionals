@@ -8,10 +8,9 @@ import { cn } from "@/lib/utils";
 import { PillLink } from "@/components/pill-button";
 
 const NAV_ITEMS = [
-  { href: "/bouwers", label: "Bouwers" },
   { href: "/architecten", label: "Architecten" },
   { href: "/vakspecialisten", label: "Vakspecialisten" },
-  { href: "/events", label: "Events" },
+  { href: "/bouwondernemers", label: "Bouwondernemers" },
   { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ];
@@ -83,7 +82,7 @@ export function DesktopSidebar() {
   return (
     <aside
       aria-label="Hoofdnavigatie"
-      className="hidden shrink-0 lg:block lg:w-[360px]"
+      className="hidden shrink-0 lg:block lg:w-[440px]"
     >
       <div className="sticky top-0 flex h-screen flex-col items-end justify-between px-10 py-14">
         <Link
@@ -91,7 +90,7 @@ export function DesktopSidebar() {
           aria-label="Renocheck Professionals — home"
           className="enter-up delay-100"
         >
-          <Wordmark size={42} />
+          <Wordmark size={52} />
         </Link>
 
         <nav className="flex flex-col items-end gap-5">
@@ -152,7 +151,7 @@ function MobileBar({
       <div className="px-4 pt-4">
         <div className="flex items-center justify-between gap-3 rounded-full bg-white/85 py-2.5 pl-5 pr-2 shadow-[0_2px_14px_-2px_rgba(28,27,24,0.08)] ring-1 ring-ink/[0.04] backdrop-blur-xl">
           <Link href="/" aria-label="Renocheck Professionals — home">
-            <Wordmark size={24} stacked={false} />
+            <Wordmark size={28} stacked={false} />
           </Link>
           <button
             type="button"

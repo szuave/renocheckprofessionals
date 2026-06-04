@@ -42,14 +42,14 @@ const PATHWAYS = [
     alt: "Vakspecialist op de werf met materiaal",
   },
   {
-    href: "/bouwers",
-    eyebrow: "Bouwt of renoveert u",
-    title: "Voor bouwheren",
+    href: "/bouwondernemers",
+    eyebrow: "Algemene aannemers",
+    title: "Voor bouwondernemers",
     tagline:
-      "Eén ingang naar een coherent team — architect en vakspecialisten uit het netwerk die elkaar al kennen voor uw project start.",
+      "Bouwondernemers die volledige projecten coördineren en mee aan tafel zitten met onze architecten en vakspecialisten.",
     image:
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1600&q=90",
-    alt: "Modern architectonisch gebouw",
+      "https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1600&q=90",
+    alt: "Bouwondernemer op de werf in overleg",
   },
 ];
 
@@ -90,11 +90,11 @@ function Hero() {
       <div className="mx-auto w-full max-w-[1280px]">
         <div className="grid items-center gap-12 md:grid-cols-12 md:gap-16">
           <div className="min-w-0 md:col-span-7">
-            <p className="enter-up delay-300 text-[18px] text-ink-soft">
-              Renocheck Professionals · Vlaams bouwnetwerk
+            <p className="enter-up delay-300 text-[12px] font-medium uppercase tracking-[0.32em] text-ink-muted">
+              Het Vlaams bouwnetwerk
             </p>
 
-            <h1 className="enter-up delay-400 mt-6 font-display text-[clamp(3rem,6.5vw,5.75rem)] font-medium leading-[0.98] text-ink">
+            <h1 className="enter-up delay-400 mt-5 font-display text-[clamp(3rem,6.5vw,5.75rem)] font-medium leading-[0.98] text-ink">
               Geselecteerde{" "}
               <span className="italic text-sage">partners</span>,<br />
               gedeelde standaard.
@@ -381,13 +381,12 @@ function Manifesto() {
               netwerk.
             </p>
             <p className="text-[19px] leading-[1.7] text-ink-soft md:text-[21px]">
-              Voor architectenbureaus en vakspecialisten betekent dat: geen
-              concurrentie op opdrachten die via het netwerk binnenkomen, en
-              vaste partners waarmee u al meermaals samenwerkte.
+              Geen concurrentie op opdrachten die via het netwerk binnenkomen.
+              Vaste architecten, vakspecialisten en bouwondernemers die elkaar
+              kennen via terugkerende partnerevents per regio.
             </p>
             <p className="text-[19px] leading-[1.7] text-ink-soft md:text-[21px]">
-              Voor bouwheren: één coherent team in plaats van versnipperde
-              offertes.
+              Wij zijn geen lead-veiling. Wij zijn een gesloten kring.
             </p>
           </div>
         </div>

@@ -94,14 +94,14 @@ function DesktopSidebar({
           <Image
             src="/brand/renocheck-wordmark.png"
             alt="Renocheck"
-            width={247}
-            height={30}
+            width={297}
+            height={36}
             priority
             className="select-none"
           />
           <span
-            className="mt-2.5 text-[11px] font-medium uppercase text-ink"
-            style={{ letterSpacing: "0.4em", marginLeft: 36 }}
+            className="mt-2.5 text-[12px] font-medium uppercase text-ink"
+            style={{ letterSpacing: "0.4em", marginLeft: 44 }}
           >
             Professionals
           </span>
@@ -147,14 +147,14 @@ function MobileBar({
           <Image
             src="/brand/renocheck-wordmark.png"
             alt="Renocheck"
-            width={165}
-            height={20}
+            width={198}
+            height={24}
             priority
             className="select-none"
           />
           <span
-            className="mt-1 text-[9px] font-medium uppercase text-ink"
-            style={{ letterSpacing: "0.4em", marginLeft: 22 }}
+            className="mt-1 text-[10px] font-medium uppercase text-ink"
+            style={{ letterSpacing: "0.4em", marginLeft: 28 }}
           >
             Professionals
           </span>

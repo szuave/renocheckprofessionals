@@ -86,7 +86,7 @@ export async function submitLead(formData: FormData) {
   const email = trim(formData, "email");
   const region = trim(formData, "region");
   const source = trim(formData, "source") || "homepage";
-  const next = trim(formData, "next") || "/bouwers";
+  const next = trim(formData, "next") || "/";
 
   if (!email) {
     redirect(`${next}?lead=missing#gids`);
