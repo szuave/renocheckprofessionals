@@ -1,13 +1,28 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/auth";
-import { deleteEvent, getEvent } from "@/lib/queries";
+import {
+  checkInToEvent,
+  checkOutFromEvent,
+  deleteEvent,
+  getEvent,
+  isUserCheckedIn,
+  listEventCheckins,
+} from "@/lib/queries";
 import { DeletePostButton } from "../../blog/[id]/delete-button";
 
 export const metadata: Metadata = {
   title: "Event",
   robots: { index: false, follow: false },
+};
+
+const REGION_LABEL: Record<string, string> = {
+  "west-vlaanderen": "West-Vlaanderen",
+  "oost-vlaanderen": "Oost-Vlaanderen",
+  antwerpen: "Antwerpen",
+  "vlaams-brabant": "Vlaams-Brabant",
 };
 
 async function deleteEventAction(formData: FormData) {
@@ -26,6 +41,36 @@ async function deleteEventAction(formData: FormData) {
   redirect("/dashboard/agenda");
 }
 
+async function checkInAction(formData: FormData) {
+  "use server";
+  const id = String(formData.get("event_id"));
+  if (!id) return;
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+  await checkInToEvent(id, user.id);
+  revalidatePath(`/dashboard/agenda/${id}`);
+}
+
+async function checkOutAction(formData: FormData) {
+  "use server";
+  const id = String(formData.get("event_id"));
+  if (!id) return;
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+  await checkOutFromEvent(id, user.id);
+  revalidatePath(`/dashboard/agenda/${id}`);
+}
+
+function formatPrice(price_cents: string | null): string | null {
+  if (!price_cents) return null;
+  const n = Number(price_cents);
+  if (!Number.isFinite(n)) return null;
+  return new Intl.NumberFormat("nl-BE", {
+    style: "currency",
+    currency: "EUR",
+  }).format(n / 100);
+}
+
 export default async function EventDetailPage({
   params,
 }: {
@@ -42,6 +87,10 @@ export default async function EventDetailPage({
   const authorName =
     event.author?.full_name ?? event.author?.company ?? "Renocheck partner";
   const isOwner = user?.id === event.author_id;
+  const isAdmin = user?.role === "admin";
+  const checkedIn = user ? await isUserCheckedIn(id, user.id) : false;
+  const attendees = isAdmin || isOwner ? await listEventCheckins(id) : [];
+  const price = formatPrice(event.price_cents);
 
   return (
     <article className="px-6 pb-20 pt-12 md:px-12 md:pb-28 md:pt-16 lg:px-20 lg:pt-20">
@@ -69,6 +118,17 @@ export default async function EventDetailPage({
         {event.location ? (
           <Detail label="Locatie" value={event.location} />
         ) : null}
+        {event.region ? (
+          <Detail
+            label="Regio"
+            value={REGION_LABEL[event.region] ?? event.region}
+          />
+        ) : null}
+        {price ? (
+          <Detail label="Prijs per persoon" value={price} />
+        ) : (
+          <Detail label="Prijs per persoon" value="Gratis" />
+        )}
       </dl>
 
       {event.description ? (
@@ -77,11 +137,80 @@ export default async function EventDetailPage({
         </div>
       ) : null}
 
-      {isOwner ? (
+      {user ? (
+        <section className="mt-12 max-w-3xl rounded-3xl border border-ink-hair/60 bg-surface-soft/30 p-6 md:p-8">
+          <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-ink-muted">
+            {checkedIn ? "U bent ingeschreven" : "Aanwezigheid"}
+          </p>
+          <p className="mt-3 text-[15px] leading-[1.7] text-ink-soft">
+            {checkedIn
+              ? "Het admin-team weet dat u komt. U kan zich nog uitschrijven via de knop hieronder."
+              : "Klik op de knop om u in te schrijven voor dit event. De admin ziet wie er komt."}
+          </p>
+          <form
+            action={checkedIn ? checkOutAction : checkInAction}
+            className="mt-5"
+          >
+            <input type="hidden" name="event_id" value={event.id} />
+            <button
+              type="submit"
+              className={`inline-flex items-center justify-center gap-3 rounded-full px-6 py-3 text-[14px] font-medium transition-colors ${
+                checkedIn
+                  ? "border border-ink-hair/70 bg-white text-ink hover:border-sage"
+                  : "bg-sage text-white hover:bg-sage-dark"
+              }`}
+            >
+              {checkedIn ? "Ik kom toch niet" : "Ik kom (inschrijven)"}
+            </button>
+          </form>
+        </section>
+      ) : null}
+
+      {(isOwner || isAdmin) && attendees.length >= 0 ? (
+        <section className="mt-12 max-w-3xl">
+          <h2 className="font-display text-[26px] font-medium leading-[1.15] text-ink md:text-[30px]">
+            Ingeschreven{" "}
+            <span className="italic text-sage">({attendees.length})</span>
+          </h2>
+          {attendees.length === 0 ? (
+            <p className="mt-6 text-[14px] text-ink-muted">
+              Nog niemand ingeschreven.
+            </p>
+          ) : (
+            <ul className="mt-6 divide-y divide-ink-hair/50 border-y border-ink-hair/50">
+              {attendees.map((a) => (
+                <li
+                  key={a.user_id}
+                  className="flex items-center justify-between gap-4 py-4"
+                >
+                  <div className="min-w-0">
+                    <p className="font-display text-[18px] font-medium leading-tight text-ink">
+                      {a.user_name ?? a.user_company ?? a.user_email}
+                    </p>
+                    <p className="mt-1 text-[12px] text-ink-muted">
+                      {a.user_company && a.user_name
+                        ? `${a.user_company} · ${a.user_email}`
+                        : a.user_email}
+                    </p>
+                  </div>
+                  <p className="shrink-0 text-[11px] uppercase tracking-[0.28em] text-ink-muted">
+                    {new Date(a.checked_in_at).toLocaleDateString("nl-BE", {
+                      day: "2-digit",
+                      month: "short",
+                    })}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ) : null}
+
+      {isOwner || isAdmin ? (
         <div className="mt-16 max-w-3xl border-t border-ink-hair/60 pt-8">
           <p className="text-[14px] text-ink-muted">
-            U heeft dit event toegevoegd. U kan het verwijderen — klik
-            twee keer om te bevestigen.
+            U heeft dit event toegevoegd of bent admin. Klik twee keer om
+            definitief te verwijderen.
           </p>
           <div className="mt-4">
             <DeletePostButton

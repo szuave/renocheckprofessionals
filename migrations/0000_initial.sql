@@ -9,11 +9,14 @@ CREATE TABLE IF NOT EXISTS users (
   full_name TEXT,
   company TEXT,
   region TEXT,
+  regions TEXT,
   rubriek TEXT,
   partner_type TEXT,
+  slug TEXT,
   role TEXT NOT NULL DEFAULT 'partner' CHECK (role IN ('admin','partner')),
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_slug ON users(slug) WHERE slug IS NOT NULL;
 
 CREATE TABLE IF NOT EXISTS sessions (
   token TEXT PRIMARY KEY,
@@ -40,11 +43,23 @@ CREATE TABLE IF NOT EXISTS events (
   title TEXT NOT NULL,
   description TEXT,
   location TEXT,
+  region TEXT,
+  price_cents TEXT,
   starts_at TEXT NOT NULL,
   ends_at TEXT,
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
 CREATE INDEX IF NOT EXISTS idx_events_starts_at ON events(starts_at);
+CREATE INDEX IF NOT EXISTS idx_events_region ON events(region);
+
+CREATE TABLE IF NOT EXISTS event_checkins (
+  event_id TEXT NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  checked_in_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  PRIMARY KEY (event_id, user_id)
+);
+CREATE INDEX IF NOT EXISTS idx_event_checkins_event ON event_checkins(event_id);
+CREATE INDEX IF NOT EXISTS idx_event_checkins_user ON event_checkins(user_id);
 
 CREATE TABLE IF NOT EXISTS partner_applications (
   id TEXT PRIMARY KEY,

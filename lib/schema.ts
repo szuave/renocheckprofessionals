@@ -10,8 +10,12 @@ export const users = sqliteTable("users", {
   full_name: text("full_name"),
   company: text("company"),
   region: text("region"),
+  // JSON-encoded array of region slugs. Multi-region support — een vakspecialist
+  // kan in meerdere regio's actief zijn.
+  regions: text("regions"),
   rubriek: text("rubriek"),
   partner_type: text("partner_type"),
+  slug: text("slug").unique(),
   role: text("role", { enum: ["admin", "partner"] }).notNull().default("partner"),
   created_at: text("created_at").notNull().default(now),
 });
@@ -55,11 +59,34 @@ export const events = sqliteTable(
     title: text("title").notNull(),
     description: text("description"),
     location: text("location"),
+    region: text("region"),
+    // Stored in cents to avoid float arithmetic. Null = niet gecommuniceerd / gratis.
+    price_cents: text("price_cents"),
     starts_at: text("starts_at").notNull(),
     ends_at: text("ends_at"),
     created_at: text("created_at").notNull().default(now),
   },
-  (t) => [index("idx_events_starts_at").on(t.starts_at)],
+  (t) => [
+    index("idx_events_starts_at").on(t.starts_at),
+    index("idx_events_region").on(t.region),
+  ],
+);
+
+export const event_checkins = sqliteTable(
+  "event_checkins",
+  {
+    event_id: text("event_id")
+      .notNull()
+      .references(() => events.id, { onDelete: "cascade" }),
+    user_id: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    checked_in_at: text("checked_in_at").notNull().default(now),
+  },
+  (t) => [
+    index("idx_event_checkins_event").on(t.event_id),
+    index("idx_event_checkins_user").on(t.user_id),
+  ],
 );
 
 export const partner_applications = sqliteTable(

@@ -4,8 +4,34 @@ import { and, desc, eq, gte, sql as drizzleSql } from "drizzle-orm";
 import { getDb, schema } from "./db";
 import type { BlogPost, EventRow, User } from "./types";
 
-const { users, blog_posts, events, partner_applications, leads, contact_messages } =
-  schema;
+const {
+  users,
+  blog_posts,
+  events,
+  event_checkins,
+  partner_applications,
+  leads,
+  contact_messages,
+} = schema;
+
+// Helpers for multi-region encoding (JSON-array text column).
+export function parseRegions(value: string | null): string[] {
+  if (!value) return [];
+  try {
+    const arr = JSON.parse(value);
+    return Array.isArray(arr) ? arr.filter((s): s is string => typeof s === "string") : [];
+  } catch {
+    return value
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+}
+
+export function serializeRegions(arr: string[] | null | undefined): string | null {
+  if (!arr || arr.length === 0) return null;
+  return JSON.stringify(arr.filter((s, i, all) => s && all.indexOf(s) === i));
+}
 
 export type AuthorRef = Pick<User, "full_name" | "company">;
 export type BlogPostWithAuthor = BlogPost & { author: AuthorRef | null };
@@ -29,6 +55,8 @@ const eventJoinColumns = {
   title: events.title,
   description: events.description,
   location: events.location,
+  region: events.region,
+  price_cents: events.price_cents,
   starts_at: events.starts_at,
   ends_at: events.ends_at,
   created_at: events.created_at,
@@ -68,6 +96,8 @@ function shapeEvent(r: {
   title: string;
   description: string | null;
   location: string | null;
+  region: string | null;
+  price_cents: string | null;
   starts_at: string;
   ends_at: string | null;
   created_at: string;
@@ -80,6 +110,8 @@ function shapeEvent(r: {
     title: r.title,
     description: r.description,
     location: r.location,
+    region: r.region,
+    price_cents: r.price_cents,
     starts_at: r.starts_at,
     ends_at: r.ends_at,
     created_at: r.created_at,
@@ -168,6 +200,8 @@ export async function createEvent(input: {
   title: string;
   description: string | null;
   location: string | null;
+  region: string | null;
+  price_cents: number | null;
   starts_at: string;
   ends_at: string | null;
 }): Promise<string> {
@@ -179,15 +213,124 @@ export async function createEvent(input: {
     title: input.title,
     description: input.description,
     location: input.location,
+    region: input.region,
+    price_cents: input.price_cents != null ? String(input.price_cents) : null,
     starts_at: input.starts_at,
     ends_at: input.ends_at,
   });
   return id;
 }
 
+export async function updateEvent(
+  id: string,
+  patch: Partial<{
+    title: string;
+    description: string | null;
+    location: string | null;
+    region: string | null;
+    price_cents: number | null;
+    starts_at: string;
+    ends_at: string | null;
+  }>,
+): Promise<void> {
+  const db = await getDb();
+  const values: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(patch)) {
+    if (v === undefined) continue;
+    if (k === "price_cents") {
+      values.price_cents = v != null ? String(v) : null;
+    } else {
+      values[k] = v;
+    }
+  }
+  if (Object.keys(values).length === 0) return;
+  await db.update(events).set(values).where(eq(events.id, id));
+}
+
 export async function deleteEvent(id: string): Promise<void> {
   const db = await getDb();
   await db.delete(events).where(eq(events.id, id));
+}
+
+/* -------------------- Event checkins -------------------- */
+
+export type EventCheckin = {
+  event_id: string;
+  user_id: string;
+  checked_in_at: string;
+  user_name: string | null;
+  user_company: string | null;
+  user_email: string;
+};
+
+export async function checkInToEvent(
+  event_id: string,
+  user_id: string,
+): Promise<void> {
+  const db = await getDb();
+  // Idempotent — duplicate check-in same (event,user) is a no-op via primary key.
+  try {
+    await db
+      .insert(event_checkins)
+      .values({ event_id, user_id });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "";
+    if (!msg.includes("UNIQUE") && !msg.includes("PRIMARY")) throw e;
+  }
+}
+
+export async function checkOutFromEvent(
+  event_id: string,
+  user_id: string,
+): Promise<void> {
+  const db = await getDb();
+  await db
+    .delete(event_checkins)
+    .where(
+      and(eq(event_checkins.event_id, event_id), eq(event_checkins.user_id, user_id)),
+    );
+}
+
+export async function isUserCheckedIn(
+  event_id: string,
+  user_id: string,
+): Promise<boolean> {
+  const db = await getDb();
+  const rows = await db
+    .select({ event_id: event_checkins.event_id })
+    .from(event_checkins)
+    .where(
+      and(eq(event_checkins.event_id, event_id), eq(event_checkins.user_id, user_id)),
+    )
+    .limit(1);
+  return rows.length > 0;
+}
+
+export async function listEventCheckins(event_id: string): Promise<EventCheckin[]> {
+  const db = await getDb();
+  const rows = await db
+    .select({
+      event_id: event_checkins.event_id,
+      user_id: event_checkins.user_id,
+      checked_in_at: event_checkins.checked_in_at,
+      user_name: users.full_name,
+      user_company: users.company,
+      user_email: users.email,
+    })
+    .from(event_checkins)
+    .innerJoin(users, eq(users.id, event_checkins.user_id))
+    .where(eq(event_checkins.event_id, event_id))
+    .orderBy(desc(event_checkins.checked_in_at));
+  return rows as EventCheckin[];
+}
+
+export async function listUserCheckins(user_id: string): Promise<string[]> {
+  const db = await getDb();
+  const rows = await db
+    .select({ event_id: event_checkins.event_id })
+    .from(event_checkins)
+    .where(eq(event_checkins.user_id, user_id));
+  return rows.map((r) => r.event_id);
 }
 
 /* -------------------- Users (list) -------------------- */
@@ -198,8 +341,10 @@ const userColumns = {
   full_name: users.full_name,
   company: users.company,
   region: users.region,
+  regions: users.regions,
   rubriek: users.rubriek,
   partner_type: users.partner_type,
+  slug: users.slug,
   role: users.role,
   created_at: users.created_at,
 };
@@ -220,6 +365,54 @@ export async function listUsersByName(): Promise<User[]> {
     .from(users)
     .orderBy(drizzleSql`COALESCE(${users.full_name}, ${users.company}, ${users.email}) ASC`);
   return rows as User[];
+}
+
+export async function getUserById(id: string): Promise<User | null> {
+  const db = await getDb();
+  const rows = await db
+    .select(userColumns)
+    .from(users)
+    .where(eq(users.id, id))
+    .limit(1);
+  return (rows[0] as User | undefined) ?? null;
+}
+
+export async function getUserBySlug(slug: string): Promise<User | null> {
+  const db = await getDb();
+  const rows = await db
+    .select(userColumns)
+    .from(users)
+    .where(eq(users.slug, slug.toLowerCase()))
+    .limit(1);
+  return (rows[0] as User | undefined) ?? null;
+}
+
+export async function updateUserProfile(
+  id: string,
+  patch: Partial<{
+    full_name: string | null;
+    company: string | null;
+    region: string | null;
+    regions: string[] | null;
+    rubriek: string | null;
+    partner_type: string | null;
+    slug: string | null;
+  }>,
+): Promise<void> {
+  const db = await getDb();
+  const values: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(patch)) {
+    if (v === undefined) continue;
+    if (k === "regions") {
+      values.regions = serializeRegions(v as string[] | null);
+    } else if (k === "slug") {
+      values.slug = v ? String(v).trim().toLowerCase() : null;
+    } else {
+      values[k] = v;
+    }
+  }
+  if (Object.keys(values).length === 0) return;
+  await db.update(users).set(values).where(eq(users.id, id));
 }
 
 /* -------------------- Partner applications -------------------- */

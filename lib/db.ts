@@ -31,11 +31,52 @@ async function getLocalDb(): Promise<DB> {
   conn.pragma("journal_mode = WAL");
   conn.pragma("foreign_keys = ON");
   conn.exec(LOCAL_SCHEMA_SQL);
+  migrateLocalSchema(conn);
 
   cachedLocalDb = drizzle(conn, { schema });
 
   await seedAdminIfEmpty(cachedLocalDb);
   return cachedLocalDb;
+}
+
+function migrateLocalSchema(conn: import("better-sqlite3").Database) {
+  // Idempotent column additions for existing local DBs.
+  const userCols = new Set(
+    (conn.prepare("PRAGMA table_info(users)").all() as { name: string }[]).map(
+      (r) => r.name,
+    ),
+  );
+  if (!userCols.has("regions"))
+    conn.exec("ALTER TABLE users ADD COLUMN regions TEXT");
+  if (!userCols.has("slug"))
+    conn.exec("ALTER TABLE users ADD COLUMN slug TEXT");
+
+  const eventCols = new Set(
+    (conn.prepare("PRAGMA table_info(events)").all() as { name: string }[]).map(
+      (r) => r.name,
+    ),
+  );
+  if (!eventCols.has("region"))
+    conn.exec("ALTER TABLE events ADD COLUMN region TEXT");
+  if (!eventCols.has("price_cents"))
+    conn.exec("ALTER TABLE events ADD COLUMN price_cents TEXT");
+
+  // Unique index on slug (after column exists) — partial unique to allow NULLs.
+  conn.exec(
+    "CREATE UNIQUE INDEX IF NOT EXISTS idx_users_slug ON users(slug) WHERE slug IS NOT NULL",
+  );
+  // event_checkins table
+  conn.exec(`
+    CREATE TABLE IF NOT EXISTS event_checkins (
+      event_id TEXT NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      checked_in_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+      PRIMARY KEY (event_id, user_id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_event_checkins_event ON event_checkins(event_id);
+    CREATE INDEX IF NOT EXISTS idx_event_checkins_user ON event_checkins(user_id);
+    CREATE INDEX IF NOT EXISTS idx_events_region ON events(region);
+  `);
 }
 
 async function getCloudflareDb(): Promise<DB> {

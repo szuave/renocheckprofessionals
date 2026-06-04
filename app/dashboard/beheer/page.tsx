@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import {
@@ -7,7 +8,8 @@ import {
   requireAdmin,
   setUserRole,
 } from "@/lib/auth";
-import { listUsers } from "@/lib/queries";
+import { listUsers, parseRegions } from "@/lib/queries";
+import { validateSlug } from "@/lib/slugs";
 
 export const metadata: Metadata = {
   title: "Beheer",
@@ -46,9 +48,10 @@ async function createUserAction(formData: FormData) {
   const password = String(formData.get("password") ?? "").trim();
   const full_name = String(formData.get("full_name") ?? "").trim();
   const company = String(formData.get("company") ?? "").trim();
-  const region = String(formData.get("region") ?? "").trim();
+  const regions = formData.getAll("regions").map((r) => String(r).trim()).filter(Boolean);
   const rubriek = String(formData.get("rubriek") ?? "").trim();
   const partner_type = String(formData.get("partner_type") ?? "").trim();
+  const slugRaw = String(formData.get("slug") ?? "").trim().toLowerCase();
   const roleRaw = String(formData.get("role") ?? "partner").trim();
   const role: "admin" | "partner" = roleRaw === "admin" ? "admin" : "partner";
 
@@ -58,6 +61,12 @@ async function createUserAction(formData: FormData) {
   if (password.length < 6) {
     redirect("/dashboard/beheer?error=password-too-short");
   }
+  let slug: string | null = null;
+  if (slugRaw) {
+    const err = validateSlug(slugRaw);
+    if (err) redirect(`/dashboard/beheer?error=${encodeURIComponent(err)}`);
+    slug = slugRaw;
+  }
 
   try {
     await createUser({
@@ -65,9 +74,11 @@ async function createUserAction(formData: FormData) {
       password,
       full_name: full_name || null,
       company: company || null,
-      region: region || null,
+      region: regions[0] ?? null,
+      regions: regions.length > 0 ? regions : null,
       rubriek: rubriek || null,
       partner_type: partner_type || null,
+      slug,
       role,
     });
   } catch (err) {
@@ -163,25 +174,40 @@ export default async function BeheerPage({
             ]}
             help="Admin krijgt toegang tot inbox en beheer-paginas."
           />
-          <div className="grid gap-6 md:grid-cols-2">
-            <Select
-              id="partner_type"
-              label="Type partner"
-              options={[
-                { value: "", label: "—" },
-                { value: "architect", label: "Architect" },
-                { value: "vakspecialist", label: "Vakspecialist" },
-                { value: "bouwondernemer", label: "Bouwondernemer" },
-              ]}
-            />
-            <Select
-              id="region"
-              label="Regio"
-              options={[
-                { value: "", label: "—" },
-                ...REGIONS.map((r) => ({ value: r, label: capitalize(r) })),
-              ]}
-            />
+          <Select
+            id="partner_type"
+            label="Type partner"
+            options={[
+              { value: "", label: "—" },
+              { value: "architect", label: "Architect" },
+              { value: "vakspecialist", label: "Vakspecialist" },
+              { value: "bouwondernemer", label: "Bouwondernemer" },
+            ]}
+          />
+          <div>
+            <span className="block text-[14px] font-medium text-ink">
+              Regio's
+            </span>
+            <p className="mt-1 text-[13px] text-ink-muted">
+              Selecteer alle regio's waar deze partner actief is. Vakspecialisten
+              kunnen in meerdere regio's zitten.
+            </p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              {REGIONS.map((r) => (
+                <label
+                  key={r}
+                  className="flex items-center gap-3 rounded-xl border border-ink-hair/70 bg-white/60 px-4 py-3 text-[14px] text-ink hover:border-sage"
+                >
+                  <input
+                    type="checkbox"
+                    name="regions"
+                    value={r}
+                    className="h-4 w-4 accent-sage"
+                  />
+                  {capitalize(r)}
+                </label>
+              ))}
+            </div>
           </div>
           <Select
             id="rubriek"
@@ -190,6 +216,11 @@ export default async function BeheerPage({
               { value: "", label: "—" },
               ...RUBRIEKEN.map((r) => ({ value: r, label: r })),
             ]}
+          />
+          <Field
+            id="slug"
+            label="Publieke URL slug (optioneel)"
+            help="Wordt het URL-fragment van hun bedrijfspagina (renocheckprofessionals.be/<slug>). Lowercase letters, cijfers en koppeltekens."
           />
           <button
             type="submit"
@@ -205,20 +236,32 @@ export default async function BeheerPage({
           Alle partners
         </h2>
         <ul className="mt-8 divide-y divide-ink-hair/50 border-y border-ink-hair/50">
-          {profiles.map((p) => (
+          {profiles.map((p) => {
+            const regionsList = parseRegions(p.regions);
+            const displayRegions =
+              regionsList.length > 0
+                ? regionsList.map((r) => capitalize(r)).join(", ")
+                : p.region
+                  ? capitalize(p.region)
+                  : "—";
+            return (
             <li
               key={p.id}
               className="grid gap-4 py-6 md:grid-cols-12 md:items-center md:gap-6"
             >
               <div className="md:col-span-5">
-                <p className="font-display text-[20px] font-medium leading-tight text-ink md:text-[22px]">
+                <Link
+                  href={`/dashboard/beheer/${p.id}`}
+                  className="font-display text-[20px] font-medium leading-tight text-ink hover:text-sage md:text-[22px]"
+                >
                   {p.full_name ?? p.company ?? "Naamloos"}
-                </p>
+                </Link>
                 <p className="mt-1 text-[13px] text-ink-muted">
                   {p.email} ·{" "}
                   {p.partner_type ?? "—"} ·{" "}
-                  {p.region ? capitalize(p.region) : "—"}
+                  {displayRegions}
                   {p.rubriek ? ` · ${p.rubriek}` : ""}
+                  {p.slug ? ` · /${p.slug}` : ""}
                 </p>
               </div>
               <div className="md:col-span-3">
@@ -261,7 +304,8 @@ export default async function BeheerPage({
                 ) : null}
               </div>
             </li>
-          ))}
+            );
+          })}
         </ul>
       </section>
     </article>

@@ -6,8 +6,10 @@ export type User = {
   full_name: string | null;
   company: string | null;
   region: string | null;
+  regions: string | null;
   rubriek: string | null;
   partner_type: string | null;
+  slug: string | null;
   role: Role;
   created_at: string;
 };
@@ -28,6 +30,8 @@ export type EventRow = {
   title: string;
   description: string | null;
   location: string | null;
+  region: string | null;
+  price_cents: string | null;
   starts_at: string;
   ends_at: string | null;
   created_at: string;

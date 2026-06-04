@@ -9,12 +9,28 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+const VALID_REGIONS = new Set([
+  "west-vlaanderen",
+  "oost-vlaanderen",
+  "antwerpen",
+  "vlaams-brabant",
+]);
+
 async function createEventAction(formData: FormData) {
   "use server";
 
   const title = String(formData.get("title") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
   const location = String(formData.get("location") ?? "").trim();
+  const regionRaw = String(formData.get("region") ?? "").trim();
+  const region = VALID_REGIONS.has(regionRaw) ? regionRaw : null;
+  const priceRaw = String(formData.get("price_eur") ?? "").trim();
+  let price_cents: number | null = null;
+  if (priceRaw) {
+    const cleaned = priceRaw.replace(",", ".");
+    const n = Number.parseFloat(cleaned);
+    if (Number.isFinite(n) && n >= 0) price_cents = Math.round(n * 100);
+  }
   const starts_at = String(formData.get("starts_at") ?? "").trim();
   const ends_at = String(formData.get("ends_at") ?? "").trim();
 
@@ -29,6 +45,8 @@ async function createEventAction(formData: FormData) {
     title,
     description: description || null,
     location: location || null,
+    region,
+    price_cents,
     starts_at: new Date(starts_at).toISOString(),
     ends_at: ends_at ? new Date(ends_at).toISOString() : null,
   });
@@ -90,6 +108,40 @@ export default async function NewEventPage({
         />
 
         <div className="grid gap-6 md:grid-cols-2">
+          <div>
+            <label
+              htmlFor="region"
+              className="block text-[14px] font-medium text-ink"
+            >
+              Regio
+            </label>
+            <p className="mt-1 text-[13px] text-ink-muted">
+              Welke regio dit event bedient.
+            </p>
+            <select
+              id="region"
+              name="region"
+              defaultValue=""
+              className="mt-3 w-full rounded-xl border border-ink-hair/70 bg-surface-soft/70 px-4 py-3.5 text-[16px] text-ink focus:border-ink focus:outline-none"
+            >
+              <option value="">Geen / alle regio's</option>
+              <option value="west-vlaanderen">West-Vlaanderen</option>
+              <option value="oost-vlaanderen">Oost-Vlaanderen</option>
+              <option value="antwerpen">Antwerpen</option>
+              <option value="vlaams-brabant">Vlaams-Brabant</option>
+            </select>
+          </div>
+          <Field
+            id="price_eur"
+            label="Prijs per persoon (EUR)"
+            type="number"
+            step="0.01"
+            min="0"
+            help="Laat leeg voor gratis events. Partners zien dit bedrag."
+          />
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
           <Field
             id="starts_at"
             label="Begint op"
@@ -135,12 +187,16 @@ function Field({
   help,
   type = "text",
   required,
+  step,
+  min,
 }: {
   id: string;
   label: string;
   help?: string;
   type?: string;
   required?: boolean;
+  step?: string;
+  min?: string;
 }) {
   return (
     <div>
@@ -163,6 +219,8 @@ function Field({
         name={id}
         type={type}
         required={required}
+        step={step}
+        min={min}
         className="mt-3 w-full rounded-xl border border-ink-hair/70 bg-surface-soft/70 px-4 py-3.5 text-[16px] text-ink placeholder:text-ink-muted/60 focus:border-ink focus:outline-none"
       />
     </div>
