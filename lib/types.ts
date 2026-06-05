@@ -8,6 +8,7 @@ export type User = {
   region: string | null;
   regions: string | null;
   rubriek: string | null;
+  rubrieken: string | null;
   partner_type: string | null;
   slug: string | null;
   role: Role;

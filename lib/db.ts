@@ -48,6 +48,8 @@ function migrateLocalSchema(conn: import("better-sqlite3").Database) {
   );
   if (!userCols.has("regions"))
     conn.exec("ALTER TABLE users ADD COLUMN regions TEXT");
+  if (!userCols.has("rubrieken"))
+    conn.exec("ALTER TABLE users ADD COLUMN rubrieken TEXT");
   if (!userCols.has("slug"))
     conn.exec("ALTER TABLE users ADD COLUMN slug TEXT");
 
@@ -142,8 +144,11 @@ CREATE TABLE IF NOT EXISTS users (
   full_name TEXT,
   company TEXT,
   region TEXT,
+  regions TEXT,
   rubriek TEXT,
+  rubrieken TEXT,
   partner_type TEXT,
+  slug TEXT,
   role TEXT NOT NULL DEFAULT 'partner' CHECK (role IN ('admin','partner')),
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );

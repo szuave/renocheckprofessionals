@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
   region TEXT,
   regions TEXT,
   rubriek TEXT,
+  rubrieken TEXT,
   partner_type TEXT,
   slug TEXT,
   role TEXT NOT NULL DEFAULT 'partner' CHECK (role IN ('admin','partner')),

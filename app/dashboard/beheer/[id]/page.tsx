@@ -7,6 +7,7 @@ import {
   getUserById,
   listUserCheckins,
   parseRegions,
+  parseRubrieken,
   updateUserProfile,
 } from "@/lib/queries";
 import { validateSlug } from "@/lib/slugs";
@@ -52,7 +53,10 @@ async function updateUserAction(formData: FormData) {
     .getAll("regions")
     .map((r) => String(r).trim())
     .filter(Boolean);
-  const rubriek = String(formData.get("rubriek") ?? "").trim();
+  const rubrieken = formData
+    .getAll("rubrieken")
+    .map((r) => String(r).trim())
+    .filter(Boolean);
   const partner_type = String(formData.get("partner_type") ?? "").trim();
   const slugRaw = String(formData.get("slug") ?? "").trim().toLowerCase();
 
@@ -69,7 +73,8 @@ async function updateUserAction(formData: FormData) {
       company: company || null,
       region: regions[0] ?? null,
       regions: regions.length > 0 ? regions : null,
-      rubriek: rubriek || null,
+      rubriek: rubrieken[0] ?? null,
+      rubrieken: rubrieken.length > 0 ? rubrieken : null,
       partner_type: partner_type || null,
       slug,
     });
@@ -102,6 +107,12 @@ export default async function UserDetailPage({
     ? userRegions
     : user.region
       ? [user.region]
+      : [];
+  const userRubrieken = parseRubrieken(user.rubrieken);
+  const fallbackRubrieken = userRubrieken.length > 0
+    ? userRubrieken
+    : user.rubriek
+      ? [user.rubriek]
       : [];
   const checkinIds = await listUserCheckins(id);
 
@@ -201,15 +212,31 @@ export default async function UserDetailPage({
             </div>
           </div>
 
-          <Select
-            id="rubriek"
-            label="Rubriek (vakspecialisten)"
-            defaultValue={user.rubriek ?? ""}
-            options={[
-              { value: "", label: "—" },
-              ...RUBRIEKEN.map((r) => ({ value: r, label: r })),
-            ]}
-          />
+          <div>
+            <span className="block text-[14px] font-medium text-ink">
+              Rubrieken (vakspecialisten)
+            </span>
+            <p className="mt-1 text-[13px] text-ink-muted">
+              Selecteer alle rubrieken waarin deze partner actief is.
+            </p>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              {RUBRIEKEN.map((r) => (
+                <label
+                  key={r}
+                  className="flex items-center gap-3 rounded-xl border border-ink-hair/70 bg-white/60 px-3 py-2 text-[13px] text-ink hover:border-sage"
+                >
+                  <input
+                    type="checkbox"
+                    name="rubrieken"
+                    value={r}
+                    defaultChecked={fallbackRubrieken.includes(r)}
+                    className="h-4 w-4 accent-sage"
+                  />
+                  {r}
+                </label>
+              ))}
+            </div>
+          </div>
 
           <Field
             id="slug"

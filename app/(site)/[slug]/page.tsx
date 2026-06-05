@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BreadcrumbSchema } from "@/components/structured-data";
-import { getUserBySlug, parseRegions } from "@/lib/queries";
+import { getUserBySlug, parseRegions, parseRubrieken } from "@/lib/queries";
 import { RESERVED_SLUGS } from "@/lib/slugs";
 
 export const dynamic = "force-dynamic";
@@ -42,7 +42,12 @@ export async function generateMetadata({
       : user.region
         ? REGION_LABEL[user.region] ?? user.region
         : "Vlaanderen";
-  const description = `${title} — ${PARTNER_TYPE_LABEL[user.partner_type ?? ""] ?? "Partner"} binnen het Renocheck Professionals netwerk. Actief in ${regionList}.${user.rubriek ? ` Rubriek: ${user.rubriek}.` : ""}`;
+  const rubrieken = parseRubrieken(user.rubrieken);
+  const rubriekenSummary =
+    rubrieken.length > 0
+      ? rubrieken.join(", ")
+      : user.rubriek ?? null;
+  const description = `${title} — ${PARTNER_TYPE_LABEL[user.partner_type ?? ""] ?? "Partner"} binnen het Renocheck Professionals netwerk. Actief in ${regionList}.${rubriekenSummary ? ` ${rubrieken.length > 1 ? "Rubrieken" : "Rubriek"}: ${rubriekenSummary}.` : ""}`;
   return {
     title: `${title} — Renocheck Professionals`,
     description,
@@ -78,6 +83,13 @@ export default async function PartnerPage({
       ? regions
       : user.region
         ? [user.region]
+        : [];
+  const rubrieken = parseRubrieken(user.rubrieken);
+  const rubriekenList =
+    rubrieken.length > 0
+      ? rubrieken
+      : user.rubriek
+        ? [user.rubriek]
         : [];
 
   return (
@@ -126,8 +138,11 @@ export default async function PartnerPage({
                 : "—"
             }
           />
-          {user.rubriek ? (
-            <Detail label="Rubriek" value={user.rubriek} />
+          {rubriekenList.length > 0 ? (
+            <Detail
+              label={rubriekenList.length > 1 ? "Rubrieken" : "Rubriek"}
+              value={rubriekenList.join(", ")}
+            />
           ) : null}
         </dl>
       </section>

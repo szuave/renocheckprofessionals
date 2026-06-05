@@ -8,7 +8,7 @@ import {
   requireAdmin,
   setUserRole,
 } from "@/lib/auth";
-import { listUsers, parseRegions } from "@/lib/queries";
+import { listUsers, parseRegions, parseRubrieken } from "@/lib/queries";
 import { validateSlug } from "@/lib/slugs";
 
 export const metadata: Metadata = {
@@ -49,7 +49,7 @@ async function createUserAction(formData: FormData) {
   const full_name = String(formData.get("full_name") ?? "").trim();
   const company = String(formData.get("company") ?? "").trim();
   const regions = formData.getAll("regions").map((r) => String(r).trim()).filter(Boolean);
-  const rubriek = String(formData.get("rubriek") ?? "").trim();
+  const rubrieken = formData.getAll("rubrieken").map((r) => String(r).trim()).filter(Boolean);
   const partner_type = String(formData.get("partner_type") ?? "").trim();
   const slugRaw = String(formData.get("slug") ?? "").trim().toLowerCase();
   const roleRaw = String(formData.get("role") ?? "partner").trim();
@@ -76,7 +76,8 @@ async function createUserAction(formData: FormData) {
       company: company || null,
       region: regions[0] ?? null,
       regions: regions.length > 0 ? regions : null,
-      rubriek: rubriek || null,
+      rubriek: rubrieken[0] ?? null,
+      rubrieken: rubrieken.length > 0 ? rubrieken : null,
       partner_type: partner_type || null,
       slug,
       role,
@@ -209,14 +210,31 @@ export default async function BeheerPage({
               ))}
             </div>
           </div>
-          <Select
-            id="rubriek"
-            label="Rubriek (alleen voor vakspecialisten)"
-            options={[
-              { value: "", label: "—" },
-              ...RUBRIEKEN.map((r) => ({ value: r, label: r })),
-            ]}
-          />
+          <div>
+            <span className="block text-[14px] font-medium text-ink">
+              Rubrieken (alleen voor vakspecialisten)
+            </span>
+            <p className="mt-1 text-[13px] text-ink-muted">
+              Selecteer één of meer rubrieken. Vakspecialisten kunnen in
+              meerdere vakken actief zijn.
+            </p>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {RUBRIEKEN.map((r) => (
+                <label
+                  key={r}
+                  className="flex items-center gap-3 rounded-xl border border-ink-hair/70 bg-white/60 px-3 py-2 text-[13px] text-ink hover:border-sage"
+                >
+                  <input
+                    type="checkbox"
+                    name="rubrieken"
+                    value={r}
+                    className="h-4 w-4 accent-sage"
+                  />
+                  {r}
+                </label>
+              ))}
+            </div>
+          </div>
           <Field
             id="slug"
             label="Publieke URL slug (optioneel)"
@@ -244,6 +262,11 @@ export default async function BeheerPage({
                 : p.region
                   ? capitalize(p.region)
                   : "—";
+            const rubriekenList = parseRubrieken(p.rubrieken);
+            const displayRubrieken =
+              rubriekenList.length > 0
+                ? rubriekenList.join(", ")
+                : p.rubriek ?? null;
             return (
             <li
               key={p.id}
@@ -260,7 +283,7 @@ export default async function BeheerPage({
                   {p.email} ·{" "}
                   {p.partner_type ?? "—"} ·{" "}
                   {displayRegions}
-                  {p.rubriek ? ` · ${p.rubriek}` : ""}
+                  {displayRubrieken ? ` · ${displayRubrieken}` : ""}
                   {p.slug ? ` · /${p.slug}` : ""}
                 </p>
               </div>

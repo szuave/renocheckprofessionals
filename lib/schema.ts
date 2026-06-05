@@ -14,6 +14,9 @@ export const users = sqliteTable("users", {
   // kan in meerdere regio's actief zijn.
   regions: text("regions"),
   rubriek: text("rubriek"),
+  // JSON-encoded array of rubriek-namen. Multi-rubriek support — sommige
+  // vakspecialisten zijn in meerdere rubrieken actief.
+  rubrieken: text("rubrieken"),
   partner_type: text("partner_type"),
   slug: text("slug").unique(),
   role: text("role", { enum: ["admin", "partner"] }).notNull().default("partner"),

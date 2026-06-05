@@ -14,8 +14,8 @@ const {
   contact_messages,
 } = schema;
 
-// Helpers for multi-region encoding (JSON-array text column).
-export function parseRegions(value: string | null): string[] {
+// Helpers for JSON-array text columns (multi-region, multi-rubriek).
+function parseJsonArray(value: string | null): string[] {
   if (!value) return [];
   try {
     const arr = JSON.parse(value);
@@ -28,10 +28,15 @@ export function parseRegions(value: string | null): string[] {
   }
 }
 
-export function serializeRegions(arr: string[] | null | undefined): string | null {
+function serializeJsonArray(arr: string[] | null | undefined): string | null {
   if (!arr || arr.length === 0) return null;
   return JSON.stringify(arr.filter((s, i, all) => s && all.indexOf(s) === i));
 }
+
+export const parseRegions = parseJsonArray;
+export const serializeRegions = serializeJsonArray;
+export const parseRubrieken = parseJsonArray;
+export const serializeRubrieken = serializeJsonArray;
 
 export type AuthorRef = Pick<User, "full_name" | "company">;
 export type BlogPostWithAuthor = BlogPost & { author: AuthorRef | null };
@@ -343,6 +348,7 @@ const userColumns = {
   region: users.region,
   regions: users.regions,
   rubriek: users.rubriek,
+  rubrieken: users.rubrieken,
   partner_type: users.partner_type,
   slug: users.slug,
   role: users.role,
@@ -395,6 +401,7 @@ export async function updateUserProfile(
     region: string | null;
     regions: string[] | null;
     rubriek: string | null;
+    rubrieken: string[] | null;
     partner_type: string | null;
     slug: string | null;
   }>,
@@ -405,6 +412,8 @@ export async function updateUserProfile(
     if (v === undefined) continue;
     if (k === "regions") {
       values.regions = serializeRegions(v as string[] | null);
+    } else if (k === "rubrieken") {
+      values.rubrieken = serializeRubrieken(v as string[] | null);
     } else if (k === "slug") {
       values.slug = v ? String(v).trim().toLowerCase() : null;
     } else {

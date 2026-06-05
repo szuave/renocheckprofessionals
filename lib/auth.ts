@@ -20,6 +20,7 @@ const userColumns = {
   region: users.region,
   regions: users.regions,
   rubriek: users.rubriek,
+  rubrieken: users.rubrieken,
   partner_type: users.partner_type,
   slug: users.slug,
   role: users.role,
@@ -126,12 +127,13 @@ export type CreateUserInput = {
   region?: string | null;
   regions?: string[] | null;
   rubriek?: string | null;
+  rubrieken?: string[] | null;
   partner_type?: string | null;
   slug?: string | null;
   role?: Role;
 };
 
-function serializeRegions(arr: string[] | null | undefined): string | null {
+function serializeArray(arr: string[] | null | undefined): string | null {
   if (!arr || arr.length === 0) return null;
   return JSON.stringify(arr.filter((s, i, all) => s && all.indexOf(s) === i));
 }
@@ -146,8 +148,9 @@ export async function createUser(input: CreateUserInput): Promise<User> {
     full_name: input.full_name?.trim() || null,
     company: input.company?.trim() || null,
     region: input.region?.trim() || null,
-    regions: serializeRegions(input.regions),
+    regions: serializeArray(input.regions),
     rubriek: input.rubriek?.trim() || null,
+    rubrieken: serializeArray(input.rubrieken),
     partner_type: input.partner_type?.trim() || null,
     slug: input.slug ? input.slug.trim().toLowerCase() || null : null,
     role: input.role ?? "partner",
