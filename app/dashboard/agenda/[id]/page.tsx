@@ -73,10 +73,13 @@ function formatPrice(price_cents: string | null): string | null {
 
 export default async function EventDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ saved?: string }>;
 }) {
   const { id } = await params;
+  const sp = await searchParams;
   const user = await getCurrentUser();
   const event = await getEvent(id);
 
@@ -88,6 +91,7 @@ export default async function EventDetailPage({
     event.author?.full_name ?? event.author?.company ?? "Renocheck partner";
   const isOwner = user?.id === event.author_id;
   const isAdmin = user?.role === "admin";
+  const canEdit = isOwner || isAdmin;
   const checkedIn = user ? await isUserCheckedIn(id, user.id) : false;
   const attendees = isAdmin || isOwner ? await listEventCheckins(id) : [];
   const price = formatPrice(event.price_cents);
@@ -101,13 +105,29 @@ export default async function EventDetailPage({
         ← Terug naar de agenda
       </Link>
 
-      <header className="mt-8 max-w-3xl">
-        <p className="text-[12px] font-medium uppercase tracking-[0.28em] text-ink-muted">
-          Toegevoegd door {authorName}
-        </p>
-        <h1 className="mt-4 font-display text-[clamp(2rem,4.5vw,3.5rem)] font-medium leading-[1.05] text-ink">
-          {event.title}
-        </h1>
+      {sp?.saved === "1" ? (
+        <div className="mt-6 max-w-3xl rounded-2xl border border-sage/40 bg-sage/10 p-5 text-[14px] text-ink">
+          Wijzigingen opgeslagen.
+        </div>
+      ) : null}
+
+      <header className="mt-8 flex max-w-3xl flex-col items-start justify-between gap-4 md:flex-row md:items-end">
+        <div className="min-w-0">
+          <p className="text-[12px] font-medium uppercase tracking-[0.28em] text-ink-muted">
+            Toegevoegd door {authorName}
+          </p>
+          <h1 className="mt-4 font-display text-[clamp(2rem,4.5vw,3.5rem)] font-medium leading-[1.05] text-ink">
+            {event.title}
+          </h1>
+        </div>
+        {canEdit ? (
+          <Link
+            href={`/dashboard/agenda/${id}/bewerken`}
+            className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-[13px] font-medium text-white transition-colors hover:bg-sage"
+          >
+            Bewerken →
+          </Link>
+        ) : null}
       </header>
 
       <dl className="mt-10 grid max-w-3xl gap-6 rounded-3xl border border-ink-hair/60 bg-surface-soft/30 p-7 md:grid-cols-2 md:gap-8 md:p-10">
