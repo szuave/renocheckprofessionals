@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import {
   getUserById,
-  listUserCheckins,
+  listUserCheckinsWithEvents,
   parseRegions,
   parseRubrieken,
   updateUserProfile,
@@ -114,7 +114,7 @@ export default async function UserDetailPage({
     : user.rubriek
       ? [user.rubriek]
       : [];
-  const checkinIds = await listUserCheckins(id);
+  const checkins = await listUserCheckinsWithEvents(id);
 
   const errorMsg = sp?.error;
   const savedMsg = sp?.saved === "1";
@@ -301,26 +301,41 @@ export default async function UserDetailPage({
               Aanwezigheid
             </p>
             <h3 className="mt-3 font-display text-[24px] font-medium leading-[1.15] text-ink">
-              Ingecheckte events.
+              Ingecheckte{" "}
+              <span className="italic text-sage">events</span>
+              <span className="text-ink-soft"> ({checkins.length})</span>
             </h3>
-            {checkinIds.length === 0 ? (
+            {checkins.length === 0 ? (
               <p className="mt-5 text-[14px] text-ink-muted">
                 Deze partner heeft zich nog niet ingeschreven voor events.
               </p>
             ) : (
-              <p className="mt-5 text-[14px] text-ink">
-                Ingeschreven voor{" "}
-                <span className="font-medium text-sage">
-                  {checkinIds.length}
-                </span>{" "}
-                event{checkinIds.length === 1 ? "" : "s"}.{" "}
-                <Link
-                  href="/dashboard/agenda"
-                  className="text-sage underline-offset-4 hover:underline"
-                >
-                  Open agenda →
-                </Link>
-              </p>
+              <ul className="mt-5 space-y-3">
+                {checkins.map((c) => (
+                  <li
+                    key={c.event_id}
+                    className="rounded-xl border border-ink-hair/60 bg-white/60 p-3"
+                  >
+                    <Link
+                      href={`/dashboard/agenda/${c.event_id}`}
+                      className="block"
+                    >
+                      <p className="text-[14px] font-medium text-ink hover:text-sage">
+                        {c.title}
+                      </p>
+                      <p className="mt-1 text-[12px] text-ink-muted">
+                        {new Date(c.starts_at).toLocaleDateString("nl-BE", {
+                          day: "2-digit",
+                          month: "long",
+                          year: "numeric",
+                        })}
+                        {c.region ? ` · ${capitalize(c.region)}` : ""}
+                        {c.location ? ` · ${c.location}` : ""}
+                      </p>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             )}
           </section>
 

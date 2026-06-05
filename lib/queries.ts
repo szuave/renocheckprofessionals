@@ -338,6 +338,35 @@ export async function listUserCheckins(user_id: string): Promise<string[]> {
   return rows.map((r) => r.event_id);
 }
 
+export type UserCheckinEvent = {
+  event_id: string;
+  title: string;
+  starts_at: string;
+  region: string | null;
+  location: string | null;
+  checked_in_at: string;
+};
+
+export async function listUserCheckinsWithEvents(
+  user_id: string,
+): Promise<UserCheckinEvent[]> {
+  const db = await getDb();
+  const rows = await db
+    .select({
+      event_id: event_checkins.event_id,
+      title: events.title,
+      starts_at: events.starts_at,
+      region: events.region,
+      location: events.location,
+      checked_in_at: event_checkins.checked_in_at,
+    })
+    .from(event_checkins)
+    .innerJoin(events, eq(events.id, event_checkins.event_id))
+    .where(eq(event_checkins.user_id, user_id))
+    .orderBy(desc(events.starts_at));
+  return rows as UserCheckinEvent[];
+}
+
 /* -------------------- Users (list) -------------------- */
 
 const userColumns = {

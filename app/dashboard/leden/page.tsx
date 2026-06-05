@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { listUsersByName, parseRubrieken } from "@/lib/queries";
+import { listUsersByName, parseRegions, parseRubrieken } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Andere partners",
@@ -32,6 +32,16 @@ export default async function LedenPage() {
       ) : (
         <ul className="mt-12 grid gap-5 md:mt-16 md:grid-cols-2 lg:grid-cols-3">
           {profiles.map((p) => {
+            const regionsList = parseRegions(p.regions);
+            const allRegions =
+              regionsList.length > 0
+                ? regionsList
+                : p.region
+                  ? [p.region]
+                  : [];
+            const regionsDisplay = allRegions
+              .map((r) => capitalize(r))
+              .join(", ");
             const rubriekenList = parseRubrieken(p.rubrieken);
             const displayRubrieken =
               rubriekenList.length > 0
@@ -45,7 +55,7 @@ export default async function LedenPage() {
                 <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-ink-muted">
                   {p.partner_type ??
                     (p.role === "admin" ? "Renocheck team" : "Partner")}
-                  {p.region ? ` · ${capitalize(p.region)}` : ""}
+                  {regionsDisplay ? ` · ${regionsDisplay}` : ""}
                 </p>
                 <h2 className="mt-3 font-display text-[24px] font-medium leading-[1.15] text-ink">
                   {p.full_name ?? p.company ?? "Naamloos"}
