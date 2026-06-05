@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   twitter: {
     title: "Bouwnetwerk Antwerpen · Renocheck Professionals",
     description:
-      "Selectie boven zoekvolume — een gesloten kring vakmensen voor uw project in Antwerpen, Mechelen of de Kempen.",
+      "Selectie boven zoekvolume — een gesloten kring partners in Antwerpen, Mechelen en de Kempen voor architecten, vakspecialisten en bouwondernemers.",
   },
 };
 

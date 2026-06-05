@@ -86,8 +86,9 @@ export default function VakspecialistenPage() {
                 rubrieken.
               </h2>
               <p className="mt-8 max-w-md text-[17px] leading-[1.7] text-ink-soft md:text-[18px]">
-                Renocheck dekt de essentiële vakken voor een renovatie- of
-                nieuwbouwproject. Eén persoon per vak, per regio.
+                Veertien rubrieken dekken samen het volledige bouwtraject van
+                een architect-partner. Eén vakspecialist per rubriek per
+                regio — exclusief.
               </p>
             </div>
 
@@ -124,12 +125,12 @@ export default function VakspecialistenPage() {
                 id="regions-title"
                 className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink"
               >
-                Vakspecialisten in{" "}
-                <span className="italic text-sage">uw</span> regio.
+                Vrije plekken per{" "}
+                <span className="italic text-sage">regio</span>.
               </h2>
               <p className="mt-8 max-w-md text-[17px] leading-[1.7] text-ink-soft">
-                Selecteer uw regio om de veertien vakspecialisten te
-                bekijken die er actief zijn.
+                Klik op uw regio om de huidige bezetting en de vrije
+                rubrieken te zien.
               </p>
             </div>
 
@@ -150,7 +151,7 @@ export default function VakspecialistenPage() {
             {REGIONS.map((r, i) => (
               <li key={r.slug}>
                 <Link
-                  href="/contact"
+                  href={`/regio/${r.slug}`}
                   className={`group flex items-center justify-between gap-6 py-6 md:py-8 ${
                     i === 0 ? "border-t border-ink-hair/40" : ""
                   } border-b border-ink-hair/40`}

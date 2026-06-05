@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { CustomSelect } from "@/components/custom-select";
 import { PillButton, PillLink } from "@/components/pill-button";
 import { submitPartnerApplication } from "./actions";
 
@@ -101,10 +102,9 @@ function Hero() {
             </h1>
 
             <p className="enter-up delay-500 mt-8 max-w-xl text-[17px] leading-[1.65] text-ink-soft md:text-[19px]">
-              Een gesloten netwerk van architectenbureaus, vakspecialisten en
-              bouwondernemers in West-Vlaanderen, Oost-Vlaanderen, Antwerpen en
-              Vlaams-Brabant. Eén partner per rubriek per regio — exclusief op
-              vakmanschap.
+              Een gesloten kring architectenbureaus, vakspecialisten en
+              bouwondernemers per Vlaamse regio. Vaste partners, vaste
+              doorverwijzingen, vaste standaarden — voor leden, door leden.
             </p>
 
             <div className="enter-up delay-600 mt-10 flex flex-wrap items-center gap-4">
@@ -317,7 +317,7 @@ function Regions() {
             {REGIONS.map((r, i) => (
               <li key={r.slug}>
                 <Link
-                  href="/vakspecialisten"
+                  href={`/regio/${r.slug}`}
                   className={`group flex items-center justify-between gap-6 py-5 md:py-6 ${
                     i === 0 ? "border-t border-ink-hair/40" : ""
                   } border-b border-ink-hair/40`}
@@ -450,8 +450,9 @@ function PartnerCTA({ state }: { state: string | null }) {
                 netwerk.
               </h2>
               <p className="mt-5 max-w-sm text-[15px] leading-[1.6] text-ink-soft">
-                Per regio nemen we één vakspecialist per rubriek op. Laat uw
-                gegevens achter en we contacteren u voor een kennismaking.
+                Eén architect-bureau en veertien vakspecialisten per regio.
+                Laat uw bedrijf achter en we plannen een kennismaking — geen
+                inschrijfgeld zonder gesprek.
               </p>
             </div>
 
@@ -475,73 +476,51 @@ function PartnerCTA({ state }: { state: string | null }) {
                         : "Er ging iets mis. Probeer het opnieuw."}
                   </div>
                 ) : null}
-                <div className="space-y-4">
-                  <FieldInput
-                    id="company"
-                    name="company"
-                    label="Naam bedrijf"
-                    type="text"
-                    placeholder="Uw bedrijf"
-                    required
-                  />
-                  <FieldInput
-                    id="contact_name"
-                    name="contact_name"
-                    label="Contactpersoon"
-                    type="text"
-                    placeholder="Voor- en achternaam"
-                  />
-                  <FieldInput
-                    id="email"
-                    name="email"
-                    label="E-mailadres"
-                    type="email"
-                    placeholder="u@bedrijf.be"
-                    required
-                  />
-                  <FieldInput
-                    id="phone"
-                    name="phone"
-                    label="Telefoon (optioneel)"
-                    type="tel"
-                    placeholder="+32…"
-                  />
-                  <FieldSelect
-                    id="partner_type"
-                    name="partner_type"
-                    label="Type partner"
-                    options={[
-                      { value: "", label: "Kies een type" },
-                      { value: "architect", label: "Architect" },
-                      { value: "vakspecialist", label: "Vakspecialist" },
-                      { value: "bouwondernemer", label: "Bouwondernemer" },
-                    ]}
-                  />
-                  <FieldSelect
-                    id="region"
-                    name="region"
-                    label="Regio"
-                    options={[
-                      { value: "", label: "Kies een regio" },
-                      ...REGIONS.map((r) => ({
+                <div className="space-y-3">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <FieldInput
+                      id="company"
+                      name="company"
+                      label="Bedrijf"
+                      type="text"
+                      placeholder="Uw bedrijf"
+                      required
+                    />
+                    <FieldInput
+                      id="email"
+                      name="email"
+                      label="E-mail"
+                      type="email"
+                      placeholder="u@bedrijf.be"
+                      required
+                    />
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <CustomSelect
+                      name="partner_type"
+                      label="Type"
+                      placeholder="Kies type"
+                      options={[
+                        { value: "architect", label: "Architect" },
+                        { value: "vakspecialist", label: "Vakspecialist" },
+                        { value: "bouwondernemer", label: "Bouwondernemer" },
+                      ]}
+                    />
+                    <CustomSelect
+                      name="region"
+                      label="Regio"
+                      placeholder="Kies regio"
+                      options={REGIONS.map((r) => ({
                         value: r.slug,
                         label: r.name,
-                      })),
-                    ]}
-                  />
-                  <FieldSelect
-                    id="rubriek"
-                    name="rubriek"
-                    label="Rubriek (vakspecialisten)"
-                    options={[
-                      { value: "", label: "Kies een rubriek" },
-                      ...RUBRIEKEN.map((r) => ({ value: r, label: r })),
-                    ]}
-                  />
+                      }))}
+                    />
+                  </div>
                   <FieldTextarea
                     id="message"
                     name="message"
                     label="Korte intro (optioneel)"
+                    rows={3}
                     placeholder="Vertel kort wie u bent en wat u onderscheidt."
                   />
                   <div className="pt-2">

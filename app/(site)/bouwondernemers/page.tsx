@@ -110,17 +110,17 @@ export default function BouwondernemersPage() {
               {
                 nr: "01",
                 title: "Vaste onderaannemers per rubriek",
-                body: "Eén dakwerker, één elektricien, één sanitair-partner per regio die u al kent en die uw werforganisatie kent. Minder calibratie, minder verrassingen.",
+                body: "Eén dakwerker, één elektricien, één sanitair-partner per regio die uw werforganisatie kent. Minder calibratie tussen werven, minder verrassingen op planning.",
               },
               {
                 nr: "02",
                 title: "Doorverwijzingen vanuit architecten",
-                body: "Architectenbureaus uit het netwerk verwijzen hun klanten door voor uitvoering. U bent dé voorkeurspartner per regio, geen offerte-machine.",
+                body: "Architectenbureaus uit het netwerk werken bij voorkeur met de bouwondernemer van die regio. Geen offerte-veiling, wel een vaste eerste belrij.",
               },
               {
                 nr: "03",
-                title: "Een netwerk dat mee verantwoordelijkheid neemt",
-                body: "Partnerevents per twee maanden in uw regio — geen vrijblijvend netwerken maar gedeelde kwaliteitsstandaarden en peer-controle.",
+                title: "Partnerevents per twee maanden",
+                body: "Zes partnerevents per jaar in uw regio — geen vrijblijvend netwerken, wel gedeelde kwaliteitsstandaarden en peer-validatie van nieuwe leden.",
               },
             ].map((b) => (
               <div key={b.nr} className="min-w-0">

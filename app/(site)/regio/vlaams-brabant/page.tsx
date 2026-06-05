@@ -51,7 +51,7 @@ const RUBRIEK_PLACEHOLDERS = [
 const KRING_PUNTEN = [
   {
     titel: "Eén architect als spil",
-    body: "Het architectenbureau opent het dossier — vaak in Leuven of vanuit het Pajottenland — en kiest binnen de kring de vakmensen die bij de plek en de bouwheer passen.",
+    body: "Het architectenbureau opent het dossier — vaak in Leuven of vanuit het Pajottenland — en kiest binnen de kring de vakspecialisten die bij de werf passen.",
   },
   {
     titel: "Veertien rubrieken, geen overlap",
@@ -251,7 +251,8 @@ export default async function VlaamsBrabantRegioPage() {
                 </h3>
                 <p className="mt-3 text-[15px] text-ink-soft">{p.stad}</p>
                 <p className="mt-8 text-[13px] leading-[1.6] text-ink-muted">
-                  Naam en referenties zichtbaar voor aangemelde bouwheren.
+                  Naam en referenties zichtbaar voor aangemelde
+                  netwerkleden via het partnerportaal.
                 </p>
               </li>
             ))}

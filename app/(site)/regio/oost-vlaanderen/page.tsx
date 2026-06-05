@@ -377,8 +377,7 @@ export default async function RegioOostVlaanderenPage() {
                         className="mt-2 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-sage"
                       />
                       <span>
-                        Drie referentiewerven met contactbare
-                        bouwheer.
+                        Drie referentiewerven die we mogen napellen.
                       </span>
                     </li>
                     <li className="flex items-start gap-3">

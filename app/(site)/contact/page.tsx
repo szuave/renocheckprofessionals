@@ -86,12 +86,15 @@ export default async function ContactPage({
 
             <div className="mt-12 rounded-[28px] border border-ink-hair/60 bg-surface-soft/40 p-6 md:mt-16 md:p-8">
               <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-ink-muted">
-                Liever direct?
+                Voor partners
               </p>
               <p className="mt-4 text-[15px] leading-[1.7] text-ink-soft">
-                Voor een snelle inschrijving of kennismaking kies bij
-                onderwerp <span className="font-medium text-ink">"Plan een videocall"</span>{" "}
-                — dan sturen we u een agenda-link.
+                Voor een snelle kennismaking als architect, vakspecialist of
+                bouwondernemer kies bij onderwerp{" "}
+                <span className="font-medium text-ink">
+                  "Ik wil aansluiten als partner"
+                </span>{" "}
+                — dan plannen we een gesprek met een teamlid.
               </p>
             </div>
           </aside>

@@ -108,16 +108,21 @@ export default function ArchitectenPage() {
               id="regions-title"
               className="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] font-medium leading-[1.05] text-ink"
             >
-              Architecten in{" "}
-              <span className="italic text-sage">uw</span> regio.
+              Architectenkringen per{" "}
+              <span className="italic text-sage">regio</span>.
             </h2>
+            <p className="mt-6 max-w-xl text-[17px] leading-[1.65] text-ink-soft">
+              Per Vlaamse regio bouwen we één architectenkring op met vaste
+              vakspecialisten. Klik op uw regio voor de plekken die er nog vrij
+              zijn.
+            </p>
           </div>
 
           <ul className="mt-14 grid gap-0 md:mt-20">
             {REGIONS.map((r, i) => (
               <li key={r.slug}>
                 <Link
-                  href="/contact"
+                  href={`/regio/${r.slug}`}
                   className={`group flex items-center justify-between gap-6 py-6 md:py-8 ${
                     i === 0 ? "border-t border-ink-hair/40" : ""
                   } border-b border-ink-hair/40`}
@@ -181,17 +186,17 @@ export default function ArchitectenPage() {
               {
                 nr: "01",
                 title: "Vaste vakspecialisten in uw regio",
-                body: "Eén dakwerker, één sanitair-partner, één elektricien — die u kent en die uw projecten kent. Geen koud bellen meer.",
+                body: "Eén dakwerker, één sanitair-partner, één elektricien per regio die u al heeft leren kennen op de partnerevents. Geen koud bellen, geen nieuwe calibratie per werf.",
               },
               {
                 nr: "02",
-                title: "Doorverwijzingen vanuit bouwers",
-                body: "Bouwers die via Renocheck binnenkomen, krijgen een architect uit hun regio voorgesteld. Exclusief per regio.",
+                title: "Doorverwijzingen vanuit het netwerk",
+                body: "Aanvragen die via Renocheck Professionals binnenkomen, gaan exclusief naar de architect van die regio. Geen offerte-veiling met vier collega's.",
               },
               {
                 nr: "03",
-                title: "Partnerevents om elkaar te leren kennen",
-                body: "Zes events per jaar in uw regio. In een rustige setting, zonder commerciële druk — gewoon om de mensen achter de partners te leren kennen.",
+                title: "Partnerevents per twee maanden",
+                body: "Zes partnerevents per jaar in uw regio — in een rustige setting, zonder commerciële druk. Bedoeld om elkaars werkwijze te leren kennen, niet om te verkopen.",
               },
             ].map((b) => (
               <div key={b.nr} className="min-w-0">

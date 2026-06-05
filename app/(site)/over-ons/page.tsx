@@ -36,7 +36,7 @@ const SELECTIE_CRITERIA = [
   },
   {
     title: "Aantoonbare referenties in de regio",
-    body: "Minstens drie afgewerkte projecten in de eigen provincie, op te vragen met adres, datum en contactpersoon van de bouwheer.",
+    body: "Minstens drie afgewerkte projecten in de eigen provincie, opvraagbaar door het Renocheck-team voor peer-validatie.",
   },
   {
     title: "Geen openstaande RSZ- of fiscale schulden",
@@ -137,19 +137,20 @@ export default function OverOnsPage() {
             <div className="min-w-0 space-y-6 text-[17px] leading-[1.75] text-ink-soft md:col-span-7 md:text-[18px]">
               <p>
                 Renocheck Professionals werd opgericht na vijftien jaar
-                ervaring met bouwheren die op één werf met zes tot acht
-                aannemers tegelijk worstelden — elk met hun eigen planning,
-                hun eigen onderaannemer en hun eigen versie van de waarheid.
-                Wat ontbrak, was niet aanbod. Wat ontbrak, was samenhang.
+                werven waarop zes tot acht aannemers elkaar tegenkwamen
+                zonder elkaar te kennen — elk met een eigen planning, eigen
+                onderaannemer, eigen versie van de waarheid. Wat ontbrak,
+                was niet aanbod. Wat ontbrak, was samenhang tussen de
+                vakmensen op één en hetzelfde dossier.
               </p>
               <p>
                 De keuze was bewust: geen open marktplaats, geen
                 offerteveiling, geen advertentiemodel. In plaats daarvan
-                een gesloten kring per regio, waar de architect en de
+                een gesloten kring per regio waar de architect en de
                 vakspecialisten elkaar kennen, elkaars werk al gezien
                 hebben en met dezelfde uitvoeringsstandaard werken. Klein
-                genoeg om iedereen verantwoordelijk te houden, breed
-                genoeg om een volledig project te dragen.
+                genoeg om iedereen verantwoordelijk te houden, groot genoeg
+                om een volledig bouwdossier te dragen.
               </p>
             </div>
           </div>
@@ -189,17 +190,16 @@ export default function OverOnsPage() {
               </h2>
               <div className="mt-8 space-y-5 text-[17px] leading-[1.75] text-ink-soft md:text-[18px]">
                 <p>
-                  Maxime Vandenbroucke begeleidt sinds 2011 renovatie- en
-                  nieuwbouwprojecten in West- en Oost-Vlaanderen, eerst
-                  als werfleider bij een algemeen aannemer, daarna als
-                  zelfstandig projectcoördinator voor architectenbureaus.
+                  Maxime Vandenbroucke werkt sinds 2011 in de bouwsector in
+                  West- en Oost-Vlaanderen — eerst als werfleider bij een
+                  algemeen aannemer, daarna als zelfstandig
+                  projectcoördinator voor architectenbureaus.
                 </p>
                 <p>
-                  In die periode bouwde hij een persoonlijk register op
-                  van vakspecialisten die hij meerdere keren op werven had
-                  zien werken — een notitieboek dat uiteindelijk het
-                  startpunt werd voor het Renocheck Professionals
-                  netwerk.
+                  In die periode bouwde hij een persoonlijk register op van
+                  vakspecialisten die hij meerdere keren op werven had zien
+                  werken — een notitieboek dat uiteindelijk het startpunt
+                  werd voor het Renocheck Professionals netwerk.
                 </p>
                 <p>
                   Zijn rol vandaag is bewust beperkt: hij voert de
@@ -291,8 +291,8 @@ export default function OverOnsPage() {
               <p className="mt-7 text-[16px] leading-[1.7] text-ink-soft md:text-[17px]">
                 Per rubriek vragen we de relevante erkenningen en
                 certificaten op. Documenten worden bewaard in het
-                partnerportaal en zijn voor de bouwheer opvraagbaar bij
-                de start van een werf.
+                partnerportaal en zijn beschikbaar voor de andere
+                netwerkleden die met de partner samenwerken.
               </p>
               <p className="mt-5 text-[15px] leading-[1.7] text-ink-muted">
                 Wij gebruiken geen federatielogo's op deze pagina zolang
@@ -382,12 +382,11 @@ export default function OverOnsPage() {
             </h2>
             <div className="mt-8 max-w-3xl space-y-5 text-[17px] leading-[1.75] text-ink-soft md:text-[18px]">
               <p>
-                Andere platformen verkopen uw projectaanvraag aan vijf,
-                soms tien aannemers tegelijk. Dat model rekent op het
-                volume van uw stress: hoe meer offertes u krijgt, hoe
-                meer commissie er gegenereerd wordt. De aannemer met het
-                grootste advertentiebudget wint, niet de aannemer met
-                het beste werk.
+                Andere platformen verkopen elke aanvraag aan vijf, soms
+                tien aannemers tegelijk. Dat model rekent op volume: hoe
+                meer offertes er gegenereerd worden, hoe meer commissie.
+                De partner met het grootste advertentiebudget wint, niet
+                de partner met het beste werk.
               </p>
               <p>
                 Renocheck Professionals werkt niet op commissie per

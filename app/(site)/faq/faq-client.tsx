@@ -7,9 +7,9 @@ import { FAQ_ITEMS, type Category } from "./data";
 const CATEGORIES: { value: Category | "Alle"; label: string }[] = [
   { value: "Alle", label: "Alle" },
   { value: "Algemeen", label: "Algemeen" },
-  { value: "Bouwers", label: "Voor bouwers" },
   { value: "Architecten", label: "Voor architecten" },
   { value: "Vakspecialisten", label: "Voor vakspecialisten" },
+  { value: "Bouwondernemers", label: "Voor bouwondernemers" },
   { value: "Partnerschap", label: "Partnerschap" },
   { value: "Events", label: "Events" },
 ];
@@ -31,9 +31,7 @@ const SYNONYM_GROUPS: string[][] = [
   ["prijs", "prijzen", "kost", "kosten", "tarief", "bijdrage", "betalen"],
   ["regio", "regios", "provincie", "provincies", "gebied"],
   ["rubriek", "rubrieken", "categorie", "categorieen", "vak", "vakken"],
-  ["bouwer", "bouwers", "bouwheer", "bouwheren", "klant", "klanten", "particulier"],
-  ["renoveren", "renovatie", "verbouwen", "verbouwing"],
-  ["nieuwbouw", "bouwen"],
+  ["aannemer", "aannemers", "bouwondernemer", "bouwondernemers", "algemene", "uitvoerder", "uitvoerders"],
   ["event", "events", "evenement", "evenementen", "bijeenkomst", "ontmoeting"],
   ["lid", "leden", "partner", "partners", "lidmaatschap", "aansluiten", "aansluiting"],
   ["architect", "architecten", "architectenbureau"],
