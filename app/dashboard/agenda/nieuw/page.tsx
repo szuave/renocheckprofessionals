@@ -107,39 +107,49 @@ export default async function NewEventPage({
           help="Stad, adres of omschrijving van de plek."
         />
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <div>
-            <label
-              htmlFor="region"
-              className="block text-[14px] font-medium text-ink"
-            >
-              Regio
-            </label>
-            <p className="mt-1 text-[13px] text-ink-muted">
-              Welke regio dit event bedient.
-            </p>
-            <select
-              id="region"
-              name="region"
-              defaultValue=""
-              className="mt-3 w-full rounded-xl border border-ink-hair/70 bg-surface-soft/70 px-4 py-3.5 text-[16px] text-ink focus:border-ink focus:outline-none"
-            >
-              <option value="">Geen / alle regio's</option>
-              <option value="west-vlaanderen">West-Vlaanderen</option>
-              <option value="oost-vlaanderen">Oost-Vlaanderen</option>
-              <option value="antwerpen">Antwerpen</option>
-              <option value="vlaams-brabant">Vlaams-Brabant</option>
-            </select>
+        <fieldset>
+          <legend className="block text-[14px] font-medium text-ink">
+            Regio
+          </legend>
+          <p className="mt-1 text-[13px] text-ink-muted">
+            Waar dit event zich afspeelt. Laat alles uit voor een
+            netwerkbreed event.
+          </p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            {[
+              { value: "", label: "Alle regio's" },
+              { value: "west-vlaanderen", label: "West-Vlaanderen" },
+              { value: "oost-vlaanderen", label: "Oost-Vlaanderen" },
+              { value: "antwerpen", label: "Antwerpen" },
+              { value: "vlaams-brabant", label: "Vlaams-Brabant" },
+            ].map((opt) => (
+              <label
+                key={opt.value || "all"}
+                className="group relative cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="region"
+                  value={opt.value}
+                  defaultChecked={opt.value === ""}
+                  className="peer sr-only"
+                />
+                <div className="relative h-full rounded-2xl border border-ink-hair/70 bg-white/70 px-4 py-3 text-center text-[14px] font-medium text-ink transition-all hover:border-ink/30 peer-checked:border-sage peer-checked:bg-sage/8 peer-checked:shadow-[0_0_0_3px_rgba(125,154,133,0.12)] peer-focus-visible:ring-2 peer-focus-visible:ring-sage/40">
+                  {opt.label}
+                </div>
+              </label>
+            ))}
           </div>
-          <Field
-            id="price_eur"
-            label="Prijs per persoon (EUR)"
-            type="number"
-            step="0.01"
-            min="0"
-            help="Laat leeg voor gratis events. Partners zien dit bedrag."
-          />
-        </div>
+        </fieldset>
+
+        <Field
+          id="price_eur"
+          label="Prijs per persoon (EUR)"
+          type="number"
+          step="0.01"
+          min="0"
+          help="Laat leeg voor gratis events. Partners zien dit bedrag."
+        />
 
         <div className="grid gap-6 md:grid-cols-2">
           <Field
