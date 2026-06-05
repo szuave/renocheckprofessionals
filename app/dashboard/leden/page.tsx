@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { requireUser } from "@/lib/auth";
 import { listUsersByName, parseRegions, parseRubrieken } from "@/lib/queries";
 
 export const metadata: Metadata = {
@@ -7,6 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default async function LedenPage() {
+  const me = await requireUser();
+  const isAdmin = me.role === "admin";
   const profiles = await listUsersByName();
 
   return (
@@ -47,17 +51,23 @@ export default async function LedenPage() {
               rubriekenList.length > 0
                 ? rubriekenList.join(", ")
                 : p.rubriek ?? null;
-            return (
-              <li
-                key={p.id}
-                className="rounded-2xl border border-ink-hair/60 bg-surface-soft/30 p-6"
-              >
+            // Where does this card link?
+            // Admin → naar de beheer-detailpagina (volledige info + edit)
+            // Partner → naar de publieke bedrijfspagina als slug bestaat
+            const href = isAdmin
+              ? `/dashboard/beheer/${p.id}`
+              : p.slug
+                ? `/${p.slug}`
+                : null;
+
+            const cardContent = (
+              <>
                 <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-ink-muted">
                   {p.partner_type ??
                     (p.role === "admin" ? "Renocheck team" : "Partner")}
                   {regionsDisplay ? ` · ${regionsDisplay}` : ""}
                 </p>
-                <h2 className="mt-3 font-display text-[24px] font-medium leading-[1.15] text-ink">
+                <h2 className="mt-3 font-display text-[24px] font-medium leading-[1.15] text-ink transition-colors group-hover:text-sage">
                   {p.full_name ?? p.company ?? "Naamloos"}
                 </h2>
                 {p.company && p.full_name ? (
@@ -69,6 +79,28 @@ export default async function LedenPage() {
                     {displayRubrieken}
                   </p>
                 ) : null}
+                {p.slug ? (
+                  <p className="mt-3 text-[11px] uppercase tracking-[0.24em] text-ink-muted/70">
+                    /{p.slug}
+                  </p>
+                ) : null}
+              </>
+            );
+
+            return (
+              <li key={p.id}>
+                {href ? (
+                  <Link
+                    href={href}
+                    className="group block h-full rounded-2xl border border-ink-hair/60 bg-surface-soft/30 p-6 transition-colors hover:border-sage hover:bg-surface-soft/60"
+                  >
+                    {cardContent}
+                  </Link>
+                ) : (
+                  <div className="block h-full rounded-2xl border border-ink-hair/60 bg-surface-soft/30 p-6">
+                    {cardContent}
+                  </div>
+                )}
               </li>
             );
           })}
