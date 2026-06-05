@@ -107,29 +107,35 @@ export default async function InboxPage() {
   return (
     <article className="px-6 pb-20 pt-12 md:px-12 md:pb-28 md:pt-16 lg:px-20 lg:pt-20">
       <header>
-        <p className="text-[14px] font-medium uppercase tracking-[0.28em] text-ink-muted">
-          Inbox · admin
-        </p>
-        <h1 className="mt-4 font-display text-[clamp(2rem,4.5vw,3.5rem)] font-medium leading-[1.05] text-ink">
+        <div className="flex items-center gap-3">
+          <span aria-hidden="true" className="h-px w-6 bg-sage/70" />
+          <p className="text-[10px] font-semibold uppercase tracking-[0.36em] text-ink-muted">
+            Inbox · admin
+          </p>
+        </div>
+        <h1 className="mt-5 font-display text-[clamp(2.25rem,5vw,4rem)] font-medium leading-[1.02] text-ink">
           Wat er{" "}
           <span className="italic text-sage">binnenkwam</span>.
         </h1>
-        <p className="mt-6 max-w-xl text-[16px] leading-[1.65] text-ink-soft">
+        <p className="mt-4 max-w-xl text-[15px] leading-[1.6] text-ink-soft md:text-[16px]">
           Alle aanvragen, contactberichten en gids-downloads op één plek.
           Status bijwerken doe je per item.
         </p>
       </header>
 
-      <div className="mt-10 grid gap-4 md:grid-cols-3">
-        <Stat label="Nieuwe partneraanvragen" value={newApplications} />
-        <Stat label="Nieuwe berichten" value={newMessages} />
+      <div className="mt-12 grid gap-4 md:grid-cols-3 md:mt-14">
+        <Stat label="Nieuwe partneraanvragen" value={newApplications} accent />
+        <Stat label="Nieuwe berichten" value={newMessages} accent />
         <Stat label="Leads totaal" value={leads.length} />
       </div>
 
       <section className="mt-16">
-        <h2 className="font-display text-[28px] font-medium leading-[1.15] text-ink md:text-[32px]">
-          Partneraanvragen
-        </h2>
+        <SectionHeader
+          label="Partneraanvragen"
+          count={applications.length}
+          newCount={newApplications}
+        />
+        <h2 className="sr-only">Partneraanvragen</h2>
         {applications.length === 0 ? (
           <Empty text="Nog geen partneraanvragen." />
         ) : (
@@ -217,9 +223,12 @@ export default async function InboxPage() {
       </section>
 
       <section className="mt-20">
-        <h2 className="font-display text-[28px] font-medium leading-[1.15] text-ink md:text-[32px]">
-          Contactberichten
-        </h2>
+        <SectionHeader
+          label="Contactberichten"
+          count={messages.length}
+          newCount={newMessages}
+        />
+        <h2 className="sr-only">Contactberichten</h2>
         {messages.length === 0 ? (
           <Empty text="Nog geen berichten." />
         ) : (
@@ -298,9 +307,8 @@ export default async function InboxPage() {
       </section>
 
       <section className="mt-20">
-        <h2 className="font-display text-[28px] font-medium leading-[1.15] text-ink md:text-[32px]">
-          Gids-downloads & leads
-        </h2>
+        <SectionHeader label="Gids-downloads & leads" count={leads.length} />
+        <h2 className="sr-only">Gids-downloads &amp; leads</h2>
         {leads.length === 0 ? (
           <Empty text="Nog geen downloads." />
         ) : (
@@ -360,15 +368,60 @@ export default async function InboxPage() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: number }) {
+function Stat({
+  label,
+  value,
+  accent,
+}: {
+  label: string;
+  value: number;
+  accent?: boolean;
+}) {
+  const isActive = accent && value > 0;
   return (
-    <div className="rounded-2xl border border-ink-hair/60 bg-surface-soft/30 p-5">
-      <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-ink-muted">
+    <div
+      className={`flex flex-col justify-between rounded-3xl border p-6 ${
+        isActive
+          ? "border-sage/40 bg-gradient-to-br from-sage/10 via-white to-white"
+          : "border-ink-hair/50 bg-white/70"
+      }`}
+    >
+      <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-ink-muted">
         {label}
       </p>
-      <p className="mt-3 font-display text-[40px] font-medium leading-none text-ink">
+      <p className="mt-6 font-display text-[clamp(2.25rem,5vw,3.25rem)] font-medium leading-none text-ink">
         {value}
       </p>
+    </div>
+  );
+}
+
+function SectionHeader({
+  label,
+  count,
+  newCount,
+}: {
+  label: string;
+  count: number;
+  newCount?: number;
+}) {
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-3 border-b border-ink-hair/40 pb-4">
+      <div className="flex items-center gap-3">
+        <span aria-hidden="true" className="h-px w-6 bg-sage/70" />
+        <p className="text-[10px] font-semibold uppercase tracking-[0.36em] text-ink-muted">
+          {label}
+        </p>
+        <span className="rounded-full bg-ink/5 px-2 py-0.5 text-[11px] tabular-nums text-ink-muted">
+          {count}
+        </span>
+      </div>
+      {newCount != null && newCount > 0 ? (
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-sage/10 px-2.5 py-1 text-[11px] font-medium text-sage-dark">
+          <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-sage" />
+          {newCount} nieuw
+        </span>
+      ) : null}
     </div>
   );
 }
