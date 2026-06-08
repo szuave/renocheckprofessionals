@@ -12,8 +12,8 @@
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "db:local:reset": "node -e \"const fs=require('fs');const p='data/renocheck.db';['','-shm','-wal'].forEach(s=>{try{fs.unlinkSync(p+s)}catch{}});console.log('local DB wiped')\"",
-    "db:cf:migrate": "wrangler d1 execute renocheck-professionals --remote --file=migrations/0000_initial.sql",
-    "db:cf:migrate:local": "wrangler d1 execute renocheck-professionals --local --file=migrations/0000_initial.sql"
+    "db:cf:migrate": "wrangler d1 execute renocheckprofessionals --remote --file=migrations/0000_initial.sql",
+    "db:cf:migrate:local": "wrangler d1 execute renocheckprofessionals --local --file=migrations/0000_initial.sql"
   },
   "dependencies": {
     "better-sqlite3": "^12.10.0",

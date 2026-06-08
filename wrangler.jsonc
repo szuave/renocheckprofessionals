@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "renocheck-professionals",
+  "name": "renocheckprofessionals",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-03-01",
   "compatibility_flags": ["nodejs_compat"],
@@ -14,8 +14,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "renocheck-professionals",
-      "database_id": "<RUN: wrangler d1 create renocheck-professionals AND PASTE ID HERE>"
+      "database_name": "renocheckprofessionals",
+      "database_id": "<RUN: wrangler d1 create renocheckprofessionals AND PASTE ID HERE>"
     }
   ],
   "vars": {
