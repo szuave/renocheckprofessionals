@@ -9,7 +9,7 @@ import {
 export const metadata: Metadata = {
   title: "Over ons",
   description:
-    "Renocheck Professionals — opgericht door Maxime Vandenbroucke. Gesloten netwerk: één architect en veertien vakspecialisten per Vlaamse regio. Selectie boven zoekvolume.",
+    "Renocheck Professionals — opgericht door Maxime Villa. Gesloten netwerk: één architect en veertien vakspecialisten per Vlaamse regio. Selectie boven zoekvolume.",
   alternates: { canonical: "/over-ons" },
   openGraph: {
     title: "Over Renocheck Professionals",
@@ -170,7 +170,7 @@ export default function OverOnsPage() {
                 </span>
               </div>
               <p className="mt-5 text-[12px] uppercase tracking-[0.22em] text-ink-muted">
-                Maxime Vandenbroucke (oprichter)
+                Maxime Villa (oprichter)
               </p>
               <p className="mt-2 text-[15px] text-ink-soft">
                 Oprichter &amp; netwerkcoördinator
@@ -190,7 +190,7 @@ export default function OverOnsPage() {
               </h2>
               <div className="mt-8 space-y-5 text-[17px] leading-[1.75] text-ink-soft md:text-[18px]">
                 <p>
-                  Maxime Vandenbroucke werkt sinds 2011 in de bouwsector in
+                  Maxime Villa werkt sinds 2011 in de bouwsector in
                   West- en Oost-Vlaanderen — eerst als werfleider bij een
                   algemeen aannemer, daarna als zelfstandig
                   projectcoördinator voor architectenbureaus.

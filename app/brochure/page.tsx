@@ -1039,7 +1039,7 @@ function ClosingPage() {
           </p>
 
           <div className="mt-12 grid grid-cols-3 gap-4">
-            <ContactCell label="Founder" value="Maxime Vandenbroucke" />
+            <ContactCell label="Founder" value="Maxime Villa" />
             <ContactCell label="E-mail" value="info@renocheck.be" />
             <ContactCell label="Site" value="renocheck.be" />
           </div>

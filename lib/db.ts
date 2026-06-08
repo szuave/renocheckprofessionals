@@ -285,7 +285,7 @@ async function seedDemoIfBare(db: DB) {
       title: "Welkom bij Renocheck Professionals",
       excerpt:
         "Het partnerportaal is live. Hier delen we mededelingen, agenda en samenwerkingen binnen het netwerk.",
-      body: "Beste partner,\n\nVanaf vandaag vind je op dit portaal alle mededelingen, agenda-items en updates die we binnen het netwerk delen. Gebruik 'Blog & berichten' om zelf iets te delen met de andere partners — een werfverslag, een opendeur-uitnodiging of een waarschuwing over een materiaalwijziging.\n\nWelkom aan boord.\n\n— Maxime Vandenbroucke\nRenocheck Professionals",
+      body: "Beste partner,\n\nVanaf vandaag vind je op dit portaal alle mededelingen, agenda-items en updates die we binnen het netwerk delen. Gebruik 'Blog & berichten' om zelf iets te delen met de andere partners — een werfverslag, een opendeur-uitnodiging of een waarschuwing over een materiaalwijziging.\n\nWelkom aan boord.\n\n— Maxime Villa\nRenocheck Professionals",
       authorIdx: -1, // admin
       createdOffsetDays: 14,
     },

@@ -56,7 +56,7 @@ export function OrganizationSchema() {
     founders: [
       {
         "@type": "Person",
-        name: "Maxime Vandenbroucke",
+        name: "Maxime Villa",
         jobTitle: "Founder",
       },
     ],

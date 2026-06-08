@@ -209,7 +209,7 @@ export default async function PartnerPage({
           <TrustCell
             label="Geverifieerd door"
             value="Renocheck"
-            sub="Maxime Vandenbroucke"
+            sub="Maxime Villa"
           />
         </div>
       </section>
@@ -368,7 +368,7 @@ export default async function PartnerPage({
                 <p className="mt-3 text-[13.5px] leading-[1.65] text-ink-soft">
                   Eén partner per rubriek per regio. Geen lead-veiling,
                   geen pay-per-click. Selectie op vakmanschap door Maxime
-                  Vandenbroucke en het selectiecomité.
+                  Villa en het selectiecomité.
                 </p>
                 <Link
                   href="/over-ons"
