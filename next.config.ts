@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const nextConfig: NextConfig = {
+  // OpenNext draait Next build apart en bundelt daarna. Standalone output is
+  // vereist zodat .next/standalone/ bestaat voor de OpenNext bundle-stap.
+  output: "standalone",
   images: {
     remotePatterns: [
       {
