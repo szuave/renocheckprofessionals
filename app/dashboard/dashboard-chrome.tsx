@@ -416,11 +416,20 @@ function UserCard({ user }: { user: DashboardUser }) {
       <p className="mt-3 text-[9px] font-semibold uppercase tracking-[0.32em] text-ink-muted">
         {user.role === "admin" ? "Admin account" : "Partner account"}
       </p>
+      <Link
+        href="/dashboard/account"
+        className="mt-3 inline-flex w-full items-center justify-between gap-2 rounded-xl border border-transparent px-4 py-2 text-[12.5px] font-medium text-ink-soft transition-colors hover:bg-surface-soft/60 hover:text-ink"
+      >
+        <span>Mijn account</span>
+        <span aria-hidden="true" className="text-[13px]">
+          →
+        </span>
+      </Link>
       <button
         type="button"
         onClick={handleSignOut}
         disabled={signingOut}
-        className="mt-4 inline-flex w-full items-center justify-between gap-2 rounded-xl border border-ink-hair/70 bg-white px-4 py-2.5 text-[13px] font-medium text-ink-soft transition-colors hover:border-sage hover:text-ink disabled:opacity-50"
+        className="mt-1.5 inline-flex w-full items-center justify-between gap-2 rounded-xl border border-ink-hair/70 bg-white px-4 py-2.5 text-[13px] font-medium text-ink-soft transition-colors hover:border-sage hover:text-ink disabled:opacity-50"
       >
         <span>{signingOut ? "Bezig met uitloggen…" : "Uitloggen"}</span>
         <span aria-hidden="true" className="text-[14px]">

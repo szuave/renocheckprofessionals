@@ -173,3 +173,35 @@ export async function deleteUser(id: string): Promise<void> {
   const db = await getDb();
   await db.delete(users).where(eq(users.id, id));
 }
+
+export type ChangePasswordResult =
+  | { ok: true }
+  | { ok: false; error: "current_wrong" | "weak" | "missing" };
+
+export async function changePassword(
+  userId: string,
+  currentPassword: string,
+  newPassword: string,
+): Promise<ChangePasswordResult> {
+  if (!currentPassword || !newPassword) return { ok: false, error: "missing" };
+  if (newPassword.length < 8) return { ok: false, error: "weak" };
+
+  const db = await getDb();
+  const rows = await db
+    .select({ password_hash: users.password_hash })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  const row = rows[0];
+  if (!row?.password_hash) return { ok: false, error: "current_wrong" };
+
+  if (!verifyPassword(currentPassword, row.password_hash)) {
+    return { ok: false, error: "current_wrong" };
+  }
+
+  await db
+    .update(users)
+    .set({ password_hash: hashPassword(newPassword) })
+    .where(eq(users.id, userId));
+  return { ok: true };
+}

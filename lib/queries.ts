@@ -175,6 +175,25 @@ export async function deleteBlogPost(id: string): Promise<void> {
   await db.delete(blog_posts).where(eq(blog_posts.id, id));
 }
 
+export async function updateBlogPost(
+  id: string,
+  patch: Partial<{
+    title: string;
+    excerpt: string | null;
+    body: string;
+  }>,
+): Promise<void> {
+  const db = await getDb();
+  const values: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(patch)) {
+    if (v === undefined) continue;
+    values[k] = v;
+  }
+  if (Object.keys(values).length === 0) return;
+  values.updated_at = new Date().toISOString();
+  await db.update(blog_posts).set(values).where(eq(blog_posts.id, id));
+}
+
 /* -------------------- Events -------------------- */
 
 export async function listUpcomingEvents(): Promise<EventWithAuthor[]> {

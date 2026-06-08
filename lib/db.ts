@@ -1,4 +1,5 @@
 import "server-only";
+import { eq } from "drizzle-orm";
 import type { BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
 import * as schema from "./schema";
 
@@ -36,6 +37,7 @@ async function getLocalDb(): Promise<DB> {
   cachedLocalDb = drizzle(conn, { schema });
 
   await seedAdminIfEmpty(cachedLocalDb);
+  await seedDemoIfBare(cachedLocalDb);
   return cachedLocalDb;
 }
 
@@ -129,6 +131,277 @@ async function seedAdminIfEmpty(db: DB) {
 
   console.log(
     `\n[renocheck] Geen users in DB — standaard admin aangemaakt:\n  email:    ${email}\n  password: ${password}\nWijzig of verwijder via /dashboard/beheer.\n`,
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Seed demo content if DB has admin only (no partners/posts/events)  */
+/* ------------------------------------------------------------------ */
+
+async function seedDemoIfBare(db: DB) {
+  const { hashPassword } = await import("./passwords");
+  const { randomUUID } = await import("node:crypto");
+
+  // Bail out if there's already any non-admin user, blog post or event.
+  const partners = await db
+    .select({ id: schema.users.id })
+    .from(schema.users)
+    .where(eq(schema.users.role, "partner"))
+    .limit(1);
+  if (partners.length > 0) return;
+
+  const posts = await db.select({ id: schema.blog_posts.id }).from(schema.blog_posts).limit(1);
+  if (posts.length > 0) return;
+
+  const evs = await db.select({ id: schema.events.id }).from(schema.events).limit(1);
+  if (evs.length > 0) return;
+
+  // We need an author for posts/events — pick the existing admin.
+  const adminRow = await db
+    .select({ id: schema.users.id })
+    .from(schema.users)
+    .where(eq(schema.users.role, "admin"))
+    .limit(1);
+  const adminId = adminRow[0]?.id;
+  if (!adminId) return;
+
+  const demoPassword = "demo123";
+  const hash = hashPassword(demoPassword);
+
+  // Demo partners — one per partner-type/region, slug set so /[slug] werkt.
+  const demoPartners: Array<{
+    id: string;
+    email: string;
+    full_name: string;
+    company: string;
+    partner_type: string;
+    regions: string[];
+    rubrieken: string[] | null;
+    slug: string;
+  }> = [
+    {
+      id: randomUUID(),
+      email: "stef@atelier-vandevelde.be",
+      full_name: "Stef Vandevelde",
+      company: "Atelier Vandevelde",
+      partner_type: "architect",
+      regions: ["west-vlaanderen"],
+      rubrieken: null,
+      slug: "atelier-vandevelde",
+    },
+    {
+      id: randomUUID(),
+      email: "ann@bureau-driesen.be",
+      full_name: "Ann Driesen",
+      company: "Bureau Driesen Architecten",
+      partner_type: "architect",
+      regions: ["antwerpen"],
+      rubrieken: null,
+      slug: "bureau-driesen",
+    },
+    {
+      id: randomUUID(),
+      email: "jan@elektro-callens.be",
+      full_name: "Jan Callens",
+      company: "Elektro Callens",
+      partner_type: "vakspecialist",
+      regions: ["oost-vlaanderen", "west-vlaanderen"],
+      rubrieken: ["Elektriciteit"],
+      slug: "elektro-callens",
+    },
+    {
+      id: randomUUID(),
+      email: "tim@dakwerken-vermeulen.be",
+      full_name: "Tim Vermeulen",
+      company: "Dakwerken Vermeulen",
+      partner_type: "vakspecialist",
+      regions: ["vlaams-brabant"],
+      rubrieken: ["Dakwerken", "Isolatie"],
+      slug: "dakwerken-vermeulen",
+    },
+    {
+      id: randomUUID(),
+      email: "lieven@sanitair-mertens.be",
+      full_name: "Lieven Mertens",
+      company: "Mertens Sanitair & Verwarming",
+      partner_type: "vakspecialist",
+      regions: ["antwerpen"],
+      rubrieken: ["Sanitair", "Verwarming & airco"],
+      slug: "mertens-sanitair",
+    },
+    {
+      id: randomUUID(),
+      email: "katrien@bouwgroep-deroo.be",
+      full_name: "Katrien De Roo",
+      company: "Bouwgroep De Roo",
+      partner_type: "bouwondernemer",
+      regions: ["oost-vlaanderen"],
+      rubrieken: null,
+      slug: "bouwgroep-deroo",
+    },
+    {
+      id: randomUUID(),
+      email: "peter@schilderwerken-baert.be",
+      full_name: "Peter Baert",
+      company: "Schilderwerken Baert",
+      partner_type: "vakspecialist",
+      regions: ["west-vlaanderen"],
+      rubrieken: ["Schilderwerken"],
+      slug: "schilderwerken-baert",
+    },
+  ];
+
+  for (const p of demoPartners) {
+    await db.insert(schema.users).values({
+      id: p.id,
+      email: p.email,
+      password_hash: hash,
+      full_name: p.full_name,
+      company: p.company,
+      partner_type: p.partner_type,
+      region: p.regions[0] ?? null,
+      regions: JSON.stringify(p.regions),
+      rubriek: p.rubrieken?.[0] ?? null,
+      rubrieken: p.rubrieken ? JSON.stringify(p.rubrieken) : null,
+      slug: p.slug,
+      role: "partner",
+    });
+  }
+
+  // Demo blog posts.
+  const demoPosts: Array<{ title: string; excerpt: string; body: string; authorIdx: number; createdOffsetDays: number }> = [
+    {
+      title: "Welkom bij Renocheck Professionals",
+      excerpt:
+        "Het partnerportaal is live. Hier delen we mededelingen, agenda en samenwerkingen binnen het netwerk.",
+      body: "Beste partner,\n\nVanaf vandaag vind je op dit portaal alle mededelingen, agenda-items en updates die we binnen het netwerk delen. Gebruik 'Blog & berichten' om zelf iets te delen met de andere partners — een werfverslag, een opendeur-uitnodiging of een waarschuwing over een materiaalwijziging.\n\nWelkom aan boord.\n\n— Maxime Vandenbroucke\nRenocheck Professionals",
+      authorIdx: -1, // admin
+      createdOffsetDays: 14,
+    },
+    {
+      title: "Nieuw partner: Schilderwerken Baert (West-Vlaanderen)",
+      excerpt:
+        "Peter Baert vervoegt het netwerk voor de rubriek Schilderwerken in West-Vlaanderen.",
+      body: "Vanaf deze maand is Schilderwerken Baert (Brugge) onze geselecteerde partner voor de rubriek Schilderwerken in West-Vlaanderen. Peter Baert is al meer dan vijftien jaar gespecialiseerd in restauratiewerk en hoogwaardige binnenafwerking.\n\nKom hem ontmoeten op het maandelijks partner-event in juni.",
+      authorIdx: -1,
+      createdOffsetDays: 8,
+    },
+    {
+      title: "Werfverslag: zwarte hangende keuken op project Damme",
+      excerpt:
+        "Atelier Vandevelde deelt een korte recap van een verrassend project — een keuken die letterlijk los van de muur staat.",
+      body: "Op een renovatie in Damme realiseerden we samen met Mertens Sanitair en Elektro Callens een hangende kookeiland-constructie van bijna 5 meter. De uitdaging zat in het verbergen van leidingen, dampkap-afvoer en bekabeling zonder een traditionele kookeilandpoot.\n\nResultaat: een keuken die zweeft. Foto's volgen op de eerstvolgende partner-borrel.\n\n— Stef\nAtelier Vandevelde",
+      authorIdx: 0,
+      createdOffsetDays: 5,
+    },
+    {
+      title: "Heads-up: nieuwe EPB-eisen vanaf januari",
+      excerpt:
+        "Korte samenvatting van wat de strengere isolatie-eisen betekenen voor lopende dossiers.",
+      body: "Vanaf 1 januari volgend jaar wijzigen de minimum-Umax-waarden voor daken en muren bij ingrijpende energetische renovaties. Voor lopende dossiers waarvan de bouwaanvraag nog niet definitief is, betekent dit mogelijk een aanpassing van de isolatieopbouw.\n\nWe organiseren in december een gezamenlijke partner-sessie met de EPB-verslaggever van het netwerk om concrete cases te bespreken. Inschrijven via de agenda.",
+      authorIdx: -1,
+      createdOffsetDays: 2,
+    },
+  ];
+
+  for (const p of demoPosts) {
+    const author_id =
+      p.authorIdx === -1 ? adminId : demoPartners[p.authorIdx]?.id ?? adminId;
+    const created = new Date(
+      Date.now() - p.createdOffsetDays * 24 * 60 * 60 * 1000,
+    ).toISOString();
+    await db.insert(schema.blog_posts).values({
+      id: randomUUID(),
+      author_id,
+      title: p.title,
+      excerpt: p.excerpt,
+      body: p.body,
+      created_at: created,
+      updated_at: created,
+    });
+  }
+
+  // Demo events — spread across upcoming weeks/months.
+  const upcoming: Array<{
+    title: string;
+    description: string;
+    location: string;
+    region: string | null;
+    price_eur: number | null;
+    offsetDays: number;
+    hour: number;
+  }> = [
+    {
+      title: "Partnerborrel · juni-editie",
+      description:
+        "Maandelijks netwerkmoment voor alle Renocheck partners. Korte presentatie van een nieuw partner, daarna borrel + bites.",
+      location: "Atelier Vandevelde, Brugge",
+      region: "west-vlaanderen",
+      price_eur: null,
+      offsetDays: 10,
+      hour: 19,
+    },
+    {
+      title: "Opendeur · Bureau Driesen",
+      description:
+        "Rondleiding doorheen het pas verbouwde architectenbureau, gevolgd door Q&A over werfopvolging in Antwerpen-centrum.",
+      location: "Bureau Driesen, Antwerpen",
+      region: "antwerpen",
+      price_eur: 15,
+      offsetDays: 24,
+      hour: 17,
+    },
+    {
+      title: "Werfbezoek · zero-energie woning Gent",
+      description:
+        "Bezoek met de hele projectploeg aan een zero-energie nieuwbouw kort voor oplevering. Beperkt aantal plaatsen.",
+      location: "Sint-Amandsberg, Gent",
+      region: "oost-vlaanderen",
+      price_eur: null,
+      offsetDays: 36,
+      hour: 14,
+    },
+    {
+      title: "Opleiding EPB-update januari",
+      description:
+        "Gezamenlijke partner-sessie met de EPB-verslaggever. Concrete cases uit het netwerk.",
+      location: "Online + Leuven",
+      region: "vlaams-brabant",
+      price_eur: 40,
+      offsetDays: 52,
+      hour: 9,
+    },
+    {
+      title: "Partnerborrel · juli-editie",
+      description: "Zomereditie met BBQ in de tuin van Bouwgroep De Roo.",
+      location: "Bouwgroep De Roo, Lokeren",
+      region: "oost-vlaanderen",
+      price_eur: 25,
+      offsetDays: 70,
+      hour: 18,
+    },
+  ];
+
+  for (const e of upcoming) {
+    const starts = new Date(Date.now() + e.offsetDays * 24 * 60 * 60 * 1000);
+    starts.setHours(e.hour, 0, 0, 0);
+    const ends = new Date(starts.getTime() + 3 * 60 * 60 * 1000);
+    await db.insert(schema.events).values({
+      id: randomUUID(),
+      author_id: adminId,
+      title: e.title,
+      description: e.description,
+      location: e.location,
+      region: e.region,
+      price_cents:
+        e.price_eur != null ? String(Math.round(e.price_eur * 100)) : null,
+      starts_at: starts.toISOString(),
+      ends_at: ends.toISOString(),
+    });
+  }
+
+  console.log(
+    `\n[renocheck] Demo content gezaaid: ${demoPartners.length} partners, ${demoPosts.length} berichten, ${upcoming.length} events.\nPartner-login (voor test): elk demo-account, wachtwoord: ${demoPassword}\n`,
   );
 }
 
