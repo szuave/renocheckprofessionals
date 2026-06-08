@@ -3,8 +3,6 @@ import Image from "next/image";
 export default function BrochurePage() {
   return (
     <>
-      {/* Print + screen styling. Tailwind classes drive most layout;
-          @page + global tweaks live here so de PDF echt A4 wordt. */}
       <style>{`
         @page {
           size: A4 portrait;
@@ -43,10 +41,7 @@ export default function BrochurePage() {
 
         @media print {
           html, body { background: #FFFFFF !important; }
-          .brochure {
-            padding: 0;
-            gap: 0;
-          }
+          .brochure { padding: 0; gap: 0; }
           .page {
             box-shadow: none !important;
             margin: 0;
@@ -57,8 +52,7 @@ export default function BrochurePage() {
           .no-print { display: none !important; }
         }
 
-        /* preserve background colors when printing (Chromium) */
-        .page, .swatch, .pill, .stat, .corner, .footerband {
+        .page, .swatch, .pill, .stat, .corner, .footerband, .chip, .price-band, .seat {
           -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
         }
@@ -69,34 +63,38 @@ export default function BrochurePage() {
 
         <CoverPage />
         <WhatIsItPage />
-        <DifferentPage />
-        <ForArchitectsPage />
+        <EventFormatPage />
         <ForVakspecialistenPage />
-        <ForBouwondernemersPage />
-        <NetworkAndSelectionPage />
+        <ForArchitectsPage />
+        <SelectionPage />
+        <PricingPage />
         <ClosingPage />
       </div>
     </>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  Reusable bits                                                       */
-/* ------------------------------------------------------------------ */
+/* ---------------- Reusable ---------------- */
 
-function Eyebrow({ children }: { children: React.ReactNode }) {
+function Eyebrow({
+  children,
+  light,
+}: {
+  children: React.ReactNode;
+  light?: boolean;
+}) {
   return (
-    <div className="mb-4 flex items-center gap-3">
+    <div className="mb-5 flex items-center gap-3">
       <span
         aria-hidden="true"
-        style={{ background: "#7D9A85" }}
-        className="block h-px w-7"
+        style={{ background: light ? "#CFDCD2" : "#7D9A85" }}
+        className="block h-px w-8"
       />
       <p
         className="text-[10px] font-semibold uppercase"
         style={{
-          letterSpacing: "0.36em",
-          color: "#8A948E",
+          letterSpacing: "0.4em",
+          color: light ? "rgba(255,255,255,0.7)" : "#8A948E",
         }}
       >
         {children}
@@ -107,23 +105,32 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 
 function Wordmark({
   size = "default",
+  light,
 }: {
   size?: "default" | "small";
+  light?: boolean;
 }) {
   const widths = size === "small" ? 168 : 220;
   const subLetter = size === "small" ? "0.36em" : "0.42em";
   const marginLeft = size === "small" ? 26 : 36;
   const subSize = size === "small" ? 8.5 : 10;
+  const color = light ? "#FFFFFF" : "#0F1714";
 
   return (
-    <div className="inline-flex flex-col items-start" style={{ color: "#0F1714" }}>
+    <div className="inline-flex flex-col items-start" style={{ color }}>
       <Image
-        src="/brand/renocheck-wordmark.png"
+        src={
+          light
+            ? "/brand/renocheck-wordmark-light.png"
+            : "/brand/renocheck-wordmark.png"
+        }
         alt="Renocheck"
         width={widths}
         height={Math.round(widths * 0.13)}
         priority
         className="select-none"
+        // Fallback if light variant doesn't exist — invert via CSS filter
+        style={light ? { filter: "invert(1) brightness(2)" } : undefined}
       />
       <span
         className="font-semibold uppercase"
@@ -131,7 +138,7 @@ function Wordmark({
           letterSpacing: subLetter,
           marginLeft,
           fontSize: subSize,
-          color: "#0F1714",
+          color,
         }}
       >
         Professionals
@@ -142,24 +149,17 @@ function Wordmark({
 
 function PageFooter({ pageNumber }: { pageNumber: number }) {
   return (
-    <footer className="mt-auto flex items-end justify-between border-t border-[#E2E7E3] pt-4">
-      <div className="flex items-center gap-3">
-        <Wordmark size="small" />
-      </div>
-      <div className="text-right">
-        <p
-          className="text-[9px] font-semibold uppercase"
-          style={{ letterSpacing: "0.32em", color: "#8A948E" }}
-        >
-          Sales-folder · {String(pageNumber).padStart(2, "0")}
-        </p>
-        <p
-          className="mt-1 text-[9px]"
-          style={{ color: "#8A948E", letterSpacing: "0.12em" }}
-        >
-          renocheck.be · info@renocheck.be
-        </p>
-      </div>
+    <footer
+      className="mt-auto flex items-end justify-between border-t pt-4"
+      style={{ borderColor: "#E2E7E3" }}
+    >
+      <Wordmark size="small" />
+      <p
+        className="text-[9px] font-semibold uppercase"
+        style={{ letterSpacing: "0.32em", color: "#8A948E" }}
+      >
+        {String(pageNumber).padStart(2, "0")} · Sales-folder
+      </p>
     </footer>
   );
 }
@@ -179,14 +179,11 @@ function CornerMark({ label }: { label: string }) {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  PAGE 1 — COVER                                                      */
-/* ------------------------------------------------------------------ */
+/* ---------------- PAGE 1 — COVER ---------------- */
 
 function CoverPage() {
   return (
-    <section className="page" style={{ background: "#FFFFFF" }}>
-      {/* Decorative sage gradient + ink wedge */}
+    <section className="page">
       <div
         aria-hidden="true"
         className="absolute -right-32 -top-32 h-[520px] w-[520px] rounded-full"
@@ -209,53 +206,46 @@ function CoverPage() {
           <Wordmark />
           <p
             className="text-[10px] font-semibold uppercase"
-            style={{
-              letterSpacing: "0.36em",
-              color: "#8A948E",
-            }}
+            style={{ letterSpacing: "0.36em", color: "#8A948E" }}
           >
             Sales-folder · 2026
           </p>
         </header>
 
         <div className="my-auto max-w-[160mm]">
-          <Eyebrow>Het Vlaams bouwnetwerk</Eyebrow>
+          <Eyebrow>De exclusieve B2B ledenclub</Eyebrow>
 
           <h1
             className="font-display font-medium"
             style={{
-              fontSize: 72,
-              lineHeight: 0.98,
+              fontSize: 78,
+              lineHeight: 0.95,
               letterSpacing: "-0.015em",
               color: "#0F1714",
             }}
           >
-            Geselecteerde
+            Het bouwnetwerk
             <br />
-            partners,
-            <br />
+            aan{" "}
             <span style={{ color: "#7D9A85", fontStyle: "italic" }}>
-              gedeelde
-            </span>{" "}
-            standaard.
+              één tafel
+            </span>
+            .
           </h1>
 
           <p
-            className="mt-8 max-w-[130mm] text-[15px]"
-            style={{ color: "#2D3B32", lineHeight: 1.6 }}
+            className="mt-7 text-[16px] font-medium"
+            style={{ color: "#2D3B32", lineHeight: 1.45, maxWidth: "140mm" }}
           >
-            Renocheck Professionals is een gesloten bouwnetwerk in Vlaanderen
-            voor <strong>architectenbureaus</strong>,{" "}
-            <strong>vakspecialisten</strong> en{" "}
-            <strong>bouwondernemers</strong>. Eén partner per rubriek per
-            regio — geen lead-veiling, wel een vertrouwd team dat elkaars
-            werk kent.
+            14 vakspecialisten + 14 architecten. Eén partner per discipline.
+            Een avond met doorschuiftafels en gastronomisch diner.
           </p>
 
-          <div className="mt-12 grid grid-cols-3 gap-6 max-w-[150mm]">
-            <Stat value="4" label="Vlaamse regio's" />
-            <Stat value="14" label="Vakrubrieken" />
-            <Stat value="1" label="Partner per rubriek per regio" />
+          <div className="mt-12 grid grid-cols-4 gap-6 max-w-[170mm]">
+            <Stat value="14+14" label="Aan tafel" />
+            <Stat value="9" label="Events/jaar" />
+            <Stat value="+4" label="Premium" />
+            <Stat value="€1.750" label="Lidmaatschap" small />
           </div>
         </div>
 
@@ -264,27 +254,17 @@ function CoverPage() {
             className="flex items-end justify-between border-t pt-5"
             style={{ borderColor: "#E2E7E3" }}
           >
-            <div>
-              <p
-                className="text-[10px] font-semibold uppercase"
-                style={{ letterSpacing: "0.32em", color: "#8A948E" }}
-              >
-                Voor verkoop · interne briefing
-              </p>
-              <p
-                className="mt-1.5 font-display font-medium"
-                style={{ fontSize: 18, color: "#0F1714" }}
-              >
-                renocheck.be / professionals
-              </p>
-            </div>
+            <p
+              className="font-display font-medium"
+              style={{ fontSize: 18, color: "#0F1714" }}
+            >
+              renocheck.be · info@renocheck.be
+            </p>
             <p
               className="text-[10px]"
               style={{ color: "#8A948E", textAlign: "right" }}
             >
-              Te overhandigen aan
-              <br />
-              architectenbureaus & vakspecialisten
+              Interne sales-folder
             </p>
           </div>
         </footer>
@@ -293,18 +273,30 @@ function CoverPage() {
   );
 }
 
-function Stat({ value, label }: { value: string; label: string }) {
+function Stat({
+  value,
+  label,
+  small,
+}: {
+  value: string;
+  label: string;
+  small?: boolean;
+}) {
   return (
     <div className="stat">
       <p
         className="font-display font-medium"
-        style={{ fontSize: 38, lineHeight: 1, color: "#7D9A85" }}
+        style={{
+          fontSize: small ? 28 : 44,
+          lineHeight: 1,
+          color: "#7D9A85",
+        }}
       >
         {value}
       </p>
       <p
         className="mt-2 text-[10px] font-semibold uppercase"
-        style={{ letterSpacing: "0.28em", color: "#8A948E" }}
+        style={{ letterSpacing: "0.26em", color: "#8A948E" }}
       >
         {label}
       </p>
@@ -312,92 +304,85 @@ function Stat({ value, label }: { value: string; label: string }) {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  PAGE 2 — WAT IS HET                                                 */
-/* ------------------------------------------------------------------ */
+/* ---------------- PAGE 2 — WAT IS HET ---------------- */
 
 function WhatIsItPage() {
   return (
     <section className="page">
       <CornerMark label="Wat is het" />
 
-      <Eyebrow>Renocheck Professionals</Eyebrow>
+      <Eyebrow>Inner circle voor de bouwsector</Eyebrow>
 
       <h2
         className="font-display font-medium"
         style={{
-          fontSize: 44,
-          lineHeight: 1.05,
-          letterSpacing: "-0.01em",
+          fontSize: 52,
+          lineHeight: 1.02,
+          letterSpacing: "-0.015em",
           color: "#0F1714",
-          maxWidth: "150mm",
+          maxWidth: "160mm",
         }}
       >
-        Een{" "}
+        Geen platform.{" "}
         <span style={{ color: "#7D9A85", fontStyle: "italic" }}>
-          gesloten kring
-        </span>{" "}
-        van bouwprofessionals in Vlaanderen.
+          Een ledenclub
+        </span>
+        .
       </h2>
 
       <p
-        className="mt-6 text-[14px]"
-        style={{
-          color: "#2D3B32",
-          lineHeight: 1.65,
-          maxWidth: "150mm",
-        }}
+        className="mt-6 text-[15px] font-medium"
+        style={{ color: "#2D3B32", lineHeight: 1.45, maxWidth: "150mm" }}
       >
-        Renocheck Professionals selecteert per Vlaamse regio één
-        architectenbureau, één bouwondernemer en één vakspecialist per
-        rubriek. Samen vormen ze het lokale Renocheck-team — dat elkaars werk
-        kent, dezelfde standaard hanteert en projecten samen oppakt.
+        Een gecureerde inner circle van architecten en vakspecialisten — die
+        elkaar live aan tafel ontmoeten.
       </p>
 
       <div
-        className="mt-10 grid grid-cols-3 gap-6"
+        className="mt-12 grid grid-cols-3 gap-5"
         style={{ maxWidth: "180mm" }}
       >
         <PillarCard
           number="01"
-          title="Selectie"
-          body="Eén partner per rubriek per regio. Geen veiling, geen pay-per-click. Kwaliteit boven volume."
+          title="Curatie"
+          bullets={[
+            "Selectie op reputatie",
+            "Eén per discipline",
+            "Geen concurrenten aan tafel",
+          ]}
         />
         <PillarCard
           number="02"
-          title="Samenwerking"
-          body="Maandelijkse partnerevents, gedeelde werven en directe doorverwijzing tussen architecten en vakspecialisten."
+          title="Efficiëntie"
+          bullets={[
+            "Doorschuifsysteem",
+            "Maximale interacties",
+            "Eén avond, hele netwerk",
+          ]}
         />
         <PillarCard
           number="03"
-          title="Vertrouwen"
-          body="Renocheck staat als merk garant voor het werk van haar partners. Een bouwheer kiest het netwerk, niet één losse vakman."
+          title="Status"
+          bullets={[
+            "Renocheck-keurmerk",
+            "'I made it' beleving",
+            "Lange-termijn relaties",
+          ]}
         />
       </div>
 
       <div
-        className="mt-10 rounded-2xl p-7"
-        style={{
-          background: "#F5F8F6",
-          maxWidth: "180mm",
-        }}
+        className="mt-auto rounded-2xl p-7"
+        style={{ background: "#F5F8F6", maxWidth: "180mm" }}
       >
         <p
-          className="text-[10px] font-semibold uppercase"
-          style={{ letterSpacing: "0.32em", color: "#526A59" }}
+          className="font-display font-medium"
+          style={{ fontSize: 24, lineHeight: 1.2, color: "#0F1714" }}
         >
-          De pitch in één zin
-        </p>
-        <p
-          className="mt-3 font-display font-medium"
-          style={{ fontSize: 24, lineHeight: 1.25, color: "#0F1714" }}
-        >
-          "Wij zijn geen{" "}
+          "Member of Renocheck Professionals."{" "}
           <span style={{ color: "#7D9A85", fontStyle: "italic" }}>
-            lead-veiling
+            I made it.
           </span>
-          . Wij zijn een gesloten kring van bouwprofessionals die elkaar
-          versterken."
         </p>
       </div>
 
@@ -409,11 +394,11 @@ function WhatIsItPage() {
 function PillarCard({
   number,
   title,
-  body,
+  bullets,
 }: {
   number: string;
   title: string;
-  body: string;
+  bullets: string[];
 }) {
   return (
     <div
@@ -422,144 +407,136 @@ function PillarCard({
     >
       <p
         className="font-display font-medium"
-        style={{
-          fontSize: 11,
-          letterSpacing: "0.32em",
-          color: "#7D9A85",
-        }}
+        style={{ fontSize: 11, letterSpacing: "0.32em", color: "#7D9A85" }}
       >
         {number}
       </p>
       <h3
         className="mt-3 font-display font-medium"
-        style={{ fontSize: 20, lineHeight: 1.2, color: "#0F1714" }}
+        style={{ fontSize: 22, lineHeight: 1.15, color: "#0F1714" }}
       >
         {title}
       </h3>
-      <p
-        className="mt-3 text-[12.5px]"
-        style={{ color: "#2D3B32", lineHeight: 1.55 }}
-      >
-        {body}
-      </p>
+      <ul className="mt-4 space-y-2">
+        {bullets.map((b) => (
+          <li
+            key={b}
+            className="flex items-start gap-2 text-[12.5px]"
+            style={{ color: "#2D3B32", lineHeight: 1.4 }}
+          >
+            <span
+              aria-hidden="true"
+              className="mt-2 inline-block h-1 w-1 shrink-0 rounded-full"
+              style={{ background: "#7D9A85" }}
+            />
+            <span>{b}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  PAGE 3 — HOE ANDERS                                                 */
-/* ------------------------------------------------------------------ */
+/* ---------------- PAGE 3 — EVENT FORMAT ---------------- */
 
-function DifferentPage() {
+function EventFormatPage() {
   return (
     <section className="page">
-      <CornerMark label="Wat is anders" />
+      <CornerMark label="Het event" />
 
-      <Eyebrow>Anders dan andere bouwplatforms</Eyebrow>
+      <Eyebrow>Hoe een avond eruitziet</Eyebrow>
 
       <h2
         className="font-display font-medium"
         style={{
-          fontSize: 40,
-          lineHeight: 1.05,
+          fontSize: 50,
+          lineHeight: 1.02,
+          letterSpacing: "-0.015em",
           color: "#0F1714",
           maxWidth: "160mm",
         }}
       >
-        Niet de zoveelste leadgenerator.
+        14 + 14,{" "}
+        <span style={{ color: "#7D9A85", fontStyle: "italic" }}>
+          doorschuiftafels
+        </span>
+        .
       </h2>
 
-      <p
-        className="mt-5 text-[13.5px]"
+      {/* Visualisatie van het 14+14 dinerformat */}
+      <div
+        className="mt-10 rounded-3xl border p-8"
         style={{
-          color: "#2D3B32",
-          lineHeight: 1.65,
-          maxWidth: "150mm",
+          borderColor: "#E2E7E3",
+          background: "#FAFBFA",
+          maxWidth: "180mm",
         }}
       >
-        Het verschil zit in selectie, schaal en model. Dit is wat je niét bij
-        ons vindt — en wel.
-      </p>
-
-      <div
-        className="mt-9 grid grid-cols-2 gap-x-6"
-        style={{ maxWidth: "180mm" }}
-      >
-        {/* Wat anderen doen */}
-        <div>
-          <div className="flex items-center gap-3">
-            <span
-              aria-hidden="true"
-              style={{ background: "#8A948E" }}
-              className="h-px w-6"
-            />
+        <div className="grid grid-cols-2 gap-10">
+          <div>
             <p
               className="text-[10px] font-semibold uppercase"
-              style={{ letterSpacing: "0.32em", color: "#8A948E" }}
+              style={{ letterSpacing: "0.3em", color: "#7D9A85" }}
             >
-              Bij andere platforms
+              Vakspecialisten
+            </p>
+            <div className="mt-4 flex flex-wrap gap-1.5">
+              {Array.from({ length: 14 }).map((_, i) => (
+                <span
+                  key={i}
+                  className="seat inline-block h-6 w-6 rounded-full"
+                  style={{ background: "#7D9A85" }}
+                />
+              ))}
+            </div>
+            <p
+              className="mt-3 font-display font-medium"
+              style={{ fontSize: 32, lineHeight: 1, color: "#0F1714" }}
+            >
+              14
+            </p>
+            <p className="text-[12px]" style={{ color: "#8A948E" }}>
+              één per discipline
             </p>
           </div>
-          <ul className="mt-5 space-y-4">
-            <CrossPoint text="Onbeperkt aantal aannemers per rubriek per regio" />
-            <CrossPoint text="Lead-veiling — wie het hardst biedt, wint" />
-            <CrossPoint text="Pay-per-click of pay-per-lead model" />
-            <CrossPoint text="Anonieme klantencontacten, geen netwerk" />
-            <CrossPoint text="Marketing-budget bepaalt zichtbaarheid" />
-          </ul>
-        </div>
 
-        {/* Wat wij doen */}
-        <div>
-          <div className="flex items-center gap-3">
-            <span
-              aria-hidden="true"
-              style={{ background: "#7D9A85" }}
-              className="h-px w-6"
-            />
+          <div>
             <p
               className="text-[10px] font-semibold uppercase"
-              style={{ letterSpacing: "0.32em", color: "#526A59" }}
+              style={{ letterSpacing: "0.3em", color: "#526A59" }}
             >
-              Bij Renocheck Professionals
+              Architecten
+            </p>
+            <div className="mt-4 flex flex-wrap gap-1.5">
+              {Array.from({ length: 14 }).map((_, i) => (
+                <span
+                  key={i}
+                  className="seat inline-block h-6 w-6 rounded-full border-2"
+                  style={{ borderColor: "#0F1714", background: "#FFFFFF" }}
+                />
+              ))}
+            </div>
+            <p
+              className="mt-3 font-display font-medium"
+              style={{ fontSize: 32, lineHeight: 1, color: "#0F1714" }}
+            >
+              14
+            </p>
+            <p className="text-[12px]" style={{ color: "#8A948E" }}>
+              actieve bureaus
             </p>
           </div>
-          <ul className="mt-5 space-y-4">
-            <CheckPoint text="Eén partner per rubriek per regio — schaarste door selectie" />
-            <CheckPoint text="Geen veiling, geen pay-per-click — vaste partnerbijdrage" />
-            <CheckPoint text="Selectie op vakmanschap door Maxime & het selectiecomité" />
-            <CheckPoint text="Gedeelde werven, directe doorverwijzing tussen partners" />
-            <CheckPoint text="Eigen bedrijfspagina op renocheck.be (SEO + autoriteit)" />
-          </ul>
         </div>
       </div>
 
       <div
-        className="mt-auto rounded-2xl p-7"
-        style={{
-          background: "#0F1714",
-          color: "#FFFFFF",
-          maxWidth: "180mm",
-        }}
+        className="mt-10 grid grid-cols-2 gap-4"
+        style={{ maxWidth: "180mm" }}
       >
-        <p
-          className="text-[10px] font-semibold uppercase"
-          style={{
-            letterSpacing: "0.32em",
-            color: "rgba(255,255,255,0.65)",
-          }}
-        >
-          Belangrijkste verschil
-        </p>
-        <p
-          className="mt-3 font-display font-medium"
-          style={{ fontSize: 22, lineHeight: 1.25 }}
-        >
-          Wij verkopen geen leads.{" "}
-          <span style={{ color: "#CFDCD2", fontStyle: "italic" }}>
-            Wij selecteren partners.
-          </span>
-        </p>
+        <BenefitTile icon="🍽️" text="Gastronomisch diner" />
+        <BenefitTile icon="🔄" text="Doorschuifsysteem" />
+        <BenefitTile icon="🚫" text="Geen concurrent aan tafel" />
+        <BenefitTile icon="📅" text="9 events per jaar" />
       </div>
 
       <PageFooter pageNumber={3} />
@@ -567,198 +544,30 @@ function DifferentPage() {
   );
 }
 
-function CrossPoint({ text }: { text: string }) {
-  return (
-    <li className="flex gap-3">
-      <span
-        aria-hidden="true"
-        className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full"
-        style={{ background: "#E2E7E3" }}
-      >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#8A948E"
-          strokeWidth="3"
-          strokeLinecap="round"
-          className="h-2.5 w-2.5"
-        >
-          <path d="M6 6l12 12M18 6L6 18" />
-        </svg>
-      </span>
-      <span className="text-[12.5px]" style={{ color: "#2D3B32", lineHeight: 1.5 }}>
-        {text}
-      </span>
-    </li>
-  );
-}
-
-function CheckPoint({ text }: { text: string }) {
-  return (
-    <li className="flex gap-3">
-      <span
-        aria-hidden="true"
-        className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full"
-        style={{ background: "#7D9A85" }}
-      >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#FFFFFF"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-2.5 w-2.5"
-        >
-          <path d="M20 6L9 17l-5-5" />
-        </svg>
-      </span>
-      <span className="text-[12.5px]" style={{ color: "#0F1714", lineHeight: 1.5 }}>
-        {text}
-      </span>
-    </li>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  PAGE 4 — VOOR ARCHITECTEN                                           */
-/* ------------------------------------------------------------------ */
-
-function ForArchitectsPage() {
-  return (
-    <section className="page">
-      <CornerMark label="Architecten" />
-
-      <Eyebrow>Voor architectenbureaus</Eyebrow>
-
-      <h2
-        className="font-display font-medium"
-        style={{
-          fontSize: 42,
-          lineHeight: 1.05,
-          color: "#0F1714",
-          maxWidth: "160mm",
-        }}
-      >
-        Eén bureau,{" "}
-        <span style={{ color: "#7D9A85", fontStyle: "italic" }}>
-          één regio
-        </span>
-        .
-      </h2>
-
-      <p
-        className="mt-5 text-[13.5px]"
-        style={{
-          color: "#2D3B32",
-          lineHeight: 1.65,
-          maxWidth: "150mm",
-        }}
-      >
-        Per Vlaamse regio kiezen we exact één architectenbureau om in het
-        netwerk op te nemen. Voor u betekent dat exclusiviteit, instant
-        toegang tot vakspecialisten die we al hebben gescreend, en een
-        vertrouwd contactpunt voor de uitvoering.
-      </p>
-
-      <div
-        className="mt-9 grid grid-cols-2 gap-4"
-        style={{ maxWidth: "180mm" }}
-      >
-        <Benefit
-          icon="🏛️"
-          title="Exclusieve regio"
-          body="U bent het enige architectenbureau in uw regio binnen het Renocheck-netwerk."
-        />
-        <Benefit
-          icon="🤝"
-          title="Voorgescreende uitvoerders"
-          body="Direct toegang tot 14 vakspecialisten die we al hebben geselecteerd op vakmanschap."
-        />
-        <Benefit
-          icon="📂"
-          title="Project-doorverwijzing"
-          body="Renocheck stuurt bouwheren met een passend dossier rechtstreeks naar u door."
-        />
-        <Benefit
-          icon="📈"
-          title="Bedrijfspagina + SEO"
-          body="Uw eigen pagina op renocheck.be/uw-bureau — geïndexeerd, met regio-autoriteit."
-        />
-        <Benefit
-          icon="🗓️"
-          title="Maandelijkse events"
-          body="Werfbezoeken, opleidingen en netwerkmomenten met andere partners in uw regio."
-        />
-        <Benefit
-          icon="📰"
-          title="Blog + portfolio"
-          body="Publiceer projecten en werfverslagen op het centrale platform — extra visibility."
-        />
-      </div>
-
-      <div
-        className="mt-8 rounded-2xl p-6"
-        style={{
-          background: "#F5F8F6",
-          maxWidth: "180mm",
-        }}
-      >
-        <p
-          className="text-[10px] font-semibold uppercase"
-          style={{ letterSpacing: "0.32em", color: "#526A59" }}
-        >
-          Salestip
-        </p>
-        <p
-          className="mt-2 text-[13.5px]"
-          style={{ color: "#0F1714", lineHeight: 1.55 }}
-        >
-          Wanneer u praat met een architectenbureau — leg de nadruk op{" "}
-          <strong>exclusiviteit per regio</strong>. Dit is geen platform waar
-          ze in een lijst van 30 staan. Eén bureau per regio = pure schaarste.
-        </p>
-      </div>
-
-      <PageFooter pageNumber={4} />
-    </section>
-  );
-}
-
-function Benefit({
-  icon,
-  title,
-  body,
-}: {
-  icon: string;
-  title: string;
-  body: string;
-}) {
+function BenefitTile({ icon, text }: { icon: string; text: string }) {
   return (
     <div
-      className="rounded-2xl border p-5"
+      className="flex items-center gap-4 rounded-2xl border p-5"
       style={{ borderColor: "#E2E7E3", background: "#FFFFFF" }}
     >
-      <p style={{ fontSize: 22, lineHeight: 1 }}>{icon}</p>
-      <h3
-        className="mt-3 font-display font-medium"
-        style={{ fontSize: 16, lineHeight: 1.2, color: "#0F1714" }}
+      <span
+        aria-hidden="true"
+        className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
+        style={{ background: "rgba(125,154,133,0.12)", fontSize: 22 }}
       >
-        {title}
-      </h3>
+        {icon}
+      </span>
       <p
-        className="mt-2 text-[12px]"
-        style={{ color: "#2D3B32", lineHeight: 1.55 }}
+        className="font-display font-medium"
+        style={{ fontSize: 16.5, lineHeight: 1.25, color: "#0F1714" }}
       >
-        {body}
+        {text}
       </p>
     </div>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  PAGE 5 — VOOR VAKSPECIALISTEN                                       */
-/* ------------------------------------------------------------------ */
+/* ---------------- PAGE 4 — VAKSPECIALISTEN ---------------- */
 
 function ForVakspecialistenPage() {
   return (
@@ -770,63 +579,63 @@ function ForVakspecialistenPage() {
       <h2
         className="font-display font-medium"
         style={{
-          fontSize: 42,
-          lineHeight: 1.05,
+          fontSize: 52,
+          lineHeight: 1.02,
+          letterSpacing: "-0.015em",
           color: "#0F1714",
-          maxWidth: "160mm",
+          maxWidth: "170mm",
         }}
       >
-        Eén vakman per rubriek,{" "}
+        Eén stoel{" "}
         <span style={{ color: "#7D9A85", fontStyle: "italic" }}>
-          per regio
+          per discipline
         </span>
         .
       </h2>
 
-      <p
-        className="mt-5 text-[13.5px]"
-        style={{
-          color: "#2D3B32",
-          lineHeight: 1.65,
-          maxWidth: "150mm",
-        }}
-      >
-        Of u nu dakwerker, elektricien, sanitair-installateur of schilder
-        bent — we selecteren per rubriek slechts één partner per Vlaamse
-        regio. U werkt rechtstreeks samen met de geselecteerde architecten
-        en bouwondernemers in uw kring.
-      </p>
-
       <div
-        className="mt-8"
+        className="mt-8 grid grid-cols-2 gap-4"
         style={{ maxWidth: "180mm" }}
       >
+        <BenefitTile icon="🛠️" text="Exclusief in uw vak" />
+        <BenefitTile icon="🏗️" text="Toegang tot architecten" />
+        <BenefitTile icon="📈" text="Premium positionering" />
+        <BenefitTile icon="🤝" text="Lange-termijn relaties" />
+      </div>
+
+      <div className="mt-9" style={{ maxWidth: "180mm" }}>
         <p
           className="text-[10px] font-semibold uppercase"
-          style={{ letterSpacing: "0.32em", color: "#8A948E" }}
+          style={{ letterSpacing: "0.3em", color: "#8A948E" }}
         >
-          14 rubrieken waarvoor we partners selecteren
+          Disciplines (één per groep)
         </p>
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap gap-1.5">
           {[
             "Dakwerken",
             "Ramen & deuren",
-            "Elektriciteit",
-            "Sanitair",
-            "Verwarming & airco",
-            "Tegels & natuursteen",
-            "Schrijnwerk",
-            "Schilderwerken",
-            "Vloeren",
             "Isolatie",
-            "Tuinaanleg",
-            "Zonnepanelen",
-            "Zwembaden",
+            "Gevelwerken",
+            "Ruwbouw",
+            "Elektriciteit",
+            "Sanitair & loodgieterij",
+            "HVAC & ventilatie",
+            "Airco & warmtepompen",
+            "Vloer- & tegelwerken",
+            "Chape",
+            "Pleisterwerk",
+            "Schilderwerk",
+            "Schrijnwerk",
             "Keukens",
+            "Terras & opritten",
+            "Tuinaanleg",
+            "Zwembaden",
+            "Zonnepanelen",
+            "Waterdichting",
           ].map((r) => (
             <span
               key={r}
-              className="pill inline-flex items-center rounded-full border px-3 py-1.5 text-[11px] font-medium"
+              className="chip inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-medium"
               style={{
                 borderColor: "#7D9A85",
                 background: "rgba(125,154,133,0.08)",
@@ -840,61 +649,75 @@ function ForVakspecialistenPage() {
       </div>
 
       <div
-        className="mt-8 grid grid-cols-2 gap-4"
+        className="mt-auto rounded-2xl p-7"
+        style={{ background: "#F5F8F6", maxWidth: "180mm" }}
+      >
+        <p
+          className="font-display font-medium"
+          style={{ fontSize: 22, lineHeight: 1.25, color: "#0F1714" }}
+        >
+          Eén partner per vak.{" "}
+          <span style={{ color: "#7D9A85", fontStyle: "italic" }}>
+            Geen concurrentie aan tafel.
+          </span>
+        </p>
+      </div>
+
+      <PageFooter pageNumber={4} />
+    </section>
+  );
+}
+
+/* ---------------- PAGE 5 — ARCHITECTEN ---------------- */
+
+function ForArchitectsPage() {
+  return (
+    <section className="page">
+      <CornerMark label="Architecten" />
+
+      <Eyebrow>Voor architectenbureaus</Eyebrow>
+
+      <h2
+        className="font-display font-medium"
+        style={{
+          fontSize: 56,
+          lineHeight: 1.0,
+          letterSpacing: "-0.015em",
+          color: "#0F1714",
+          maxWidth: "160mm",
+        }}
+      >
+        Vooraf{" "}
+        <span style={{ color: "#7D9A85", fontStyle: "italic" }}>
+          gescreende
+        </span>{" "}
+        partners.
+      </h2>
+
+      <div
+        className="mt-12 grid grid-cols-2 gap-4"
         style={{ maxWidth: "180mm" }}
       >
-        <Benefit
-          icon="🛠️"
-          title="Exclusief in uw rubriek"
-          body="Eén partner per rubriek per regio. Geen concurrentie binnen het netwerk."
-        />
-        <Benefit
-          icon="🏗️"
-          title="Werk via architecten"
-          body="Directe doorverwijzing vanuit de architectenbureaus in uw regio. Géén leads kopen."
-        />
-        <Benefit
-          icon="🗺️"
-          title="Meerdere regio's"
-          body="Werkt u in meerdere regio's? Geen probleem — u kan in elke regio één van de partners zijn."
-        />
-        <Benefit
-          icon="🎓"
-          title="Opleidingen & events"
-          body="Maandelijkse partner-events: nieuwe normen, EPB-updates, productdemo's."
-        />
-        <Benefit
-          icon="📍"
-          title="Bedrijfspagina"
-          body="Uw eigen URL renocheck.be/uw-bedrijf met regio + rubrieken, vindbaar via Google."
-        />
-        <Benefit
-          icon="🏷️"
-          title="Renocheck-label"
-          body="Werk dragen onder het Renocheck-keurmerk geeft bouwheren vertrouwen."
-        />
+        <BenefitTile icon="⏱️" text="Tijdswinst op screening" />
+        <BenefitTile icon="🛡️" text="Minder reputatierisico" />
+        <BenefitTile icon="🤝" text="20+ disciplines op één avond" />
+        <BenefitTile icon="💡" text="Kruisbestuiving & inspiratie" />
+        <BenefitTile icon="🎩" text="Premium beleving" />
+        <BenefitTile icon="🍽️" text="Inbegrepen gastronomisch diner" />
       </div>
 
       <div
-        className="mt-auto rounded-2xl p-6"
-        style={{
-          background: "#F5F8F6",
-          maxWidth: "180mm",
-        }}
+        className="mt-auto rounded-2xl p-7"
+        style={{ background: "#0F1714", color: "#FFFFFF", maxWidth: "180mm" }}
       >
         <p
-          className="text-[10px] font-semibold uppercase"
-          style={{ letterSpacing: "0.32em", color: "#526A59" }}
+          className="font-display font-medium"
+          style={{ fontSize: 22, lineHeight: 1.25 }}
         >
-          Salestip
-        </p>
-        <p
-          className="mt-2 text-[13.5px]"
-          style={{ color: "#0F1714", lineHeight: 1.55 }}
-        >
-          Vraag of de vakspecialist wel eens een lead heeft gekocht die niks
-          opleverde. Vertel dan dat wij <strong>géén</strong> leads verkopen
-          — werk komt via een vertrouwd netwerk, niet via een veiling.
+          Eén avond.{" "}
+          <span style={{ color: "#CFDCD2", fontStyle: "italic" }}>
+            Heel uw uitvoerend netwerk gescreend.
+          </span>
         </p>
       </div>
 
@@ -903,110 +726,64 @@ function ForVakspecialistenPage() {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  PAGE 6 — VOOR BOUWONDERNEMERS                                       */
-/* ------------------------------------------------------------------ */
+/* ---------------- PAGE 6 — SELECTIE ---------------- */
 
-function ForBouwondernemersPage() {
+function SelectionPage() {
   return (
     <section className="page">
-      <CornerMark label="Bouwondernemers" />
+      <CornerMark label="Selectie" />
 
-      <Eyebrow>Voor bouwondernemers</Eyebrow>
+      <Eyebrow>Toelating tot de club</Eyebrow>
 
       <h2
         className="font-display font-medium"
         style={{
-          fontSize: 42,
-          lineHeight: 1.05,
+          fontSize: 50,
+          lineHeight: 1.02,
+          letterSpacing: "-0.015em",
           color: "#0F1714",
-          maxWidth: "160mm",
+          maxWidth: "170mm",
         }}
       >
-        Een{" "}
+        Lidmaatschap is{" "}
         <span style={{ color: "#7D9A85", fontStyle: "italic" }}>
-          team
-        </span>{" "}
-        dat samen schaalt.
+          geen recht
+        </span>
+        .
       </h2>
 
       <p
-        className="mt-5 text-[13.5px]"
-        style={{
-          color: "#2D3B32",
-          lineHeight: 1.65,
-          maxWidth: "150mm",
-        }}
+        className="mt-6 text-[14px] font-medium"
+        style={{ color: "#2D3B32", lineHeight: 1.5, maxWidth: "150mm" }}
       >
-        Voor algemene bouwondernemers is Renocheck Professionals het lokale
-        ecosysteem. U werkt samen met de geselecteerde architect en de 14
-        vakspecialisten in uw regio — een vast team waar u op kan rekenen
-        voor elke fase van het project.
+        Selectie en toelating op basis van kwaliteit, reputatie en fit met de
+        community. Exclusiviteit per discipline blijft heilig.
       </p>
 
       <div
-        className="mt-9 grid grid-cols-2 gap-4"
+        className="mt-10 grid grid-cols-2 gap-x-8 gap-y-5"
         style={{ maxWidth: "180mm" }}
       >
-        <Benefit
-          icon="🏘️"
-          title="Compleet regioteam"
-          body="Eén architect + 14 vakspecialisten. Klaar voor projecten van renovatie tot turn-key nieuwbouw."
-        />
-        <Benefit
-          icon="⏱️"
-          title="Sneller schakelen"
-          body="Iedereen kent elkaar. Geen tijd verliezen aan onderaannemers zoeken of voorstellen."
-        />
-        <Benefit
-          icon="✅"
-          title="Gegarandeerde kwaliteit"
-          body="Alle partners doorlopen dezelfde selectie. Werk dat we samen leveren = werk waar we voor staan."
-        />
-        <Benefit
-          icon="📋"
-          title="Gedeelde werfopvolging"
-          body="Via het partnerportaal communicatie en planning op één plek."
-        />
-        <Benefit
-          icon="💬"
-          title="Maandelijks overleg"
-          body="Partnerevents waar projecten worden besproken en onderlinge afspraken vastgelegd."
-        />
-        <Benefit
-          icon="🛡️"
-          title="Renocheck-garantie"
-          body="Bouwheren krijgen één aanspreekpunt en een gedeelde standaard — meer zekerheid, minder discussie."
-        />
+        <Criterion number="01" text="Reputatie in de sector" />
+        <Criterion number="02" text="Service & klantgerichtheid" />
+        <Criterion number="03" text="Aantoonbare betrouwbaarheid" />
+        <Criterion number="04" text="Past in community-cultuur" />
+        <Criterion number="05" text="Geen open plek = wachtlijst" />
+        <Criterion number="06" text="Lange-termijn engagement" />
       </div>
 
       <div
-        className="mt-auto rounded-2xl p-6"
-        style={{
-          background: "#0F1714",
-          color: "#FFFFFF",
-          maxWidth: "180mm",
-        }}
+        className="mt-auto rounded-2xl p-7"
+        style={{ background: "#F5F8F6", maxWidth: "180mm" }}
       >
         <p
-          className="text-[10px] font-semibold uppercase"
-          style={{
-            letterSpacing: "0.32em",
-            color: "rgba(255,255,255,0.65)",
-          }}
+          className="font-display font-medium"
+          style={{ fontSize: 22, lineHeight: 1.25, color: "#0F1714" }}
         >
-          Salestip
-        </p>
-        <p
-          className="mt-2 text-[13.5px]"
-          style={{ color: "#FFFFFF", lineHeight: 1.55 }}
-        >
-          Bouwondernemers zoeken vaste onderaannemers waar ze op kunnen
-          rekenen. Verkoop hen op{" "}
-          <span style={{ color: "#CFDCD2", fontStyle: "italic" }}>
-            "uw vaste regioteam, vooraf gescreend door ons"
+          Eens een discipline vergeven is,{" "}
+          <span style={{ color: "#7D9A85", fontStyle: "italic" }}>
+            sluit ze.
           </span>
-          .
         </p>
       </div>
 
@@ -1015,103 +792,9 @@ function ForBouwondernemersPage() {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  PAGE 7 — SELECTIE + NETWERK                                         */
-/* ------------------------------------------------------------------ */
-
-function NetworkAndSelectionPage() {
+function Criterion({ number, text }: { number: string; text: string }) {
   return (
-    <section className="page">
-      <CornerMark label="Selectie & netwerk" />
-
-      <Eyebrow>Hoe wij selecteren</Eyebrow>
-
-      <h2
-        className="font-display font-medium"
-        style={{
-          fontSize: 40,
-          lineHeight: 1.05,
-          color: "#0F1714",
-          maxWidth: "160mm",
-        }}
-      >
-        Selectie op{" "}
-        <span style={{ color: "#7D9A85", fontStyle: "italic" }}>
-          vakmanschap
-        </span>
-        , niet op marketingbudget.
-      </h2>
-
-      <div
-        className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4"
-        style={{ maxWidth: "180mm" }}
-      >
-        <Criterion
-          number="01"
-          title="Vakmanschap & ervaring"
-          body="Minimum 5 jaar professionele actiengang in de rubriek."
-        />
-        <Criterion
-          number="02"
-          title="Werfreferenties"
-          body="Minstens 3 referenties van afgewerkte werven."
-        />
-        <Criterion
-          number="03"
-          title="Verzekeringen & vergunningen"
-          body="BTW-onderneming, beroepsaansprakelijkheid en 10-jarige verzekering in orde."
-        />
-        <Criterion
-          number="04"
-          title="Klantgerichtheid"
-          body="Beoordeeld via reviews of intake-gesprek met eerdere bouwheren."
-        />
-        <Criterion
-          number="05"
-          title="Samenwerkingscultuur"
-          body="Bereidheid om actief te netwerken en met andere partners samen te werken."
-        />
-        <Criterion
-          number="06"
-          title="Regionale verankering"
-          body="Sterke aanwezigheid in de regio waarvoor men zich kandidaat stelt."
-        />
-      </div>
-
-      <div
-        className="mt-10"
-        style={{ maxWidth: "180mm" }}
-      >
-        <p
-          className="text-[10px] font-semibold uppercase"
-          style={{ letterSpacing: "0.32em", color: "#8A948E" }}
-        >
-          Actief in 4 Vlaamse regio's
-        </p>
-        <div className="mt-4 grid grid-cols-4 gap-3">
-          <RegionTile name="West-Vlaanderen" cities="Brugge · Kortrijk · Oostende" />
-          <RegionTile name="Oost-Vlaanderen" cities="Gent · Aalst · Sint-Niklaas" />
-          <RegionTile name="Antwerpen" cities="Antwerpen · Mechelen · Turnhout" />
-          <RegionTile name="Vlaams-Brabant" cities="Leuven · Vilvoorde · Halle" />
-        </div>
-      </div>
-
-      <PageFooter pageNumber={7} />
-    </section>
-  );
-}
-
-function Criterion({
-  number,
-  title,
-  body,
-}: {
-  number: string;
-  title: string;
-  body: string;
-}) {
-  return (
-    <div className="flex gap-4">
+    <div className="flex items-center gap-4">
       <span
         className="font-display font-medium"
         style={{
@@ -1119,54 +802,184 @@ function Criterion({
           letterSpacing: "0.28em",
           color: "#7D9A85",
           minWidth: 30,
-          marginTop: 4,
         }}
       >
         {number}
       </span>
-      <div>
-        <h4
-          className="font-display font-medium"
-          style={{ fontSize: 15, lineHeight: 1.2, color: "#0F1714" }}
-        >
-          {title}
-        </h4>
-        <p
-          className="mt-1.5 text-[12px]"
-          style={{ color: "#2D3B32", lineHeight: 1.55 }}
-        >
-          {body}
-        </p>
-      </div>
+      <p
+        className="font-display font-medium"
+        style={{ fontSize: 17, lineHeight: 1.25, color: "#0F1714" }}
+      >
+        {text}
+      </p>
     </div>
   );
 }
 
-function RegionTile({ name, cities }: { name: string; cities: string }) {
+/* ---------------- PAGE 7 — PRIJS ---------------- */
+
+function PricingPage() {
+  return (
+    <section className="page" style={{ background: "#FAFBFA" }}>
+      <CornerMark label="Investering" />
+
+      <Eyebrow>Wat kost lidmaatschap</Eyebrow>
+
+      <h2
+        className="font-display font-medium"
+        style={{
+          fontSize: 52,
+          lineHeight: 1.0,
+          letterSpacing: "-0.015em",
+          color: "#0F1714",
+        }}
+      >
+        Twee tarieven.
+        <br />
+        <span style={{ color: "#7D9A85", fontStyle: "italic" }}>
+          Eén club
+        </span>
+        .
+      </h2>
+
+      <div
+        className="price-band mt-10 rounded-3xl p-9"
+        style={{
+          background: "#0F1714",
+          color: "#FFFFFF",
+          maxWidth: "180mm",
+        }}
+      >
+        <div className="grid grid-cols-2 gap-10 items-start">
+          <div>
+            <p
+              className="text-[10px] font-semibold uppercase"
+              style={{
+                letterSpacing: "0.32em",
+                color: "rgba(255,255,255,0.65)",
+              }}
+            >
+              Vakspecialist · lidmaatschap
+            </p>
+            <p
+              className="mt-3 font-display font-medium"
+              style={{ fontSize: 78, lineHeight: 0.95, color: "#FFFFFF" }}
+            >
+              €1.750
+            </p>
+            <p
+              className="mt-2 text-[14px]"
+              style={{ color: "#CFDCD2", lineHeight: 1.4 }}
+            >
+              per jaar · excl. btw
+            </p>
+            <ul className="mt-5 space-y-2">
+              {[
+                "Toegang tot alle 9 events",
+                "Exclusieve plek in vak",
+                "Renocheck-keurmerk",
+                "Community-toegang",
+              ].map((b) => (
+                <li
+                  key={b}
+                  className="flex items-center gap-2 text-[12.5px]"
+                  style={{ color: "rgba(255,255,255,0.85)" }}
+                >
+                  <span
+                    aria-hidden="true"
+                    className="inline-block h-1.5 w-1.5 rounded-full"
+                    style={{ background: "#CFDCD2" }}
+                  />
+                  {b}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <p
+              className="text-[10px] font-semibold uppercase"
+              style={{
+                letterSpacing: "0.32em",
+                color: "rgba(255,255,255,0.65)",
+              }}
+            >
+              Architect · per event
+            </p>
+            <p
+              className="mt-3 font-display font-medium"
+              style={{ fontSize: 78, lineHeight: 0.95, color: "#FFFFFF" }}
+            >
+              €150
+            </p>
+            <p
+              className="mt-2 text-[14px]"
+              style={{ color: "#CFDCD2", lineHeight: 1.4 }}
+            >
+              per aanwezig event
+            </p>
+            <ul className="mt-5 space-y-2">
+              {[
+                "Geen jaarbinding",
+                "Inbegrepen diner",
+                "14 vakspecialisten aan tafel",
+                "Doorschuifsysteem",
+              ].map((b) => (
+                <li
+                  key={b}
+                  className="flex items-center gap-2 text-[12.5px]"
+                  style={{ color: "rgba(255,255,255,0.85)" }}
+                >
+                  <span
+                    aria-hidden="true"
+                    className="inline-block h-1.5 w-1.5 rounded-full"
+                    style={{ background: "#CFDCD2" }}
+                  />
+                  {b}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="mt-8 grid grid-cols-3 gap-4"
+        style={{ maxWidth: "180mm" }}
+      >
+        <SmallStatCard value="9" label="Reguliere events/jaar" />
+        <SmallStatCard value="+4" label="Premium events/jaar" />
+        <SmallStatCard value="85%" label="Doelbezetting" />
+      </div>
+
+      <PageFooter pageNumber={7} />
+    </section>
+  );
+}
+
+function SmallStatCard({ value, label }: { value: string; label: string }) {
   return (
     <div
-      className="rounded-2xl border p-3"
-      style={{ borderColor: "#E2E7E3", background: "#FAFBFA" }}
+      className="rounded-2xl border p-5"
+      style={{ borderColor: "#E2E7E3", background: "#FFFFFF" }}
     >
       <p
         className="font-display font-medium"
-        style={{ fontSize: 13, lineHeight: 1.2, color: "#0F1714" }}
+        style={{ fontSize: 32, lineHeight: 1, color: "#7D9A85" }}
       >
-        {name}
+        {value}
       </p>
       <p
-        className="mt-1.5 text-[10px]"
-        style={{ color: "#8A948E", lineHeight: 1.5 }}
+        className="mt-2 text-[10px] font-semibold uppercase"
+        style={{ letterSpacing: "0.28em", color: "#8A948E" }}
       >
-        {cities}
+        {label}
       </p>
     </div>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  PAGE 8 — CLOSING / PRAKTISCH                                        */
-/* ------------------------------------------------------------------ */
+/* ---------------- PAGE 8 — CLOSING ---------------- */
 
 function ClosingPage() {
   return (
@@ -1182,7 +995,7 @@ function ClosingPage() {
 
       <div className="relative flex h-full flex-col">
         <header className="flex items-start justify-between">
-          <Wordmark size="small" />
+          <Wordmark size="small" light />
           <p
             className="text-[10px] font-semibold uppercase"
             style={{
@@ -1190,117 +1003,61 @@ function ClosingPage() {
               color: "rgba(255,255,255,0.6)",
             }}
           >
-            Praktisch · CTA
+            Contact
           </p>
         </header>
 
-        <div className="my-auto" style={{ maxWidth: "160mm" }}>
-          <div className="flex items-center gap-3">
-            <span
-              aria-hidden="true"
-              style={{ background: "#CFDCD2" }}
-              className="block h-px w-7"
-            />
-            <p
-              className="text-[10px] font-semibold uppercase"
-              style={{
-                letterSpacing: "0.36em",
-                color: "rgba(255,255,255,0.7)",
-              }}
-            >
-              Klaar voor een gesprek
-            </p>
-          </div>
+        <div className="my-auto" style={{ maxWidth: "170mm" }}>
+          <Eyebrow light>Klaar voor de club</Eyebrow>
 
           <h2
-            className="mt-6 font-display font-medium"
+            className="font-display font-medium"
             style={{
-              fontSize: 56,
-              lineHeight: 0.98,
-              letterSpacing: "-0.01em",
+              fontSize: 76,
+              lineHeight: 0.95,
+              letterSpacing: "-0.015em",
               color: "#FFFFFF",
             }}
           >
-            Word de partner
-            <br />
-            van uw{" "}
+            Word{" "}
             <span style={{ color: "#CFDCD2", fontStyle: "italic" }}>
-              regio
+              member
             </span>
             .
           </h2>
 
           <p
-            className="mt-7 text-[14.5px]"
+            className="mt-7 text-[15.5px]"
             style={{
               color: "rgba(255,255,255,0.85)",
-              lineHeight: 1.65,
+              lineHeight: 1.5,
               maxWidth: "130mm",
             }}
           >
-            We selecteren actief partners in de 4 Vlaamse regio's. Eens een
-            rubriek vergeven is in een regio, sluit ze. Snel zijn = uw plek
-            claimen voor de concurrentie het doet.
+            Eens een vak vergeven is in de groep — sluit het. Snel zijn = uw
+            stoel claimen voor iemand anders het doet.
           </p>
 
-          <div className="mt-10 grid grid-cols-3 gap-4 max-w-[160mm]">
-            <ContactCell
-              label="Aanvraag"
-              value="renocheck.be/contact"
-            />
-            <ContactCell
-              label="E-mail"
-              value="info@renocheck.be"
-            />
-            <ContactCell
-              label="Founder"
-              value="Maxime Vandenbroucke"
-            />
+          <div className="mt-12 grid grid-cols-3 gap-4">
+            <ContactCell label="Founder" value="Maxime Vandenbroucke" />
+            <ContactCell label="E-mail" value="info@renocheck.be" />
+            <ContactCell label="Site" value="renocheck.be" />
           </div>
         </div>
 
         <footer
-          className="footerband mt-auto rounded-2xl p-6"
+          className="footerband mt-auto rounded-2xl px-6 py-5"
           style={{ background: "rgba(255,255,255,0.06)" }}
         >
-          <div className="flex items-center justify-between gap-6">
-            <div>
-              <p
-                className="text-[10px] font-semibold uppercase"
-                style={{
-                  letterSpacing: "0.32em",
-                  color: "rgba(255,255,255,0.6)",
-                }}
-              >
-                Volgende stap voor de verkoper
-              </p>
-              <p
-                className="mt-2 text-[13px]"
-                style={{ color: "#FFFFFF", lineHeight: 1.55, maxWidth: "120mm" }}
-              >
-                Plan een kennismakingsgesprek van 30 min — videocall of bij
-                hen op kantoor. We screenen tijdens dat gesprek of er match
-                is met de selectiecriteria (pagina 7).
-              </p>
-            </div>
-            <span
-              aria-hidden="true"
-              className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full"
-              style={{ background: "#7D9A85" }}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#FFFFFF"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-6 w-6"
-              >
-                <path d="M5 12h14M13 5l7 7-7 7" />
-              </svg>
+          <p
+            className="font-display font-medium"
+            style={{ fontSize: 17, lineHeight: 1.3, color: "#FFFFFF" }}
+          >
+            30 minuten kennismaking.{" "}
+            <span style={{ color: "#CFDCD2", fontStyle: "italic" }}>
+              Direct duidelijk of er een stoel vrij is.
             </span>
-          </div>
+          </p>
         </footer>
       </div>
     </section>
@@ -1335,9 +1092,7 @@ function ContactCell({ label, value }: { label: string; value: string }) {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  Screen-only hint how to export to PDF                              */
-/* ------------------------------------------------------------------ */
+/* ---------------- Screen-only hint ---------------- */
 
 function PrintHint() {
   return (
@@ -1355,8 +1110,20 @@ function PrintHint() {
         boxShadow: "0 12px 24px -10px rgba(15,23,20,0.4)",
       }}
     >
-      Druk <kbd style={{ background: "#7D9A85", padding: "2px 6px", borderRadius: 4, marginLeft: 6, marginRight: 6 }}>Ctrl + P</kbd>
-      en kies "Opslaan als PDF" · marges = <strong>Geen</strong> · achtergrondgrafiek = <strong>aan</strong>
+      Druk{" "}
+      <kbd
+        style={{
+          background: "#7D9A85",
+          padding: "2px 6px",
+          borderRadius: 4,
+          marginLeft: 6,
+          marginRight: 6,
+        }}
+      >
+        Ctrl + P
+      </kbd>{" "}
+      → "Opslaan als PDF" · marges <strong>Geen</strong> · achtergrondgrafiek{" "}
+      <strong>aan</strong>
     </aside>
   );
 }
