@@ -241,11 +241,10 @@ function CoverPage() {
             Een avond met doorschuiftafels en gastronomisch diner.
           </p>
 
-          <div className="mt-12 grid grid-cols-4 gap-6 max-w-[170mm]">
+          <div className="mt-12 grid grid-cols-3 gap-8 max-w-[140mm]">
             <Stat value="14+14" label="Aan tafel" />
             <Stat value="9" label="Events/jaar" />
             <Stat value="+4" label="Premium" />
-            <Stat value="€1.750" label="Lidmaatschap" small />
           </div>
         </div>
 
@@ -362,10 +361,10 @@ function WhatIsItPage() {
         />
         <PillarCard
           number="03"
-          title="Status"
+          title="Vertrouwen"
           bullets={[
             "Renocheck-keurmerk",
-            "'I made it' beleving",
+            "Vooraf gescreend",
             "Lange-termijn relaties",
           ]}
         />
@@ -379,9 +378,9 @@ function WhatIsItPage() {
           className="font-display font-medium"
           style={{ fontSize: 24, lineHeight: 1.2, color: "#0F1714" }}
         >
-          "Member of Renocheck Professionals."{" "}
+          Geen lead-veiling.{" "}
           <span style={{ color: "#7D9A85", fontStyle: "italic" }}>
-            I made it.
+            Een gecureerde inner circle.
           </span>
         </p>
       </div>
@@ -904,19 +903,19 @@ function PricingPage() {
                 color: "rgba(255,255,255,0.65)",
               }}
             >
-              Architect · per event
+              Architect · deelname
             </p>
             <p
               className="mt-3 font-display font-medium"
               style={{ fontSize: 78, lineHeight: 0.95, color: "#FFFFFF" }}
             >
-              €150
+              Gratis
             </p>
             <p
               className="mt-2 text-[14px]"
               style={{ color: "#CFDCD2", lineHeight: 1.4 }}
             >
-              per aanwezig event
+              uitnodiging per event
             </p>
             <ul className="mt-5 space-y-2">
               {[
@@ -944,7 +943,42 @@ function PricingPage() {
       </div>
 
       <div
-        className="mt-8 grid grid-cols-3 gap-4"
+        className="mt-7 flex items-center gap-5 rounded-2xl border p-5"
+        style={{
+          borderColor: "#7D9A85",
+          background: "rgba(125,154,133,0.08)",
+          maxWidth: "180mm",
+        }}
+      >
+        <span
+          aria-hidden="true"
+          className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
+          style={{ background: "#7D9A85", color: "#FFFFFF", fontSize: 22 }}
+        >
+          !
+        </span>
+        <div>
+          <p
+            className="text-[10px] font-semibold uppercase"
+            style={{ letterSpacing: "0.32em", color: "#526A59" }}
+          >
+            Architect · no-show boete
+          </p>
+          <p
+            className="mt-1.5 font-display font-medium"
+            style={{ fontSize: 18, lineHeight: 1.3, color: "#0F1714" }}
+          >
+            €150 per gecanceld event{" "}
+            <span style={{ color: "#526A59", fontStyle: "italic" }}>
+              waarop aanwezigheid bevestigd was
+            </span>
+            .
+          </p>
+        </div>
+      </div>
+
+      <div
+        className="mt-6 grid grid-cols-3 gap-4"
         style={{ maxWidth: "180mm" }}
       >
         <SmallStatCard value="9" label="Reguliere events/jaar" />
