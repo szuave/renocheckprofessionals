@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // better-sqlite3 is enkel voor lokale dev. In de Cloudflare-build mag dat
+  // native Node-pakket niet meegebundled worden (en zou sowieso niet werken).
+  outputFileTracingExcludes: {
+    "*": ["./node_modules/better-sqlite3/**/*", "./node_modules/@types/better-sqlite3/**/*"],
+  },
+  serverExternalPackages: ["better-sqlite3"],
 };
 
 // Wires up the Cloudflare context (D1 binding, env vars) during `next dev`

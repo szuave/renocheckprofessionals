@@ -21,8 +21,19 @@ function isCloudflare(): boolean {
 async function getLocalDb(): Promise<DB> {
   if (cachedLocalDb) return cachedLocalDb;
 
-  const { default: Database } = await import("better-sqlite3");
-  const { drizzle } = await import("drizzle-orm/better-sqlite3");
+  // Hide the better-sqlite3 import from the bundler/tracer so it never ends
+  // up in the Cloudflare Workers bundle. Function('return import(x)')() is a
+  // runtime-only construct the static tracer cannot follow.
+  const dynImport = Function(
+    "spec",
+    "return import(spec)",
+  ) as (spec: string) => Promise<{ default: unknown }>;
+  const { default: Database } = (await dynImport("better-sqlite3")) as {
+    default: typeof import("better-sqlite3");
+  };
+  const { drizzle } = (await dynImport("drizzle-orm/better-sqlite3")) as {
+    default: unknown;
+  } & typeof import("drizzle-orm/better-sqlite3");
   const path = await import("node:path");
   const fs = await import("node:fs");
 

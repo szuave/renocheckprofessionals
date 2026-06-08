@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { getCurrentUser } from "@/lib/auth";
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = {
@@ -11,7 +13,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const user = await getCurrentUser();
+  if (user) redirect("/dashboard");
+
   return (
     <main id="main" className="relative flex min-h-screen flex-col lg:flex-row">
       {/* ---------- Visual side ---------- */}
